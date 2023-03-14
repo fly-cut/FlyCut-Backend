@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BarberAuthController;
+use App\Http\Controllers\BarbershopOwnerAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/barber/register', [BarberAuthController::class, 'register']);
+Route::post('/barber/login', [BarberAuthController::class, 'login']);
+
+Route::post('/barbershopOwner/register', [BarbershopOwnerAuthController::class, 'register']);
+Route::post('/barbershopOwner/login', [BarbershopOwnerAuthController::class, 'login']);
+
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/barber/logout', [BarberAuthController::class, 'logout']);
+    Route::post('/barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
 });
