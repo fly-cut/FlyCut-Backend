@@ -8,4 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Barber extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'rating',
+        'birth_date',
+        'image'
+    ];
+
+    public function barbershop()
+    {
+        return $this->belongsTo(Barbershop::class);
+    }
 }

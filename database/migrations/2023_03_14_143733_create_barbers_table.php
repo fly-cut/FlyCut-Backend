@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('barbers', function (Blueprint $table) {
             $table->id();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->double('rating');
+            $table->date('birth_date');
+            $table->string('image')->nullable();
+            $table->foreignId('barbershop_id')->constrained('barbershops');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
