@@ -20,7 +20,7 @@ class BarberAuthController extends Controller
             'image' => 'required',
             'barbershop_id' => 'required'
         ]);
-        
+
         $barber = Barber::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -33,8 +33,8 @@ class BarberAuthController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path().'/images';
-        $path->move($destinationPath,$filename);
+        $destinationPath = public_path() . '/images';
+        $path->move($destinationPath, $filename);
         $barber->image = $filename;
         $barber->save();
 
@@ -54,7 +54,8 @@ class BarberAuthController extends Controller
         ]);
 
         $barber = Barber::where('email', $request->email)->first();
-        if (! $barber || ! Hash::check($request->password, $barber->password)) {
+        return $barber;
+        if (!$barber || !Hash::check($request->password, $barber->password)) {
             return response(
                 [
                     'Response' => 'Please enter the right email or password!',
