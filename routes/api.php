@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/barber/logout', [BarberAuthController::class, 'logout']);
     Route::post('/barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
 });
-
+Route::post('client/register', [ClientAuthController::class, 'register']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 
 Route::middleware('auth:client-api')->group(function () {

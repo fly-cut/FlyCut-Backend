@@ -10,8 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class ClientAuthController extends Controller
 {
-    public function register()
+    public function register(Request $request)
     {
+        $fields = $request->validate([
+            'first_name' => 'required|string|max:20|regex:/(^([a-zA-Z]+)?$)/u',
+            'last_name' => 'required|string|max:20|regex:/(^([a-zA-Z]+)?$)/u',
+            'email' => 'required|string|unique:clients,email|email|max:40',
+            'password' => 'required|string|confirmed|max:40',
+            'birth_date' => 'required|date'
+        ]);
+        $fields['password'] = bcrypt($request->password);
+        $client = Client::create($fields);
+        $token = $client->createToken('Laravel Password Grant Client')->accessToken;
+        $message = [
+            'user' => $client,
+            'token' => $token
+        ];
+        return response($message, 201);
     }
     public function login(Request $request)
     {
