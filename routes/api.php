@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BarberAuthController;
+use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\BarbershopOwnerAuthController;
+use App\Http\Controllers\ClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +33,10 @@ Route::post('admin/login', [AdminAuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/barber/logout', [BarberAuthController::class, 'logout']);
     Route::post('/barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
+});
+
+Route::post('client/login', [ClientAuthController::class, 'login']);
+
+Route::middleware('auth:client-api')->group(function () {
+    Route::post('client/logout', [ClientAuthController::class, 'logout']);
 });
