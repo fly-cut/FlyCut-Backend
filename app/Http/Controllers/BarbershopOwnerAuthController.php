@@ -15,8 +15,7 @@ class BarbershopOwnerAuthController extends Controller
             'last_name' => 'required|string|max:20|regex:/(^([a-zA-Z]+)?$)/u',
             'email' => 'required|string|unique:barbershop_owners,email|email|max:40',
             'password' => 'required|string|confirmed|max:40',
-            'birth_date' => 'required|date',
-            'image' => 'required'
+            'birth_date' => 'required|date'
         ]);
 
         $barbershop_owner = BarbershopOwner::create([
@@ -26,16 +25,20 @@ class BarbershopOwnerAuthController extends Controller
             'password' => bcrypt($request->password),
             'birth_date' => $request->birth_date
         ]);
-
-        $path = $request->file('image');
-        $filename = $path->getClientOriginalName();
-        $destinationPath = public_path() . '/images';
-        $path->move($destinationPath, $filename);
-        $barbershop_owner->image = $filename;
-        $barbershop_owner->save();
+        if($request->image)
+        {
+            $path = $request->file('image');
+            $filename = $path->getClientOriginalName();
+            $destinationPath = public_path() . '/images';
+            $path->move($destinationPath, $filename);
+            $barbershop_owner->image = $filename;
+            $barbershop_owner->save();
+        }
+        $token = $barbershop_owner->createToken('Laravel Password Grant BarbershopOwner')->accessToken;
 
         $response = [
             'barbershopOwner' => $barbershop_owner,
+            'token' => $token,
             'message' => 'barbershop owner registered successfully'
         ];
 
@@ -59,7 +62,7 @@ class BarbershopOwnerAuthController extends Controller
             );
         }
 
-        $token = $barbershop_owner->createToken('barbershopownertoken')->plainTextToken;
+        $token = $barbershop_owner->createToken('Laravel Password Grant BarbershopOwner')->accessToken;
 
         $response = [
             'barbershopOwner' => $barbershop_owner,
@@ -74,7 +77,7 @@ class BarbershopOwnerAuthController extends Controller
         auth()->user()->tokens()->delete();
 
         return [
-            'Response' => 'Logged out',
+            'response' => 'Logged out',
         ];
     }
 }

@@ -45,41 +45,4 @@ class BarberAuthController extends Controller
 
         return response($response, 201);
     }
-
-    public function login(Request $request)
-    {
-        $this->validate($request, [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        $barber = Barber::where('email', $request->email)->first();
-        return $barber;
-        if (!$barber || !Hash::check($request->password, $barber->password)) {
-            return response(
-                [
-                    'Response' => 'Please enter the right email or password!',
-                ],
-                401
-            );
-        }
-
-        $token = $barber->createToken('barbertoken')->plainTextToken;
-
-        $response = [
-            'barber' => $barber,
-            'token' => $token,
-        ];
-
-        return response($response, 200);
-    }
-
-    public function logout()
-    {
-        auth()->user()->tokens()->delete();
-
-        return [
-            'Response' => 'Logged out',
-        ];
-    }
 }

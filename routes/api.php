@@ -6,7 +6,9 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BarberAuthController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\BarbershopOwnerAuthController;
+use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\ClientController;
+use App\Models\BarbershopOwner;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,21 +21,20 @@ use App\Http\Controllers\ClientController;
 |
 */
 
-Route::post('/barber/register', [BarberAuthController::class, 'register']);
-Route::post('/barber/login', [BarberAuthController::class, 'login']);
-
 Route::post('/barbershopOwner/register', [BarbershopOwnerAuthController::class, 'register']);
 Route::post('/barbershopOwner/login', [BarbershopOwnerAuthController::class, 'login']);
+
+Route::middleware('auth:barbershopOwner-api')->group(function () {
+    Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
+});
+
+Route::post('admin/login', [AdminAuthController::class, 'login']);
 
 Route::middleware('auth:admin-api')->group(function () {
     Route::post('admin/logout', [AdminAuthController::class, 'logout']);
 });
 
-Route::post('admin/login', [AdminAuthController::class, 'login']);
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/barber/logout', [BarberAuthController::class, 'logout']);
-    Route::post('/barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
-});
+
 Route::post('client/register', [ClientAuthController::class, 'register']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 
