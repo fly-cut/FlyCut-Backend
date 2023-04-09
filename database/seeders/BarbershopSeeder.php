@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
+use App\Models\Barbershop;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Client;
 
-class ClientSeeder extends Seeder
+class BarbershopSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Client::factory()->count(4)->create();
+        Barbershop::factory()->count(25)->hasBarbers(5)->hasBarbershopAddresses(2)->create();
     }
 }

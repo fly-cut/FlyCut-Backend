@@ -2,10 +2,36 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
-class BarbershopOwner extends Model
+class BarbershopOwner extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
+
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'phone',
+        'birth_date',
+        'image'
+    ];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    public function barbershop()
+    {
+        return $this->hasOne(Barbershop::class);
+    }
+    public function providers()
+    {
+        return $this->hasMany(Provider::class,'barbershop_owner_id','id');
+    }
 }

@@ -17,7 +17,11 @@ class BarbershopOwnerFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name(),
+            'email' => $this->faker->email(),
+            'phone' => $this->faker->phoneNumber(),
+            'password' => $this->faker->password(),
+            'birth_date' => $this->faker->date()
         ];
     }
 }

@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('barbers', function (Blueprint $table) {
+        Schema::create('providers', function (Blueprint $table) {
             $table->id();
+            $table->string('provider');
+            $table->string('provider_id');
+            $table->string('avatar')->nullable();
+            $table->foreignId('barbershop_owner_id')->constrained('barbershop_owners');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('barbers');
+        Schema::dropIfExists('providers');
     }
 };

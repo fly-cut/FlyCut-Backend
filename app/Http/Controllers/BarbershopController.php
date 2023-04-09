@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
+use App\Models\Barbershop;
+use App\Http\Requests\StoreBarbershopRequest;
+use App\Http\Requests\UpdateBarbershopRequest;
 
-class ClientController extends Controller
+class BarbershopController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        //
     }
 
     /**
@@ -26,7 +27,7 @@ class ClientController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreClientRequest $request)
+    public function store(StoreBarbershopRequest $request)
     {
         //
     }
@@ -34,7 +35,7 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Client $client)
+    public function show(Barbershop $barbershop)
     {
         //
     }
@@ -42,7 +43,7 @@ class ClientController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Client $client)
+    public function edit(Barbershop $barbershop)
     {
         //
     }
@@ -50,7 +51,7 @@ class ClientController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(UpdateBarbershopRequest $request, Barbershop $barbershop)
     {
         //
     }
@@ -58,7 +59,7 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $client)
+    public function destroy(Barbershop $barbershop)
     {
         //
     }

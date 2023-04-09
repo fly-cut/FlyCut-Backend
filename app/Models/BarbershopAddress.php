@@ -2,26 +2,17 @@
 
 namespace App\Models;
 
-
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Barber extends Model
+class BarbershopAddress extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'email',
-        'rating',
-        'birth_date',
-        'image',
-        'barbershop_id'
-    ];
-    protected $hidden = [
-        'password',
-        'remember_token',
+        'longitude',
+        'latitude',
+        'address'
     ];
 
     public function barbershop()

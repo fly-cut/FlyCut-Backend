@@ -1,7 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\BarberAuthController;
+use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\BarbershopOwnerAuthController;
+use App\Http\Controllers\BarbershopOwnerController;
+use App\Http\Controllers\ClientController;
+use App\Models\BarbershopOwner;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +21,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/barbershopOwner/register', [BarbershopOwnerAuthController::class, 'register']);
+Route::post('/barbershopOwner/login', [BarbershopOwnerAuthController::class, 'login']);
+Route::post('/resend/email/token', [BarbershopOwnerAuthController::class, 'resendPin']);
+
+Route::get('/login/{provider}', [BarbershopOwnerAuthController::class,'redirectToProvider']);
+Route::get('/login/{provider}/callback', [BarbershopOwnerAuthController::class,'handleProviderCallback']);
+
+
+Route::middleware('auth:barbershopOwner-api')->group(function () {
+    Route::post('email/verify',[BarbershopOwnerAuthController::class, 'verifyEmail']);
+
+    Route::middleware('verify.api')->group(function () {
+        Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
+    });
+
+
+});
+
+Route::post('admin/login', [AdminAuthController::class, 'login']);
+
+Route::middleware('auth:admin-api')->group(function () {
+    Route::post('admin/logout', [AdminAuthController::class, 'logout']);
+});
+
+
+Route::post('client/register', [ClientAuthController::class, 'register']);
+Route::post('client/login', [ClientAuthController::class, 'login']);
+
+Route::middleware('auth:client-api')->group(function () {
+    Route::post('client/logout', [ClientAuthController::class, 'logout']);
 });
