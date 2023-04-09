@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
+        'verify.api'=> \App\Http\Middleware\VerifyEmail::class,
     ];
 }

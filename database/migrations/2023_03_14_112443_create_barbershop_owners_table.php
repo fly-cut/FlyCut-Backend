@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('barbershop_owners', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->date('birth_date');
+            $table->string('phone')->nullable();
+            $table->string('password')->nullable();
+            $table->date('birth_date')->nullable();
             $table->string('image')->nullable();
             $table->rememberToken();
             $table->timestamps();

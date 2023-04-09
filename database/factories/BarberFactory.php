@@ -18,10 +18,8 @@ class BarberFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => $this->faker->name(),
-            'last_name' => $this->faker->name(),
+            'name' => $this->faker->name(),
             'email' => $this->faker->email(),
-            'password' => $this->faker->password(),
             'rating' => $this->faker->randomFloat(2, 0, 5),
             'barbershop_id' => Barbershop::factory(),
             'birth_date' => $this->faker->date()

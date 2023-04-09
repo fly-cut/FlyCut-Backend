@@ -23,9 +23,20 @@ use App\Models\BarbershopOwner;
 
 Route::post('/barbershopOwner/register', [BarbershopOwnerAuthController::class, 'register']);
 Route::post('/barbershopOwner/login', [BarbershopOwnerAuthController::class, 'login']);
+Route::post('/resend/email/token', [BarbershopOwnerAuthController::class, 'resendPin']);
+
+Route::get('/login/{provider}', [BarbershopOwnerAuthController::class,'redirectToProvider']);
+Route::get('/login/{provider}/callback', [BarbershopOwnerAuthController::class,'handleProviderCallback']);
+
 
 Route::middleware('auth:barbershopOwner-api')->group(function () {
-    Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
+    Route::post('email/verify',[BarbershopOwnerAuthController::class, 'verifyEmail']);
+
+    Route::middleware('verify.api')->group(function () {
+        Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
+    });
+
+
 });
 
 Route::post('admin/login', [AdminAuthController::class, 'login']);

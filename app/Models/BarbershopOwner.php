@@ -14,10 +14,10 @@ class BarbershopOwner extends Authenticatable
 
 
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'email',
         'password',
+        'phone',
         'birth_date',
         'image'
     ];
@@ -29,5 +29,9 @@ class BarbershopOwner extends Authenticatable
     public function barbershop()
     {
         return $this->hasOne(Barbershop::class);
+    }
+    public function providers()
+    {
+        return $this->hasMany(Provider::class,'barbershop_owner_id','id');
     }
 }
