@@ -21,34 +21,42 @@ use App\Models\BarbershopOwner;
 |
 */
 
+
+
+Route::post('admin/register', [AdminAuthController::class, 'register']);
+Route::post('admin/login', [AdminAuthController::class, 'login']);
+
+Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+    Route::post('admin/logout', [AdminAuthController::class, 'logout']);
+});
+
+
 Route::post('/barbershopOwner/register', [BarbershopOwnerAuthController::class, 'register']);
 Route::post('/barbershopOwner/login', [BarbershopOwnerAuthController::class, 'login']);
 Route::post('/resend/email/token', [BarbershopOwnerAuthController::class, 'resendPin']);
 
-Route::get('/login/{provider}', [BarbershopOwnerAuthController::class,'redirectToProvider']);
-Route::get('/login/{provider}/callback', [BarbershopOwnerAuthController::class,'handleProviderCallback']);
+Route::get('/login/{provider}', [BarbershopOwnerAuthController::class, 'redirectToProvider']);
+Route::get('/login/{provider}/callback', [BarbershopOwnerAuthController::class, 'handleProviderCallback']);
 
 
-Route::middleware('auth:barbershopOwner-api')->group(function () {
-    Route::post('email/verify',[BarbershopOwnerAuthController::class, 'verifyEmail']);
-
-    Route::middleware('verify.api')->group(function () {
-        Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
-    });
-
-
-});
-
-Route::post('admin/login', [AdminAuthController::class, 'login']);
-
-Route::middleware('auth:admin-api')->group(function () {
-    Route::post('admin/logout', [AdminAuthController::class, 'logout']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
 });
 
 
 Route::post('client/register', [ClientAuthController::class, 'register']);
 Route::post('client/login', [ClientAuthController::class, 'login']);
 
-Route::middleware('auth:client-api')->group(function () {
+Route::middleware(['auth:sanctum', 'type.client'])->group(function () {
     Route::post('client/logout', [ClientAuthController::class, 'logout']);
+});
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    // Route::post('email/verify',[BarbershopOwnerAuthController::class, 'verifyEmail']);
+
+    // Route::middleware('verify.api')->group(function () {
+
+    // });
+
+
 });

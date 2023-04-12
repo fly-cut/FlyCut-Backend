@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use Laravel\Sanctum\HasApiTokens;
 
 class BarbershopOwner extends Authenticatable
 {
@@ -32,6 +32,6 @@ class BarbershopOwner extends Authenticatable
     }
     public function providers()
     {
-        return $this->hasMany(Provider::class,'barbershop_owner_id','id');
+        return $this->hasMany(Provider::class, 'barbershop_owner_id', 'id');
     }
 }
