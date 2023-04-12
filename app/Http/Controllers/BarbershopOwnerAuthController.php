@@ -20,109 +20,108 @@ class BarbershopOwnerAuthController extends Controller
     public function register(Request $request)
     {
         $this->validate($request, [
-            'email' => 'required|string|unique:barbershop_owners,email|email|max:40',
-            'password' => 'required|string|confirmed|max:40'
+            'email' => 'required|string|unique:barbershop_owners,email|email|max:255',
+            'password' => 'required|string|confirmed|max:255'
         ]);
 
         $barbershop_owner = BarbershopOwner::create([
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);
-        if ($barbershop_owner) {
-            $verify2 =  DB::table('password_reset_tokens')->where([
-                ['email', $request->all()['email']]
-            ]);
+        // if ($barbershop_owner) {
+        //     $verify2 =  DB::table('password_reset_tokens')->where([
+        //         ['email', $request->all()['email']]
+        //     ]);
     
-            if ($verify2->exists()) {
-                $verify2->delete();
-            }
-            $pin = rand(100000, 999999);
-            DB::table('password_reset_tokens')
-                ->insert(
-                    [
-                        'email' => $request->all()['email'], 
-                        'token' => $pin
-                    ]
-                );
-        }
-        Mail::to($request->email)->send(new VerifyEmail($pin));
-        $token = $barbershop_owner->createToken('Laravel Password Grant BarbershopOwner')->accessToken;
-
+        //     if ($verify2->exists()) {
+        //         $verify2->delete();
+        //     }
+        //     $pin = rand(100000, 999999);
+        //     DB::table('password_reset_tokens')
+        //         ->insert(
+        //             [
+        //                 'email' => $request->all()['email'], 
+        //                 'token' => $pin
+        //             ]
+        //         );
+        // }
+        // Mail::to($request->email)->send(new VerifyEmail($pin));
+        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['role:barbershopOwner'])->plainTextToken;
         $response = [
             'barbershopOwner' => $barbershop_owner,
             'token' => $token,
-            'message' => 'barbershop owner registered successfully'
+            'message' => 'Barbershop owner registered successfully'
         ];
 
         return response($response, 201);
     }
 
-    public function verifyEmail(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'token' => ['required'],
-        ]);
+    // public function verifyEmail(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'token' => ['required'],
+    //     ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->with(['message' => $validator->errors()]);
-        }
-        $select = DB::table('password_reset_tokens')
-            ->where('email', Auth::user()->email)
-            ->where('token', $request->token);
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->with(['message' => $validator->errors()]);
+    //     }
+    //     $select = DB::table('password_reset_tokens')
+    //         ->where('email', Auth::user()->email)
+    //         ->where('token', $request->token);
 
-        if ($select->get()->isEmpty()) {
-            return new JsonResponse(['success' => false, 'message' => "Invalid PIN"], 400);
-        }
+    //     if ($select->get()->isEmpty()) {
+    //         return new JsonResponse(['success' => false, 'message' => "Invalid PIN"], 400);
+    //     }
 
-        $select = DB::table('password_reset_tokens')
-            ->where('email', Auth::user()->email)
-            ->where('token', $request->token)
-            ->delete();
+    //     $select = DB::table('password_reset_tokens')
+    //         ->where('email', Auth::user()->email)
+    //         ->where('token', $request->token)
+    //         ->delete();
 
-        $barbershop_owner = BarbershopOwner::find(Auth::user()->id);
-        $barbershop_owner->email_verified_at = Carbon::now()->getTimestamp();
-        $barbershop_owner->save();
+    //     $barbershop_owner = BarbershopOwner::find(Auth::user()->id);
+    //     $barbershop_owner->email_verified_at = Carbon::now()->getTimestamp();
+    //     $barbershop_owner->save();
 
-        return new JsonResponse(['success' => true, 'message' => "Email is verified"], 200);
-    }
+    //     return new JsonResponse(['success' => true, 'message' => "Email is verified"], 200);
+    // }
 
-    public function resendPin(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => ['required', 'string', 'email', 'max:255'],
-        ]);
+    // public function resendPin(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'email' => ['required', 'string', 'email', 'max:255'],
+    //     ]);
 
-        if ($validator->fails()) {
-            return new JsonResponse(['success' => false, 'message' => $validator->errors()], 422);
-        }
+    //     if ($validator->fails()) {
+    //         return new JsonResponse(['success' => false, 'message' => $validator->errors()], 422);
+    //     }
 
-        $verify =  DB::table('password_reset_tokens')->where([
-            ['email', $request->all()['email']]
-        ]);
+    //     $verify =  DB::table('password_reset_tokens')->where([
+    //         ['email', $request->all()['email']]
+    //     ]);
 
-        if ($verify->exists()) {
-            $verify->delete();
-        }
+    //     if ($verify->exists()) {
+    //         $verify->delete();
+    //     }
 
-        $token = random_int(100000, 999999);
-        $password_reset = DB::table('password_reset_tokens')->insert([
-            'email' => $request->all()['email'],
-            'token' =>  $token,
-            'created_at' => Carbon::now()
-        ]);
+    //     $token = random_int(100000, 999999);
+    //     $password_reset = DB::table('password_reset_tokens')->insert([
+    //         'email' => $request->all()['email'],
+    //         'token' =>  $token,
+    //         'created_at' => Carbon::now()
+    //     ]);
 
-        if ($password_reset) {
-            Mail::to($request->all()['email'])->send(new VerifyEmail($token));
+    //     if ($password_reset) {
+    //         Mail::to($request->all()['email'])->send(new VerifyEmail($token));
 
-            return new JsonResponse(
-                [
-                    'success' => true, 
-                    'message' => "A verification mail has been resent"
-                ], 
-                200
-            );
-        }
-    }
+    //         return new JsonResponse(
+    //             [
+    //                 'success' => true, 
+    //                 'message' => "A verification mail has been resent"
+    //             ], 
+    //             200
+    //         );
+    //     }
+    // }
 
 
 
@@ -137,13 +136,13 @@ class BarbershopOwnerAuthController extends Controller
         if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
-                    'Response' => 'Please enter the right email or password!',
+                    'response' => 'Please enter the right email or password!',
                 ],
                 401
             );
         }
 
-        $token = $barbershop_owner->createToken('Laravel Password Grant BarbershopOwner')->accessToken;
+        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['role:barbershopOwner'])->plainTextToken;
 
         $response = [
             'barbershopOwner' => $barbershop_owner,
@@ -203,7 +202,7 @@ class BarbershopOwnerAuthController extends Controller
                 'avatar' => $barbershop_owner->getAvatar()
             ]
         );
-        $token = $barbershop_owner_created->createToken('Laravel Password Grant BarbershopOwner')->accessToken;
+        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['role:barbershopOwner'])->plainTextToken;
 
         return response()->json($barbershop_owner_created, 200, ['Access-Token' => $token]);
     }

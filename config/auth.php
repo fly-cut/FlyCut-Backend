@@ -35,39 +35,18 @@ return [
     |
     */
 
+    
+
     'guards' => [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'client' =>
-        [
+        'admin' => [
             'driver' => 'session',
-            'provider' => 'clients'
+            'provider' => 'admins',
         ],
-        'client-api' =>
-        [
-            'driver' => 'passport',
-            'provider' => 'clients'
-        ],
-        'admin' =>
-        [
-            'driver' => 'session',
-            'provider' => 'admins'
-        ],
-        'admin-api' => [
-            'driver' => 'passport',
-            'provider' => 'admins'
-        ],
-        'barbershopOwner' =>
-        [
-            'driver' => 'session',
-            'provider' => 'barbershopOwners'
-        ],
-        'barbershopOwner-api' => [
-            'driver' => 'passport',
-            'provider' => 'barbershopOwners'
-        ]
+
     ],
 
     /*
@@ -92,22 +71,11 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-        'clients' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\Client::class,
-        ],
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
         ],
-        'barbershopOwners' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\BarbershopOwner::class,
-        ],
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+    
     ],
 
     /*
@@ -135,7 +103,7 @@ return [
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
-        ],
+        ]
     ],
 
     /*
