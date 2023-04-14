@@ -21,8 +21,8 @@ class Client extends Authenticatable
         'password',
         'remember_token',
     ];
-    public function providers()
+    public function client_providers()
     {
-        return $this->hasMany(ClientProviders::class, 'client_id', 'id');
+        return $this->hasMany(ClientProvider::class, 'client_id', 'id');
     }
 }

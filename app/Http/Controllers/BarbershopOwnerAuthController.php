@@ -202,7 +202,7 @@ class BarbershopOwnerAuthController extends Controller
                 'avatar' => $barbershop_owner->getAvatar()
             ]
         );
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['role:barbershopOwner'])->plainTextToken;
+        $token = $barbershop_owner_created->createToken('BarbershopOwnerToken', ['role:barbershopOwner'])->plainTextToken;
 
         return response()->json($barbershop_owner_created, 200, ['Access-Token' => $token]);
     }

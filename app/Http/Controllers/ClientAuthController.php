@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
-use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
 use GuzzleHttp\Exception\ClientException;
 
@@ -91,7 +89,7 @@ class ClientAuthController extends Controller
                 'status' => true,
             ]
         );
-        $client_created->providers()->updateOrCreate(
+        $client_created->client_providers()->updateOrCreate(
             [
                 'provider' => $provider,
                 'provider_id' => $client->getId(),
@@ -100,7 +98,7 @@ class ClientAuthController extends Controller
                 'avatar' => $client->getAvatar()
             ]
         );
-        $token = $client->createToken('Client', ['role:barbershopOwner'])->plainTextToken;
+        $token = $client_created->createToken('Client', ['role:client'])->plainTextToken;
 
         return response()->json($client_created, 200, ['Access-Token' => $token]);
     }

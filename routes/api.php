@@ -31,12 +31,16 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
 });
 
 
-Route::post('/barbershopOwner/register', [BarbershopOwnerAuthController::class, 'register']);
-Route::post('/barbershopOwner/login', [BarbershopOwnerAuthController::class, 'login']);
-Route::post('/resend/email/token', [BarbershopOwnerAuthController::class, 'resendPin']);
 
-Route::get('/login/{provider}', [BarbershopOwnerAuthController::class, 'redirectToProvider']);
-Route::get('/login/{provider}/callback', [BarbershopOwnerAuthController::class, 'handleProviderCallback']);
+Route::group(['prefix' => 'barbershopOwner/'], function () {
+    Route::post('register', [BarbershopOwnerAuthController::class, 'register']);
+    Route::post('login', [BarbershopOwnerAuthController::class, 'login']);
+    Route::post('/resend/email/token', [BarbershopOwnerAuthController::class, 'resendPin']);
+
+    Route::get('login/{provider}', [BarbershopOwnerAuthController::class, 'redirectToProvider']);
+    Route::get('login/{provider}/callback', [BarbershopOwnerAuthController::class, 'handleProviderCallback']);
+
+});
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -44,8 +48,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
-Route::post('client/register', [ClientAuthController::class, 'register']);
-Route::post('client/login', [ClientAuthController::class, 'login']);
+Route::group(['prefix' => 'client/'], function () {
+    Route::post('register', [ClientAuthController::class, 'register']);
+    Route::post('login', [ClientAuthController::class, 'login']);
+    Route::get('login/{provider}', [ClientAuthController::class, 'redirectToProvider']);
+    Route::get('login/{provider}/callback', [ClientAuthController::class, 'handleProviderCallback']);
+
+});
+
 
 Route::middleware(['auth:sanctum', 'type.client'])->group(function () {
     Route::post('client/logout', [ClientAuthController::class, 'logout']);
