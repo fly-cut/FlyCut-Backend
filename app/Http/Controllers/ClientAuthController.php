@@ -6,6 +6,9 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use GuzzleHttp\Exception\ClientException;
 
 class ClientAuthController extends Controller
 {
@@ -54,5 +57,58 @@ class ClientAuthController extends Controller
         return [
             'response' => 'Logged out',
         ];
+    }
+
+    public function redirectToProvider($provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
+        }
+
+        return Socialite::driver($provider)->stateless()->redirect();
+    }
+
+    public function handleProviderCallback($provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
+        }
+        try {
+            $client = Socialite::driver($provider)->stateless()->user();
+        } catch (ClientException $exception) {
+            return response()->json(['error' => 'Invalid credentials provided.'], 422);
+        }
+
+        $client_created = Client::firstOrCreate(
+            [
+                'email' => $client->getEmail()
+            ],
+            [
+                'email_verified_at' => now(),
+                'name' => $client->getName(),
+                'status' => true,
+            ]
+        );
+        $client_created->providers()->updateOrCreate(
+            [
+                'provider' => $provider,
+                'provider_id' => $client->getId(),
+            ],
+            [
+                'avatar' => $client->getAvatar()
+            ]
+        );
+        $token = $client->createToken('Client', ['role:barbershopOwner'])->plainTextToken;
+
+        return response()->json($client_created, 200, ['Access-Token' => $token]);
+    }
+
+    protected function validateProvider($provider)
+    {
+        if (!in_array($provider, ['facebook', 'twitter', 'google'])) {
+            return response()->json(['error' => 'Please login using facebook, twitter or google'], 422);
+        }
     }
 }

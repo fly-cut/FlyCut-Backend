@@ -32,7 +32,7 @@ class BarbershopOwnerAuthController extends Controller
         //     $verify2 =  DB::table('password_reset_tokens')->where([
         //         ['email', $request->all()['email']]
         //     ]);
-    
+
         //     if ($verify2->exists()) {
         //         $verify2->delete();
         //     }
