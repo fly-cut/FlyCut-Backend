@@ -39,7 +39,6 @@ Route::group(['prefix' => 'barbershopOwner/'], function () {
 
     Route::get('login/{provider}', [BarbershopOwnerAuthController::class, 'redirectToProvider']);
     Route::get('login/{provider}/callback', [BarbershopOwnerAuthController::class, 'handleProviderCallback']);
-
 });
 
 
@@ -53,9 +52,10 @@ Route::group(['prefix' => 'client/'], function () {
     Route::post('login', [ClientAuthController::class, 'login']);
     Route::get('login/{provider}', [ClientAuthController::class, 'redirectToProvider']);
     Route::get('login/{provider}/callback', [ClientAuthController::class, 'handleProviderCallback']);
-
 });
-
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::put('owner/changePassword', [BarbershopOwnerController::class, 'changePassword']);
+});
 
 Route::middleware(['auth:sanctum', 'type.client'])->group(function () {
     Route::post('client/logout', [ClientAuthController::class, 'logout']);
