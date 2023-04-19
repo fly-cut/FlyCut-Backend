@@ -20,11 +20,13 @@ class BarbershopOwnerAuthController extends Controller
     public function register(Request $request)
     {
         $this->validate($request, [
+            'name' => 'required|string',
             'email' => 'required|string|unique:barbershop_owners,email|email|max:255',
             'password' => 'required|string|confirmed|max:255'
         ]);
 
         $barbershop_owner = BarbershopOwner::create([
+            'name'  => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password)
         ]);

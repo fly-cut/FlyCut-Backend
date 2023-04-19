@@ -86,4 +86,28 @@ class BarbershopOwnerController extends Controller
         ];
         return response($message, 200);
     }
+
+    //update profile
+    public function updateProfile(Request $request)
+    {
+        //access name from request object
+        $formData = $request->validate([
+            'name' => 'string',
+            'email' => 'email'
+        ]);
+
+        $user = $request->user();
+        if ($request->file('image')) {
+            $image = $request->file('image');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+
+            $image->move(public_path('images/owners'), $image_name);
+            $formData['image'] = $image_name;
+        }
+        $user->update($formData);
+        $message = [
+            'message' => 'Profile updated successfully'
+        ];
+        return response($message, 200);
+    }
 }
