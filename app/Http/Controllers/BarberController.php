@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Barber;
 use App\Http\Requests\StoreBarberRequest;
 use App\Http\Requests\UpdateBarberRequest;
+use App\Http\Resources\BarberResource;
+use App\Models\Barbershop;
 
 class BarberController extends Controller
 {
@@ -13,15 +15,13 @@ class BarberController extends Controller
      */
     public function index()
     {
-        //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    //get all barbers of a barbershop
+    public function getBarbersOfBarbershop($barbershop_id)
     {
-        //
+        $barberShop = BarberShop::find($barbershop_id);
+        return $barberShop->barbers;
     }
 
     /**
@@ -29,24 +29,30 @@ class BarberController extends Controller
      */
     public function store(StoreBarberRequest $request)
     {
-        //
+        $this->validate(
+            $request,
+            [
+                'name' => 'required',
+                'barbershop_id' => 'required',
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
+            ]
+        );
+        $image = $request->file('image');
+        $image_name = time() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('images/barbers'), $image_name);
+
+        $barber = Barber::create([
+            'name' => $request->name,
+            'barbershop_id' => $request->barbershop_id,
+            'image' => $image_name,
+        ]);
+        $message = [
+            'message' => 'Barber created successfully',
+            'barber' => $barber
+        ];
+        return response($message, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Barber $barber)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Barber $barber)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -61,6 +67,7 @@ class BarberController extends Controller
      */
     public function destroy(Barber $barber)
     {
-        //
+        $barber->delete();
+        return response()->json(['message' => 'Barber deleted successfully']);
     }
 }
