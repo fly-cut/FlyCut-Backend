@@ -46,6 +46,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('barbershopOwner/logout', [BarbershopOwnerAuthController::class, 'logout']);
     Route::put('owner/changePassword', [BarbershopOwnerController::class, 'changePassword']);
     Route::put('owner/updateProfile', [BarbershopOwnerController::class, 'updateProfile']);
+    Route::put('client/changePassword', [ClientController::class, 'changePassword']);
+    Route::put('client/updateProfile', [ClientController::class, 'updateProfile']);
 });
 
 
