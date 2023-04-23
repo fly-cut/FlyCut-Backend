@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barber;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreBarberRequest;
 use App\Http\Requests\UpdateBarberRequest;
+use Illuminate\Support\Facades\Hash;
 
 class BarberController extends Controller
 {
