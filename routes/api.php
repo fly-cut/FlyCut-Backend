@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BarberAuthController;
+use App\Http\Controllers\BarberController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\BarbershopOwnerAuthController;
 use App\Http\Controllers\BarbershopOwnerController;
@@ -31,7 +32,6 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
 });
 
 
-
 Route::group(['prefix' => 'barbershopOwner/'], function () {
     Route::post('register', [BarbershopOwnerAuthController::class, 'register']);
     Route::post('login', [BarbershopOwnerAuthController::class, 'login']);
@@ -57,8 +57,17 @@ Route::group(['prefix' => 'client/'], function () {
     Route::get('login/{provider}', [ClientAuthController::class, 'redirectToProvider']);
     Route::get('login/{provider}/callback', [ClientAuthController::class, 'handleProviderCallback']);
 });
-
-
+Route::group(['prefix' => 'barbers/'], function () {
+    Route::get('{id}', [BarberController::class, 'getBarbersOfBarbershop']);
+    Route::post('', [BarberController::class, 'store']);
+    Route::delete('{barber}', [BarberController::class, 'destroy']);
+});
+/*
+Route::prefix('barbers')->middleware(['auth:sanctum', 'abilities' => 'barbershopOwner'])->group(function () {
+    Route::get('', [BarberController::class, 'index']);
+    Route::post('', [BarberController::class, 'store']);
+    Route::delete('{barber}', [BarberController::class, 'destroy']);
+});*/
 Route::middleware(['auth:sanctum', 'type.client'])->group(function () {
     Route::post('client/logout', [ClientAuthController::class, 'logout']);
 });

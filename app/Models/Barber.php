@@ -15,13 +15,14 @@ class Barber extends Model
         'name',
         'email',
         'rating',
-        'birth_date',
         'image',
         'barbershop_id'
     ];
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     public function barbershop()
