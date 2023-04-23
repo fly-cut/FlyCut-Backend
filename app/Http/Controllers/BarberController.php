@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barber;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreBarberRequest;
 use App\Http\Requests\UpdateBarberRequest;
 use App\Http\Resources\BarberResource;
 use App\Models\Barbershop;
+
 
 class BarberController extends Controller
 {
