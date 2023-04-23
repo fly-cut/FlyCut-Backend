@@ -12,7 +12,13 @@ class Barbershop extends Model
     protected $fillable = [
         'name',
         'image',
-        'rating'
+        'rating',
+        'no_of_reviews',
+        'description',
+        'longitude',
+        'latitude',
+        'address',
+        'city'
     ];
 
     public function barbershopOwner()
@@ -23,10 +29,5 @@ class Barbershop extends Model
     public function barbers()
     {
         return $this->hasMany(Barber::class);
-    }
-
-    public function barbershopAddresses()
-    {
-        return $this->hasMany(BarbershopAddress::class);
     }
 }

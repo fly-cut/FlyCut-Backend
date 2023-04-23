@@ -28,7 +28,7 @@ class BarbershopOwner extends Authenticatable
 
     public function barbershop()
     {
-        return $this->hasOne(Barbershop::class);
+        return $this->hasMany(Barbershop::class);
     }
     public function providers()
     {
