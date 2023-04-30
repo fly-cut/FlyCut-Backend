@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\BarbershopOwner;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Socialite\Facades\Socialite;
-use GuzzleHttp\Exception\ClientException;
 use App\Mail\VerifyEmail;
+use App\Models\BarbershopOwner;
 use Carbon\Carbon;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Socialite\Facades\Socialite;
 
 class BarbershopOwnerAuthController extends Controller
 {
@@ -22,13 +22,13 @@ class BarbershopOwnerAuthController extends Controller
         $this->validate($request, [
             'name' => 'required|string',
             'email' => 'required|string|unique:barbershop_owners,email|email|max:255',
-            'password' => 'required|string|confirmed|max:255'
+            'password' => 'required|string|confirmed|max:255',
         ]);
 
         $barbershop_owner = BarbershopOwner::create([
-            'name'  => $request->name,
+            'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
         ]);
         // if ($barbershop_owner) {
         //     $verify2 =  DB::table('password_reset_tokens')->where([
@@ -42,7 +42,7 @@ class BarbershopOwnerAuthController extends Controller
         //     DB::table('password_reset_tokens')
         //         ->insert(
         //             [
-        //                 'email' => $request->all()['email'], 
+        //                 'email' => $request->all()['email'],
         //                 'token' => $pin
         //             ]
         //         );
@@ -52,7 +52,7 @@ class BarbershopOwnerAuthController extends Controller
         $response = [
             'barbershopOwner' => $barbershop_owner,
             'token' => $token,
-            'message' => 'Barbershop owner registered successfully'
+            'message' => 'Barbershop owner registered successfully',
         ];
 
         return response($response, 201);
@@ -117,15 +117,13 @@ class BarbershopOwnerAuthController extends Controller
 
     //         return new JsonResponse(
     //             [
-    //                 'success' => true, 
+    //                 'success' => true,
     //                 'message' => "A verification mail has been resent"
-    //             ], 
+    //             ],
     //             200
     //         );
     //     }
     // }
-
-
 
     public function login(Request $request)
     {
@@ -135,7 +133,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
+        if (! $barbershop_owner || ! Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
                     'response' => 'Please enter the right email or password!',
@@ -166,7 +164,7 @@ class BarbershopOwnerAuthController extends Controller
     public function redirectToProvider($provider)
     {
         $validated = $this->validateProvider($provider);
-        if (!is_null($validated)) {
+        if (! is_null($validated)) {
             return $validated;
         }
 
@@ -176,7 +174,7 @@ class BarbershopOwnerAuthController extends Controller
     public function handleProviderCallback($provider)
     {
         $validated = $this->validateProvider($provider);
-        if (!is_null($validated)) {
+        if (! is_null($validated)) {
             return $validated;
         }
         try {
@@ -187,7 +185,7 @@ class BarbershopOwnerAuthController extends Controller
 
         $barbershop_owner_created = BarbershopOwner::firstOrCreate(
             [
-                'email' => $barbershop_owner->getEmail()
+                'email' => $barbershop_owner->getEmail(),
             ],
             [
                 'email_verified_at' => now(),
@@ -201,7 +199,7 @@ class BarbershopOwnerAuthController extends Controller
                 'provider_id' => $barbershop_owner->getId(),
             ],
             [
-                'avatar' => $barbershop_owner->getAvatar()
+                'avatar' => $barbershop_owner->getAvatar(),
             ]
         );
         $token = $barbershop_owner_created->createToken('BarbershopOwnerToken', ['role:barbershopOwner'])->plainTextToken;
@@ -211,7 +209,7 @@ class BarbershopOwnerAuthController extends Controller
 
     protected function validateProvider($provider)
     {
-        if (!in_array($provider, ['facebook', 'twitter', 'google'])) {
+        if (! in_array($provider, ['facebook', 'twitter', 'google'])) {
             return response()->json(['error' => 'Please login using facebook, twitter or google'], 422);
         }
     }

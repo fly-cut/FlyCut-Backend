@@ -19,8 +19,8 @@ class BarbershopFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'rating' => $this->faker->randomFloat(0,5),
-            'barbershop_owner_id' => BarbershopOwner::factory()
+            'rating' => $this->faker->randomFloat(0, 5),
+            'barbershop_owner_id' => BarbershopOwner::factory(),
         ];
     }
 }

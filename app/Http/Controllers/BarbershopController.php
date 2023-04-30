@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barbershop;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Http\Request;
 
 class BarbershopController extends Controller
 {
@@ -29,7 +29,7 @@ class BarbershopController extends Controller
             'address' => 'required|string',
             'city' => 'required|string',
             'longitude' => 'required',
-            'latitude' => 'required'
+            'latitude' => 'required',
         ]);
         $barbershop = new Barbershop;
         $barbershop->name = $request->name;
@@ -42,7 +42,7 @@ class BarbershopController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path() . '/images';
+        $destinationPath = public_path().'/images';
         $path->move($destinationPath, $filename);
         $barbershop->image = $filename;
 
@@ -50,7 +50,7 @@ class BarbershopController extends Controller
 
         return response()->json([
             'status' => 200,
-            'message' => 'Barbershop has been added successfully'
+            'message' => 'Barbershop has been added successfully',
         ]);
     }
 
@@ -85,11 +85,11 @@ class BarbershopController extends Controller
             'address' => 'required|string',
             'city' => 'required|string',
             'longitude' => 'required',
-            'latitude' => 'required'
+            'latitude' => 'required',
         ]);
 
         $barbershop = Barbershop::find($barbershop_id);
-        if (!$barbershop || empty($barbershop)) {
+        if (! $barbershop || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be updated!',
@@ -102,11 +102,11 @@ class BarbershopController extends Controller
         $barbershop->longitude = $request->longitude;
         $barbershop->latitude = $request->latitude;
         if ($request->hasFile('image')) {
-            if (File::exists(public_path('images/' . $barbershop->image))) {
-                File::delete(public_path('images/' . $barbershop->image));
+            if (File::exists(public_path('images/'.$barbershop->image))) {
+                File::delete(public_path('images/'.$barbershop->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path() . '/images';
+                $destinationPath = public_path().'/images';
                 $path->move($destinationPath, $filename);
                 $barbershop->image = $filename;
             }
@@ -129,14 +129,14 @@ class BarbershopController extends Controller
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
-                'errors' => 'No barbershop found to be deleted!'
+                'errors' => 'No barbershop found to be deleted!',
             ]);
         } else {
             $barbershop->delete();
 
             return response()->json([
                 'status' => 200,
-                'message' => 'The barbershop has been deleted!'
+                'message' => 'The barbershop has been deleted!',
             ]);
         }
     }
