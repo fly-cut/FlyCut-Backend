@@ -140,4 +140,25 @@ class BarbershopController extends Controller
             ]);
         }
     }
+
+    //write a function to add existing services to a barbershop and they should be connected via the pivot table, the services should be taken as array of ids also it should check if the service ids are valid and existing in the services table
+    public function addServicesToBarbershop(Request $request, $barbershop_id)
+    {
+        $this->validate($request, [
+            'services' => 'required|array',
+        ]);
+        $barbershop = Barbershop::find($barbershop_id);
+        if (is_null($barbershop) || empty($barbershop)) {
+            return response()->json([
+                'status' => 404,
+                'errors' => 'No barbershop found to add services to it!',
+            ]);
+        }
+        $barbershop->services()->sync($request->services);
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Services added successfully to the barbershop',
+        ]);
+    }
 }

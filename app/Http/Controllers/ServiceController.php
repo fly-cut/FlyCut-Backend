@@ -20,7 +20,7 @@ class ServiceController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'price' => 'required|numeric',
-            'estimated_time' => 'required|numeric',
+            'slots' => 'required|numeric',
         ]);
 
         $service = Service::create($validatedData);
@@ -48,7 +48,7 @@ class ServiceController extends Controller
         $validatedData = $request->validate([
             'name' => 'string',
             'price' => 'numeric',
-            'estimated_time' => 'numeric',
+            'slots' => 'numeric',
         ]);
 
         $service->update($validatedData);
