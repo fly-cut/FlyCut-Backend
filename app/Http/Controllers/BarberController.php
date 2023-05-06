@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Barber;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreBarberRequest;
 use App\Http\Requests\UpdateBarberRequest;
-use App\Http\Resources\BarberResource;
+use App\Models\Barber;
 use App\Models\Barbershop;
-
 
 class BarberController extends Controller
 {
@@ -23,6 +20,7 @@ class BarberController extends Controller
     public function getBarbersOfBarbershop($barbershop_id)
     {
         $barberShop = BarberShop::find($barbershop_id);
+
         return $barberShop->barbers;
     }
 
@@ -36,11 +34,11 @@ class BarberController extends Controller
             [
                 'name' => 'required',
                 'barbershop_id' => 'required',
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             ]
         );
         $image = $request->file('image');
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
+        $image_name = time().'.'.$image->getClientOriginalExtension();
         $image->move(public_path('images/barbers'), $image_name);
 
         $barber = Barber::create([
@@ -50,11 +48,11 @@ class BarberController extends Controller
         ]);
         $message = [
             'message' => 'Barber created successfully',
-            'barber' => $barber
+            'barber' => $barber,
         ];
+
         return response($message, 201);
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -70,6 +68,7 @@ class BarberController extends Controller
     public function destroy(Barber $barber)
     {
         $barber->delete();
+
         return response()->json(['message' => 'Barber deleted successfully']);
     }
 }

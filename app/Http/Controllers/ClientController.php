@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
 
 class ClientController extends Controller
 {
@@ -64,6 +64,7 @@ class ClientController extends Controller
     {
         //
     }
+
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -73,16 +74,18 @@ class ClientController extends Controller
         $user = $request->user();
         $current_password = $request->current_password;
         $new_password = $request->new_password;
-        if (!Hash::check($current_password, $user->password)) {
+        if (! Hash::check($current_password, $user->password)) {
             $message = [
-                'message' => 'Password isn\'t correct'
+                'message' => 'Password isn\'t correct',
             ];
+
             return response($message, 422);
         }
         $user->update(['password' => Hash::make($new_password)]);
         $message = [
-            'message' => 'Password changed successfully'
+            'message' => 'Password changed successfully',
         ];
+
         return response($message, 200);
     }
 
@@ -92,21 +95,22 @@ class ClientController extends Controller
         //access name from request object
         $formData = $request->validate([
             'name' => 'string',
-            'email' => 'email'
+            'email' => 'email',
         ]);
 
         $user = $request->user();
         if ($request->file('image')) {
             $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image_name = time().'.'.$image->getClientOriginalExtension();
 
             $image->move(public_path('images/owners'), $image_name);
             $formData['image'] = $image_name;
         }
         $user->update($formData);
         $message = [
-            'message' => 'Profile updated successfully'
+            'message' => 'Profile updated successfully',
         ];
+
         return response($message, 200);
     }
 }

@@ -12,15 +12,15 @@ class BarbershopOwner extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-
     protected $fillable = [
         'name',
         'email',
         'password',
         'phone',
         'birth_date',
-        'image'
+        'image',
     ];
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -30,6 +30,7 @@ class BarbershopOwner extends Authenticatable
     {
         return $this->hasMany(Barbershop::class);
     }
+
     public function providers()
     {
         return $this->hasMany(Provider::class, 'barbershop_owner_id', 'id');

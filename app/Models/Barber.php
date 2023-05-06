@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,8 +15,9 @@ class Barber extends Model
         'email',
         'rating',
         'image',
-        'barbershop_id'
+        'barbershop_id',
     ];
+
     protected $hidden = [
         'password',
         'remember_token',

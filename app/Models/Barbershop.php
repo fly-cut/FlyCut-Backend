@@ -18,7 +18,7 @@ class Barbershop extends Model
         'longitude',
         'latitude',
         'address',
-        'city'
+        'city',
     ];
 
     public function barbershopOwner()
@@ -29,5 +29,10 @@ class Barbershop extends Model
     public function barbers()
     {
         return $this->hasMany(Barber::class);
+    }
+
+    public function services()
+    {
+        return $this->belongsToMany(Service::class);
     }
 }
