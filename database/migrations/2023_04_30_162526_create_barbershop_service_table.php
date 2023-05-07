@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('barbershop_service', function (Blueprint $table) {
             $table->foreignId('barbershop_id')->constrained('barbershops');
             $table->foreignId('service_id')->constrained('services');
+            $table->integer('price')->default(1000);
+            $table->integer('slots')->default(1);
         });
     }
 

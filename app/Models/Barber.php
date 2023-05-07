@@ -14,6 +14,7 @@ class Barber extends Model
         'name',
         'email',
         'rating',
+        'rating_count',
         'image',
         'barbershop_id',
     ];
@@ -28,5 +29,10 @@ class Barber extends Model
     public function barbershop()
     {
         return $this->belongsTo(Barbershop::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(BarberRating::class);
     }
 }

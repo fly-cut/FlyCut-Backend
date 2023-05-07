@@ -19,7 +19,7 @@ class VariationController extends Controller
     public function show($id)
     {
         $variation = Variation::find($id);
-        if (! $variation) {
+        if (!$variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
 
@@ -36,13 +36,14 @@ class VariationController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path().'/images';
+        $destinationPath = public_path() . '/images';
         $path->move($destinationPath, $filename);
 
         $variation = Variation::create([
+            'service_id' => $validatedData['service_id'],
             'name' => $validatedData['name'],
             'image' => $filename,
-            'service_id' => $validatedData['service_id'],
+
         ]);
 
         return response()->json(['variation' => $variation], 201);
@@ -57,17 +58,17 @@ class VariationController extends Controller
         ]);
 
         $variation = Variation::find($id);
-        if (! $variation) {
+        if (!$variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
 
         $image = $request->file('image');
         if ($image) {
-            if (File::exists(public_path('images/'.$variation->image))) {
-                File::delete(public_path('images/'.$variation->image));
+            if (File::exists(public_path('images/' . $variation->image))) {
+                File::delete(public_path('images/' . $variation->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path().'/images';
+                $destinationPath = public_path() . '/images';
                 $path->move($destinationPath, $filename);
                 $variation->image = $filename;
             }
@@ -83,28 +84,12 @@ class VariationController extends Controller
     public function destroy($id)
     {
         $variation = Variation::find($id);
-        if (! $variation) {
+
+        if (!$variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
         $variation->delete();
 
         return response()->json(['message' => 'Variation deleted']);
-    }
-
-    /**
-     * Get variations of a particular service
-     *
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function getServiceVariations($service_id)
-    {
-        $service = Service::find($service_id);
-        if (! $service) {
-            return response()->json(['error' => 'There is no such service exists!'], 404);
-        }
-        $variations = $service->variations;
-
-        return response()->json(['variations' => $variations], 200);
     }
 }

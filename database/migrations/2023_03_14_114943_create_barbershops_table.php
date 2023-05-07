@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image')->nullable();
-            $table->double('rating')->nullable();
-            $table->integer('no_or_reviews')->default(0);
+            $table->double('rating')->default(5.0);
+            $table->integer('rating_count')->default(0);
             $table->string('description')->nullable();
             $table->double('longitude');
             $table->double('latitude');

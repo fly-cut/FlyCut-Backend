@@ -9,7 +9,7 @@ class Variation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'image'];
+    protected $fillable = ['name', 'image', 'service_id'];
 
     public function services()
     {

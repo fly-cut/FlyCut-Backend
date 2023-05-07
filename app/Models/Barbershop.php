@@ -13,7 +13,7 @@ class Barbershop extends Model
         'name',
         'image',
         'rating',
-        'no_of_reviews',
+        'rating_count',
         'description',
         'longitude',
         'latitude',
@@ -34,5 +34,10 @@ class Barbershop extends Model
     public function services()
     {
         return $this->belongsToMany(Service::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(BarbershopRating::class);
     }
 }
