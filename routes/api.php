@@ -24,11 +24,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('admin/register', [AdminAuthController::class, 'register']);
-Route::post('admin/login', [AdminAuthController::class, 'login']);
+Route::post('admins/register', [AdminAuthController::class, 'register']);
+Route::post('admins/login', [AdminAuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('admin/logout', [AdminAuthController::class, 'logout']);
+Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+    Route::post('admins/logout', [AdminAuthController::class, 'logout']);
     Route::post('services', [ServiceController::class, 'store']);
     Route::put('services/{id}', [ServiceController::class, 'update']);
     Route::delete('services/{id}', [ServiceController::class, 'destroy']);
@@ -38,40 +38,49 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('variations/{id}', [VariationController::class, 'destroy']);
 });
 
-Route::group(['prefix' => 'barbershopOwner/'], function () {
+Route::group(['prefix' => 'barbershopOwners/'], function () {
     Route::post('register', [BarbershopOwnerAuthController::class, 'register']);
     Route::post('login', [BarbershopOwnerAuthController::class, 'login']);
-    Route::post('/resend/email/token', [BarbershopOwnerAuthController::class, 'resendPin']);
+    Route::post('resend/email/pin', [BarbershopOwnerAuthController::class, 'resendPin']);
+    Route::post('forgot/password', [BarbershopOwnerAuthController::class, 'forgotPassword']);
+    Route::post('verify/pin', [BarbershopOwnerAuthController::class, 'verifyPin']);
+    Route::post('reset/password', [BarbershopOwnerAuthController::class, 'resetPassword']);
 
-    Route::get('login/{provider}', [BarbershopOwnerAuthController::class, 'redirectToProvider']);
-    Route::get('login/{provider}/callback', [BarbershopOwnerAuthController::class, 'handleProviderCallback']);
-
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
-        Route::put('changePassword', [BarbershopOwnerController::class, 'changePassword']);
-        Route::put('updateProfile', [BarbershopOwnerController::class, 'updateProfile']);
+    Route::middleware(['auth:sanctum'], 'abilities:barbershopOwner')->group(function () {
+        Route::post('email/verify', [BarbershopOwnerAuthController::class, 'verifyEmail']);
+        Route::middleware('verify.api')->group(function () {
+            Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
+            Route::put('changePassword', [BarbershopOwnerController::class, 'changePassword']);
+            Route::put('updateProfile', [BarbershopOwnerController::class, 'updateProfile']);
+        });
     });
 });
 
-Route::group(['prefix' => 'client/'], function () {
+Route::group(['prefix' => 'clients/'], function () {
     Route::post('register', [ClientAuthController::class, 'register']);
     Route::post('login', [ClientAuthController::class, 'login']);
     Route::get('login/{provider}', [ClientAuthController::class, 'redirectToProvider']);
     Route::get('login/{provider}/callback', [ClientAuthController::class, 'handleProviderCallback']);
+    Route::post('resend/email/pin', [ClientAuthController::class, 'resendPin']);
+    Route::post('forgot/password', [ClientAuthController::class, 'forgotPassword']);
+    Route::post('verify/pin', [ClientAuthController::class, 'verifyPin']);
+    Route::post('reset/password', [ClientAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::put('changePassword', [ClientController::class, 'changePassword']);
-        Route::put('updateProfile', [ClientController::class, 'updateProfile']);
+    Route::middleware(['auth:sanctum', 'abilities:client'])->group(function () {
+        Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
+        Route::middleware('verify.api')->group(function () {
+            Route::post('logout', [ClientController::class, 'logout']);
+            Route::put('changePassword', [ClientController::class, 'changePassword']);
+            Route::put('updateProfile', [ClientController::class, 'updateProfile']);
+        });
     });
 });
+
 Route::group(['prefix' => 'barbers/'], function () {
     Route::get('{id}', [BarberController::class, 'getBarbersOfBarbershop']);
     Route::post('', [BarberController::class, 'store']);
     Route::delete('{barber}', [BarberController::class, 'destroy']);
-});
-
-Route::middleware(['auth:sanctum', 'type.client'])->group(function () {
-    Route::post('client/logout', [ClientAuthController::class, 'logout']);
+    Route::put('{barber}', [BarberController::class, 'update']);
 });
 
 Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:sanctum']], function () {
@@ -85,7 +94,6 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:sanctum']], fun
     Route::delete('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'removeServiceFromBarbershop']);
     Route::put('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'editServicePriceAndSlots']);
     Route::get('{barbershop_id}/services', [BarbershopController::class, 'getBarbershopServicesWithPriceAndSlots']);
-
 });
 
 Route::group(['prefix' => 'services/', 'middleware' => ['auth:sanctum']], function () {
@@ -99,25 +107,16 @@ Route::group(['prefix' => 'variations/', 'middleware' => ['auth:sanctum']], func
     Route::get('{id}', [VariationController::class, 'show']);
 });
 
-Route::group(['prefix' => 'barber-ratings/', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'barber/ratings/', 'middleware' => ['auth:sanctum']], function () {
     Route::post('', [BarberRatingController::class, 'store']);
     Route::put('{id}', [BarberRatingController::class, 'update']);
     Route::delete('{id}', [BarberRatingController::class, 'destroy']);
     Route::get('{id}', [BarberRatingController::class, 'getRatings']);
 });
 
-Route::group(['prefix' => 'barbershop-ratings/', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => ['auth:sanctum']], function () {
     Route::post('', [BarbershopRatingController::class, 'store']);
     Route::put('{id}', [BarbershopRatingController::class, 'update']);
     Route::delete('{id}', [BarbershopRatingController::class, 'destroy']);
     Route::get('{id}', [BarbershopRatingController::class, 'getRatings']);
-});
-
-
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    // Route::post('email/verify',[BarbershopOwnerAuthController::class, 'verifyEmail']);
-
-    // Route::middleware('verify.api')->group(function () {
-
-    // });
 });
