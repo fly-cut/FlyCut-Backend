@@ -21,7 +21,7 @@ class BarbershopOwnerFactory extends Factory
             'email' => $this->faker->email(),
             'phone' => $this->faker->phoneNumber(),
             'password' => $this->faker->password(),
-            'birth_date' => $this->faker->date()
+            'birth_date' => $this->faker->date(),
         ];
     }
 }

@@ -6,28 +6,26 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-
 class AdminAuthController extends Controller
 {
-
     public function register(Request $request)
     {
         $this->validate($request, [
             'name' => 'required|string|max:255|regex:/(^([a-zA-Z]+)?$)/u',
             'email' => 'required|string|unique:admins,email|email|max:255',
-            'password' => 'required|string|confirmed|max:255'
+            'password' => 'required|string|confirmed|max:255',
         ]);
 
         $admin = Admin::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
         ]);
-        $token = $admin->createToken('AdminToken', ['role:admin'])->plainTextToken;
+        $token = $admin->createToken('AdminToken', ['admin'])->plainTextToken;
         $response = [
             'admin' => $admin,
             'token' => $token,
-            'message' => 'Admin registered successfully'
+            'message' => 'Admin registered successfully',
         ];
 
         return response($response, 201);
@@ -37,13 +35,13 @@ class AdminAuthController extends Controller
     {
         $this->validate($request, [
             'email' => 'required|string|email',
-            'password' => 'required|string'
+            'password' => 'required|string',
         ]);
         $admin = Admin::where('email', $request->email)->first();
 
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if (! $admin || ! Hash::check($request->password, $admin->password)) {
             return response([
-                'response' => 'Please enter the right email or password!'
+                'response' => 'Please enter the right email or password!',
             ], 401);
         }
 
@@ -51,10 +49,12 @@ class AdminAuthController extends Controller
 
         $response = [
             'admin' => $admin,
-            'token' => $token
+            'token' => $token,
         ];
+
         return response($response, 200);
     }
+
     public function logout()
     {
         auth()->user()->tokens()->delete();

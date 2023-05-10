@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('barbers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->double('rating')->nullable();
-            $table->date('birth_date')->nullable();
+            $table->double('rating')->default(5.0);
+            $table->integer('rating_count')->default(0);
             $table->string('image')->nullable();
             $table->foreignId('barbershop_id')->constrained('barbershops');
             $table->timestamps();

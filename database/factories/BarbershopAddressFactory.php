@@ -21,7 +21,7 @@ class BarbershopAddressFactory extends Factory
             'longitude' => $this->faker->longitude(),
             'latitude' => $this->faker->latitude(),
             'address' => $this->faker->address(),
-            'barbershop_id' => Barbershop::factory()
+            'barbershop_id' => Barbershop::factory(),
         ];
     }
 }
