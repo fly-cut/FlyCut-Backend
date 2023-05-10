@@ -12,6 +12,3 @@ php artisan route:cache
 
 echo "Running migrations..."
 php artisan migrate --force
-
-echo "making swagger docs"
-php artisan l5-swagger:generate
