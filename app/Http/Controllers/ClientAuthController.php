@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ResetPassword;
+use App\Mail\VerifyEmail;
 use App\Models\Client;
-use GuzzleHttp\Exception\ClientException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use GuzzleHttp\Exception\ClientException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use App\Mail\VerifyEmail;
-use App\Mail\ResetPassword;
+use Laravel\Socialite\Facades\Socialite;
 
 class ClientAuthController extends Controller
 {
@@ -31,8 +31,8 @@ class ClientAuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
         if ($client) {
-            $verify2 =  DB::table('password_reset_tokens')->where([
-                ['email', $request->all()['email']]
+            $verify2 = DB::table('password_reset_tokens')->where([
+                ['email', $request->all()['email']],
             ]);
 
             if ($verify2->exists()) {
@@ -43,7 +43,7 @@ class ClientAuthController extends Controller
                 ->insert(
                     [
                         'email' => $request->all()['email'],
-                        'token' => $pin
+                        'token' => $pin,
                     ]
                 );
         }
@@ -72,7 +72,7 @@ class ClientAuthController extends Controller
             ->where('token', $request->token);
 
         if ($select->get()->isEmpty()) {
-            return new JsonResponse(['success' => false, 'message' => "Invalid PIN"], 400);
+            return new JsonResponse(['success' => false, 'message' => 'Invalid PIN'], 400);
         }
 
         $select = DB::table('password_reset_tokens')
@@ -84,7 +84,7 @@ class ClientAuthController extends Controller
         $client->email_verified_at = Carbon::now()->toDateTimeString();
         $client->save();
 
-        return new JsonResponse(['success' => true, 'message' => "Email is verified"], 200);
+        return new JsonResponse(['success' => true, 'message' => 'Email is verified'], 200);
     }
 
     public function resendPin(Request $request)
@@ -97,8 +97,8 @@ class ClientAuthController extends Controller
             return new JsonResponse(['success' => false, 'message' => $validator->errors()], 422);
         }
 
-        $verify =  DB::table('password_reset_tokens')->where([
-            ['email', $request->all()['email']]
+        $verify = DB::table('password_reset_tokens')->where([
+            ['email', $request->all()['email']],
         ]);
 
         if ($verify->exists()) {
@@ -108,7 +108,7 @@ class ClientAuthController extends Controller
         $token = random_int(100000, 999999);
         $password_reset = DB::table('password_reset_tokens')->insert([
             'email' => $request->all()['email'],
-            'token' =>  $token,
+            'token' => $token,
             'created_at' => Carbon::now()->toDateTimeString(),
         ]);
 
@@ -118,7 +118,7 @@ class ClientAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => true,
-                    'message' => "A verification mail has been resent"
+                    'message' => 'A verification mail has been resent',
                 ],
                 200
             );
@@ -132,7 +132,7 @@ class ClientAuthController extends Controller
             'password' => 'required|string',
         ]);
         $client = Client::where('email', $request->email)->first();
-        if (!$client || Hash::check($request->password, $client->password)) {
+        if (! $client || Hash::check($request->password, $client->password)) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
@@ -158,7 +158,7 @@ class ClientAuthController extends Controller
     public function redirectToProvider($provider)
     {
         $validated = $this->validateProvider($provider);
-        if (!is_null($validated)) {
+        if (! is_null($validated)) {
             return $validated;
         }
 
@@ -168,7 +168,7 @@ class ClientAuthController extends Controller
     public function handleProviderCallback($provider)
     {
         $validated = $this->validateProvider($provider);
-        if (!is_null($validated)) {
+        if (! is_null($validated)) {
             return $validated;
         }
         try {
@@ -203,11 +203,10 @@ class ClientAuthController extends Controller
 
     protected function validateProvider($provider)
     {
-        if (!in_array($provider, ['facebook', 'twitter', 'google'])) {
+        if (! in_array($provider, ['facebook', 'twitter', 'google'])) {
             return response()->json(['error' => 'Please login using facebook, twitter or google'], 422);
         }
     }
-
 
     public function forgotPassword(Request $request)
     {
@@ -222,8 +221,8 @@ class ClientAuthController extends Controller
         $verify = Client::where('email', $request->all()['email'])->exists();
 
         if ($verify) {
-            $verify2 =  DB::table('password_reset_tokens')->where([
-                ['email', $request->all()['email']]
+            $verify2 = DB::table('password_reset_tokens')->where([
+                ['email', $request->all()['email']],
             ]);
 
             if ($verify2->exists()) {
@@ -233,7 +232,7 @@ class ClientAuthController extends Controller
             $token = random_int(100000, 999999);
             $password_reset = DB::table('password_reset_tokens')->insert([
                 'email' => $request->all()['email'],
-                'token' =>  $token,
+                'token' => $token,
                 'created_at' => Carbon::now()->toDateTimeString(),
             ]);
 
@@ -243,7 +242,7 @@ class ClientAuthController extends Controller
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'message' => "Please check your email for a 6 digit pin"
+                        'message' => 'Please check your email for a 6 digit pin',
                     ],
                     200
                 );
@@ -252,7 +251,7 @@ class ClientAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => false,
-                    'message' => "This email does not exist"
+                    'message' => 'This email does not exist',
                 ],
                 400
             );
@@ -278,7 +277,7 @@ class ClientAuthController extends Controller
         if ($check->exists()) {
             $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
             if ($difference > 3600) {
-                return new JsonResponse(['success' => false, 'message' => "Token Expired"], 400);
+                return new JsonResponse(['success' => false, 'message' => 'Token Expired'], 400);
             }
 
             $delete = DB::table('password_reset_tokens')->where([
@@ -289,7 +288,7 @@ class ClientAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => true,
-                    'message' => "You can now reset your password"
+                    'message' => 'You can now reset your password',
                 ],
                 200
             );
@@ -297,7 +296,7 @@ class ClientAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => false,
-                    'message' => "Invalid token"
+                    'message' => 'Invalid token',
                 ],
                 401
             );
@@ -317,7 +316,7 @@ class ClientAuthController extends Controller
 
         $client = Client::where('email', $request->email);
         $client->update([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
         $token = $client->createToken('ClientToken', ['client'])->plainTextToken;
@@ -325,8 +324,8 @@ class ClientAuthController extends Controller
         return new JsonResponse(
             [
                 'success' => true,
-                'message' => "Your password has been reset",
-                'token' => $token
+                'message' => 'Your password has been reset',
+                'token' => $token,
             ],
             200
         );

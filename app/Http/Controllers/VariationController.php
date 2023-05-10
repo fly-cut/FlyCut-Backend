@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Service;
 use App\Models\Variation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -19,7 +18,7 @@ class VariationController extends Controller
     public function show($id)
     {
         $variation = Variation::find($id);
-        if (!$variation) {
+        if (! $variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
 
@@ -36,7 +35,7 @@ class VariationController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path() . '/images';
+        $destinationPath = public_path().'/images';
         $path->move($destinationPath, $filename);
 
         $variation = Variation::create([
@@ -58,17 +57,17 @@ class VariationController extends Controller
         ]);
 
         $variation = Variation::find($id);
-        if (!$variation) {
+        if (! $variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
 
         $image = $request->file('image');
         if ($image) {
-            if (File::exists(public_path('images/' . $variation->image))) {
-                File::delete(public_path('images/' . $variation->image));
+            if (File::exists(public_path('images/'.$variation->image))) {
+                File::delete(public_path('images/'.$variation->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path() . '/images';
+                $destinationPath = public_path().'/images';
                 $path->move($destinationPath, $filename);
                 $variation->image = $filename;
             }
@@ -85,7 +84,7 @@ class VariationController extends Controller
     {
         $variation = Variation::find($id);
 
-        if (!$variation) {
+        if (! $variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
         $variation->delete();

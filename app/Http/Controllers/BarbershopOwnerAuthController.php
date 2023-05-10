@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\VerifyEmail;
 use App\Mail\ResetPassword;
+use App\Mail\VerifyEmail;
 use App\Models\BarbershopOwner;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -30,8 +30,8 @@ class BarbershopOwnerAuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
         if ($barbershop_owner) {
-            $verify2 =  DB::table('password_reset_tokens')->where([
-                ['email', $request->all()['email']]
+            $verify2 = DB::table('password_reset_tokens')->where([
+                ['email', $request->all()['email']],
             ]);
 
             if ($verify2->exists()) {
@@ -42,7 +42,7 @@ class BarbershopOwnerAuthController extends Controller
                 ->insert(
                     [
                         'email' => $request->all()['email'],
-                        'token' => $pin
+                        'token' => $pin,
                     ]
                 );
         }
@@ -71,7 +71,7 @@ class BarbershopOwnerAuthController extends Controller
             ->where('token', $request->token);
 
         if ($select->get()->isEmpty()) {
-            return new JsonResponse(['success' => false, 'message' => "Invalid PIN"], 400);
+            return new JsonResponse(['success' => false, 'message' => 'Invalid PIN'], 400);
         }
 
         $select = DB::table('password_reset_tokens')
@@ -83,7 +83,7 @@ class BarbershopOwnerAuthController extends Controller
         $barbershop_owner->email_verified_at = Carbon::now()->toDateTimeString();
         $barbershop_owner->save();
 
-        return new JsonResponse(['success' => true, 'message' => "Email is verified"], 200);
+        return new JsonResponse(['success' => true, 'message' => 'Email is verified'], 200);
     }
 
     public function resendPin(Request $request)
@@ -96,8 +96,8 @@ class BarbershopOwnerAuthController extends Controller
             return new JsonResponse(['success' => false, 'message' => $validator->errors()], 422);
         }
 
-        $verify =  DB::table('password_reset_tokens')->where([
-            ['email', $request->all()['email']]
+        $verify = DB::table('password_reset_tokens')->where([
+            ['email', $request->all()['email']],
         ]);
 
         if ($verify->exists()) {
@@ -107,8 +107,8 @@ class BarbershopOwnerAuthController extends Controller
         $token = random_int(100000, 999999);
         $password_reset = DB::table('password_reset_tokens')->insert([
             'email' => $request->all()['email'],
-            'token' =>  $token,
-            'created_at' => Carbon::now()
+            'token' => $token,
+            'created_at' => Carbon::now(),
         ]);
 
         if ($password_reset) {
@@ -117,7 +117,7 @@ class BarbershopOwnerAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => true,
-                    'message' => "A verification mail has been resent"
+                    'message' => 'A verification mail has been resent',
                 ],
                 200
             );
@@ -132,7 +132,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
+        if (! $barbershop_owner || ! Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
                     'response' => 'Please enter the right email or password!',
@@ -173,8 +173,8 @@ class BarbershopOwnerAuthController extends Controller
         $verify = BarbershopOwner::where('email', $request->all()['email'])->exists();
 
         if ($verify) {
-            $verify2 =  DB::table('password_reset_tokens')->where([
-                ['email', $request->all()['email']]
+            $verify2 = DB::table('password_reset_tokens')->where([
+                ['email', $request->all()['email']],
             ]);
 
             if ($verify2->exists()) {
@@ -184,7 +184,7 @@ class BarbershopOwnerAuthController extends Controller
             $token = random_int(100000, 999999);
             $password_reset = DB::table('password_reset_tokens')->insert([
                 'email' => $request->all()['email'],
-                'token' =>  $token,
+                'token' => $token,
                 'created_at' => Carbon::now()->toDateTimeString(),
             ]);
 
@@ -194,7 +194,7 @@ class BarbershopOwnerAuthController extends Controller
                 return new JsonResponse(
                     [
                         'success' => true,
-                        'message' => "Please check your email for a 6 digit pin"
+                        'message' => 'Please check your email for a 6 digit pin',
                     ],
                     200
                 );
@@ -203,7 +203,7 @@ class BarbershopOwnerAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => false,
-                    'message' => "This email does not exist"
+                    'message' => 'This email does not exist',
                 ],
                 400
             );
@@ -229,7 +229,7 @@ class BarbershopOwnerAuthController extends Controller
         if ($check->exists()) {
             $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
             if ($difference > 3600) {
-                return new JsonResponse(['success' => false, 'message' => "Token Expired"], 400);
+                return new JsonResponse(['success' => false, 'message' => 'Token Expired'], 400);
             }
 
             $delete = DB::table('password_reset_tokens')->where([
@@ -240,7 +240,7 @@ class BarbershopOwnerAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => true,
-                    'message' => "You can now reset your password"
+                    'message' => 'You can now reset your password',
                 ],
                 200
             );
@@ -248,7 +248,7 @@ class BarbershopOwnerAuthController extends Controller
             return new JsonResponse(
                 [
                     'success' => false,
-                    'message' => "Invalid token"
+                    'message' => 'Invalid token',
                 ],
                 401
             );
@@ -268,7 +268,7 @@ class BarbershopOwnerAuthController extends Controller
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email);
         $barbershop_owner->update([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
 
         $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['barbershopOwner'])->plainTextToken;
@@ -276,8 +276,8 @@ class BarbershopOwnerAuthController extends Controller
         return new JsonResponse(
             [
                 'success' => true,
-                'message' => "Your password has been reset",
-                'token' => $token
+                'message' => 'Your password has been reset',
+                'token' => $token,
             ],
             200
         );

@@ -32,6 +32,7 @@ class ServiceController extends Controller
             'name' => $validatedData['name'],
             'image' => $filename,
         ]);
+
         return response()->json($service, 201);
     }
 
@@ -77,8 +78,7 @@ class ServiceController extends Controller
     public function destroy($id): JsonResponse
     {
         $service = Service::find($id);
-        if (File::exists(public_path('images/'.$service->image))) 
-        {
+        if (File::exists(public_path('images/'.$service->image))) {
             File::delete(public_path('images/'.$service->image));
         }
         if (! $service) {
@@ -98,7 +98,7 @@ class ServiceController extends Controller
     public function getServiceVariations($service_id)
     {
         $service = Service::find($service_id);
-        if (!$service) {
+        if (! $service) {
             return response()->json(['error' => 'There is no such service exists!'], 404);
         }
         $variations = $service->variations;

@@ -2,15 +2,15 @@
 
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BarberController;
+use App\Http\Controllers\BarberRatingController;
 use App\Http\Controllers\BarbershopController;
 use App\Http\Controllers\BarbershopOwnerAuthController;
 use App\Http\Controllers\BarbershopOwnerController;
+use App\Http\Controllers\BarbershopRatingController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VariationController;
-use App\Http\Controllers\BarberRatingController;
-use App\Http\Controllers\BarbershopRatingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +36,8 @@ Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
     Route::post('variations', [VariationController::class, 'store']);
     Route::put('variations/{id}', [VariationController::class, 'update']);
     Route::delete('variations/{id}', [VariationController::class, 'destroy']);
+
+    Route::get('{id}', [BarbershopController::class, 'getBarbersOfBarbershop']);
 });
 
 Route::group(['prefix' => 'barbershopOwners/'], function () {
@@ -77,7 +79,6 @@ Route::group(['prefix' => 'clients/'], function () {
 });
 
 Route::group(['prefix' => 'barbers/'], function () {
-    Route::get('{id}', [BarberController::class, 'getBarbersOfBarbershop']);
     Route::post('', [BarberController::class, 'store']);
     Route::delete('{barber}', [BarberController::class, 'destroy']);
     Route::put('{barber}', [BarberController::class, 'update']);
@@ -94,6 +95,8 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:sanctum']], fun
     Route::delete('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'removeServiceFromBarbershop']);
     Route::put('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'editServicePriceAndSlots']);
     Route::get('{barbershop_id}/services', [BarbershopController::class, 'getBarbershopServicesWithPriceAndSlots']);
+
+    Route::get('/{barbershop_id}/barbers', [BarbershopController::class, 'getBarbersOfBarbershop']);
 });
 
 Route::group(['prefix' => 'services/', 'middleware' => ['auth:sanctum']], function () {
