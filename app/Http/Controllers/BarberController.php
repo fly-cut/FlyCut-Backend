@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBarberRequest;
-use App\Http\Requests\UpdateBarberRequest;
 use App\Models\Barber;
 use App\Models\Barbershop;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class BarberController extends Controller
 {
@@ -39,7 +40,7 @@ class BarberController extends Controller
         );
         $image = $request->file('image');
         $image_name = time().'.'.$image->getClientOriginalExtension();
-        $image->move(public_path('images/barbers'), $image_name);
+        $image->move(public_path('images'), $image_name);
 
         $barber = Barber::create([
             'name' => $request->name,
@@ -57,9 +58,35 @@ class BarberController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBarberRequest $request, Barber $barber)
+    public function update($request, $barber_id)
     {
-        //
+        $this->validate($request,
+            [
+                'name' => 'required',
+                'barbershop_id' => 'required',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            ]);
+        $barber = Barber::find($barber_id);
+        $barber->name = $request->name;
+        $barber->barbershop_id = $request->barbershop_id;
+
+        if ($request->hasFile('image')) {
+            $image_path = public_path('images/'.$barber->image);
+            if (File::exists($image_path)) {
+                File::delete($image_path);
+            }
+
+            $image = $request->file('image');
+            $image_name = time().'.'.$image->getClientOriginalExtension();
+            $image->move(public_path('/images'), $image_name);
+            $barber->image = $image_name;
+        }
+        $barber->save();
+
+        return response()->json(['message' => 'Barber updated successfully']);
+
+
+
     }
 
     /**

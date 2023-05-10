@@ -21,7 +21,7 @@ class AdminAuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        $token = $admin->createToken('AdminToken', ['role:admin'])->plainTextToken;
+        $token = $admin->createToken('AdminToken', ['admin'])->plainTextToken;
         $response = [
             'admin' => $admin,
             'token' => $token,
