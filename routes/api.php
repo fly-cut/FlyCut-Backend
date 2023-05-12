@@ -67,10 +67,9 @@ Route::group(['prefix' => 'clients/'], function () {
     Route::post('forgot/password', [ClientAuthController::class, 'forgotPassword']);
     Route::post('verify/pin', [ClientAuthController::class, 'verifyPin']);
     Route::post('reset/password', [ClientAuthController::class, 'resetPassword']);
-    Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
 
     Route::middleware(['auth:sanctum', 'abilities:client'])->group(function () {
-        
+        Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::middleware('verify.api')->group(function () {
             Route::post('logout', [ClientController::class, 'logout']);
             Route::put('changePassword', [ClientController::class, 'changePassword']);
