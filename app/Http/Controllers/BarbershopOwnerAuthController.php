@@ -16,6 +16,62 @@ use Illuminate\Support\Facades\Validator;
 
 class BarbershopOwnerAuthController extends Controller
 {
+
+    /**
+     * Register a new barbershop owner.
+     *
+     * @OA\Post(
+     * path="/api/barbershopOwners/register",
+     * summary="Register a new barbershop owner",
+     * description="Creates a new barbershop owner and sends an email to verify the email address",
+     * tags={"BarbershopOwner_Auth"},
+     * @OA\RequestBody(
+     * required=true,
+     * description="Provide barbershop owner credentials",
+     * @OA\JsonContent(
+     * required={"name","email","password","password_confirmation"},
+     * @OA\Property(property="name", type="string", example="John Doe"),
+     * @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
+     * @OA\Property(property="password", type="string", format="password", example="password"),
+     * @OA\Property(property="password_confirmation", type="string", format="password", example="password"),
+     * ),
+     * ),
+     * @OA\Response(
+     * response=201,
+     * description="Barbershop owner registered successfully",
+     * @OA\JsonContent(
+     * @OA\Property(property="barbershopOwner", type="object",
+     * @OA\Property(property="name", type="string", example="John Doe"),
+     * @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
+     * @OA\Property(property="password", type="string"),
+     * @OA\Property(property="created_at", type="string"),
+     * @OA\Property(property="updated_at", type="string"),
+     * @OA\Property(property="email_verified_at", type="string", format="date-time"),
+     * @OA\Property(property="id", type="integer", format="int32"),
+     * ),
+     * @OA\Property(property="token", type="string"),
+     * @OA\Property(property="message", type="string", example="Barbershop owner registered successfully"),
+     * ),
+     * ),
+     * @OA\Response(
+     * response=422,
+     * description="Invalid input data",
+     * @OA\JsonContent(
+     * @OA\Property(property="message", type="object",
+     * @OA\Property(property="name", type="array", @OA\Items(type="string")),
+     * @OA\Property(property="email", type="array", @OA\Items(type="string")),
+     * @OA\Property(property="password", type="array", @OA\Items(type="string")),
+     * ),
+     * ),
+     * ),
+     * @OA\Response(
+     * response=500,
+     * description="Internal server error",
+     * )
+     * )
+     */
+
+
     public function register(Request $request)
     {
         $this->validate($request, [
@@ -132,7 +188,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (! $barbershop_owner || ! Hash::check($request->password, $barbershop_owner->password)) {
+        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
                     'response' => 'Please enter the right email or password!',
