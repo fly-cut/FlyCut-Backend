@@ -68,14 +68,13 @@ Route::group(['prefix' => 'clients/'], function () {
     Route::post('verify/pin', [ClientAuthController::class, 'verifyPin']);
     Route::post('reset/password', [ClientAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum'])->group(function () {
+    
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::post('logout', [ClientController::class, 'logout']);
         Route::middleware('verify.api')->group(function () {
             Route::put('changePassword', [ClientController::class, 'changePassword']);
             Route::put('updateProfile', [ClientController::class, 'updateProfile']);
         });
-    });
 });
 
 Route::group(['prefix' => 'barbers/'], function () {
