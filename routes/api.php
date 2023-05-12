@@ -70,8 +70,8 @@ Route::group(['prefix' => 'clients/'], function () {
 
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
+        Route::post('logout', [ClientController::class, 'logout']);
         Route::middleware('verify.api')->group(function () {
-            Route::post('logout', [ClientController::class, 'logout']);
             Route::put('changePassword', [ClientController::class, 'changePassword']);
             Route::put('updateProfile', [ClientController::class, 'updateProfile']);
         });
@@ -85,7 +85,7 @@ Route::group(['prefix' => 'barbers/'], function () {
 });
 
 Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('', [BarbershopController::class, 'indexBarbershop']);
+    Route::get('get/all', [BarbershopController::class, 'indexBarbershop']);
     Route::post('', [BarbershopController::class, 'addBarbershop']);
     Route::get('{barbershop_id}', [BarbershopController::class, 'showBarbershop']);
     Route::put('{barbershop_id}', [BarbershopController::class, 'updateBarbershop']);
