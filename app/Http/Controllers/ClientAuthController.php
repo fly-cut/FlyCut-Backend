@@ -21,7 +21,7 @@ class ClientAuthController extends Controller
     public function register(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|string|max:255|regex:/(^([a-zA-Z]+)?$)/u',
+            'name' => 'required|string|max:255|regex:/(^([a-zA-Z ]+)?$)/u',
             'email' => 'required|string|unique:clients,email|email|max:255',
             'password' => 'required|string|confirmed|max:40',
         ]);
@@ -132,7 +132,7 @@ class ClientAuthController extends Controller
             'password' => 'required|string',
         ]);
         $client = Client::where('email', $request->email)->first();
-        if (! $client || Hash::check($request->password, $client->password)) {
+        if (!$client || Hash::check($request->password, $client->password)) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
@@ -158,7 +158,7 @@ class ClientAuthController extends Controller
     public function redirectToProvider($provider)
     {
         $validated = $this->validateProvider($provider);
-        if (! is_null($validated)) {
+        if (!is_null($validated)) {
             return $validated;
         }
 
@@ -168,7 +168,7 @@ class ClientAuthController extends Controller
     public function handleProviderCallback($provider)
     {
         $validated = $this->validateProvider($provider);
-        if (! is_null($validated)) {
+        if (!is_null($validated)) {
             return $validated;
         }
         try {
@@ -203,7 +203,7 @@ class ClientAuthController extends Controller
 
     protected function validateProvider($provider)
     {
-        if (! in_array($provider, ['facebook', 'twitter', 'google'])) {
+        if (!in_array($provider, ['facebook', 'twitter', 'google'])) {
             return response()->json(['error' => 'Please login using facebook, twitter or google'], 422);
         }
     }
