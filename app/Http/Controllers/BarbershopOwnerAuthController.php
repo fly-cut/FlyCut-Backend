@@ -103,7 +103,7 @@ class BarbershopOwnerAuthController extends Controller
                 );
         }
         Mail::to($request->email)->send(new VerifyEmail($pin));
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken')->plainTextToken;
+        $token = $barbershop_owner->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
         $response = [
             'barbershopOwner' => $barbershop_owner,
             'token' => $token,
@@ -123,7 +123,7 @@ class BarbershopOwnerAuthController extends Controller
             return redirect()->back()->with(['message' => $validator->errors()]);
         }
         $select = DB::table('password_reset_tokens')
-            ->where('email', Auth::user()->email)
+            ->where('email', Auth::guard('barbershopOwner-api')->user()->email)
             ->where('token', $request->token);
 
         if ($select->get()->isEmpty()) {
@@ -131,7 +131,7 @@ class BarbershopOwnerAuthController extends Controller
         }
 
         $select = DB::table('password_reset_tokens')
-            ->where('email', Auth::user()->email)
+            ->where('email', Auth::guard('barbershopOwner-api')->user()->email)
             ->where('token', $request->token)
             ->delete();
 
@@ -188,7 +188,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
+        if (!Auth::guard('barbershopOwner-api')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
             return response(
                 [
                     'response' => 'Please enter the right email or password!',
@@ -197,7 +197,7 @@ class BarbershopOwnerAuthController extends Controller
             );
         }
 
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken')->plainTextToken;
+        $token = $barbershop_owner->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
 
         $response = [
             'barbershopOwner' => $barbershop_owner,
@@ -209,7 +209,7 @@ class BarbershopOwnerAuthController extends Controller
 
     public function logout()
     {
-        auth()->user()->tokens()->delete();
+        Auth::user()->token()->revoke();
 
         return [
             'response' => 'Logged out',
@@ -327,8 +327,7 @@ class BarbershopOwnerAuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken')->plainTextToken;
-
+        $token = $barbershop_owner->first()->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
         return new JsonResponse(
             [
                 'success' => true,

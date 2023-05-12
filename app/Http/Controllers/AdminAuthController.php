@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 class AdminAuthController extends Controller
 {
@@ -87,7 +89,7 @@ class AdminAuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        $token = $admin->createToken('AdminToken')->plainTextToken;
+        $token = $admin->guard(['admin-api'])->createToken('AdminAccessToken')->accessToken;
         $response = [
             'admin' => $admin,
             'token' => $token,
@@ -166,14 +168,14 @@ class AdminAuthController extends Controller
             'password' => 'required|string',
         ]);
         $admin = Admin::where('email', $request->email)->first();
-
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        config(['auth.guards.admin-api.driver' => 'session']);
+        if (!Auth::guard('admin-api')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
         }
 
-        $token = $admin->createToken('AdminToken')->plainTextToken;
+        $token = $admin->guard(['admin-api'])->createToken('AdminAccessToken')->accessToken;
 
         $response = [
             'admin' => $admin,
@@ -209,10 +211,8 @@ class AdminAuthController extends Controller
      */
     public function logout()
     {
-        auth()->user()->tokens()->delete();
-
-        return [
-            'response' => 'Logged out',
-        ];
+        Auth::user()->token()->revoke();
+    
+        return response(['message' => 'Successfully logged out.'], 200);
     }
 }

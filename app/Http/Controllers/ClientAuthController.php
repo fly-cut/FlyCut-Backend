@@ -48,7 +48,7 @@ class ClientAuthController extends Controller
                 );
         }
         Mail::to($request->email)->send(new VerifyEmail($pin));
-        $token = $client->createToken('ClientToken')->plainTextToken;
+        $token = $client->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
         $response = [
             'client' => $client,
             'token' => $token,
@@ -68,7 +68,7 @@ class ClientAuthController extends Controller
             return redirect()->back()->with(['message' => $validator->errors()]);
         }
         $select = DB::table('password_reset_tokens')
-            ->where('email', Auth::user()->email)
+            ->where('email', Auth::guard('client-api')->user()->email)
             ->where('token', $request->token);
 
         if ($select->get()->isEmpty()) {
@@ -76,7 +76,7 @@ class ClientAuthController extends Controller
         }
 
         $select = DB::table('password_reset_tokens')
-            ->where('email', Auth::user()->email)
+            ->where('email', Auth::guard('client-api')->user()->email)
             ->where('token', $request->token)
             ->delete();
 
@@ -132,12 +132,13 @@ class ClientAuthController extends Controller
             'password' => 'required|string',
         ]);
         $client = Client::where('email', $request->email)->first();
-        if (!$client || Hash::check($request->password, $client->password)) {
+        if (!Auth::guard('client-api')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember')))
+         {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
         }
-        $token = $client->createToken('ClientToken')->plainTextToken;
+        $token = $client->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
         $response = [
             'client' => $client,
             'token' => $token,
@@ -148,7 +149,7 @@ class ClientAuthController extends Controller
 
     public function logout()
     {
-        auth()->user()->tokens()->delete();
+        Auth::user()->token()->revoke();
 
         return [
             'response' => 'Logged out',
@@ -196,7 +197,7 @@ class ClientAuthController extends Controller
                 'avatar' => $client->getAvatar(),
             ]
         );
-        $token = $client_created->createToken('Client')->plainTextToken;
+        $token = $client_created->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
 
         return response()->json($client_created, 200, ['token' => $token]);
     }
@@ -319,7 +320,7 @@ class ClientAuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $client->createToken('ClientToken')->plainTextToken;
+        $token = $client->first()->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
 
         return new JsonResponse(
             [
