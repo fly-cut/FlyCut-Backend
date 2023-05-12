@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('admins/register', [AdminAuthController::class, 'register']);
 Route::post('admins/login', [AdminAuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('admins/logout', [AdminAuthController::class, 'logout']);
     Route::post('services', [ServiceController::class, 'store']);
     Route::put('services/{id}', [ServiceController::class, 'update']);
@@ -48,7 +48,7 @@ Route::group(['prefix' => 'barbershopOwners/'], function () {
     Route::post('verify/pin', [BarbershopOwnerAuthController::class, 'verifyPin']);
     Route::post('reset/password', [BarbershopOwnerAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum'], 'abilities:barbershopOwner')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('email/verify', [BarbershopOwnerAuthController::class, 'verifyEmail']);
         Route::middleware('verify.api')->group(function () {
             Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
@@ -68,7 +68,7 @@ Route::group(['prefix' => 'clients/'], function () {
     Route::post('verify/pin', [ClientAuthController::class, 'verifyPin']);
     Route::post('reset/password', [ClientAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum', 'abilities:client'])->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::middleware('verify.api')->group(function () {
             Route::post('logout', [ClientController::class, 'logout']);

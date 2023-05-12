@@ -103,7 +103,7 @@ class BarbershopOwnerAuthController extends Controller
                 );
         }
         Mail::to($request->email)->send(new VerifyEmail($pin));
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['barbershopOwner'])->plainTextToken;
+        $token = $barbershop_owner->createToken('BarbershopOwnerToken')->plainTextToken;
         $response = [
             'barbershopOwner' => $barbershop_owner,
             'token' => $token,
@@ -197,7 +197,7 @@ class BarbershopOwnerAuthController extends Controller
             );
         }
 
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['barbershopOwner'])->plainTextToken;
+        $token = $barbershop_owner->createToken('BarbershopOwnerToken')->plainTextToken;
 
         $response = [
             'barbershopOwner' => $barbershop_owner,
@@ -327,7 +327,7 @@ class BarbershopOwnerAuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $barbershop_owner->createToken('BarbershopOwnerToken', ['barbershopOwner'])->plainTextToken;
+        $token = $barbershop_owner->createToken('BarbershopOwnerToken')->plainTextToken;
 
         return new JsonResponse(
             [

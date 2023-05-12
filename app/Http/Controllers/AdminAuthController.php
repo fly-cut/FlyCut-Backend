@@ -87,7 +87,7 @@ class AdminAuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        $token = $admin->createToken('AdminToken', ['admin'])->plainTextToken;
+        $token = $admin->createToken('AdminToken')->plainTextToken;
         $response = [
             'admin' => $admin,
             'token' => $token,
@@ -167,13 +167,13 @@ class AdminAuthController extends Controller
         ]);
         $admin = Admin::where('email', $request->email)->first();
 
-        if (! $admin || ! Hash::check($request->password, $admin->password)) {
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
         }
 
-        $token = $admin->createToken('AdminToken', ['admin'])->plainTextToken;
+        $token = $admin->createToken('AdminToken')->plainTextToken;
 
         $response = [
             'admin' => $admin,

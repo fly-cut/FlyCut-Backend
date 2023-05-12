@@ -48,7 +48,7 @@ class ClientAuthController extends Controller
                 );
         }
         Mail::to($request->email)->send(new VerifyEmail($pin));
-        $token = $client->createToken('ClientToken', ['client'])->plainTextToken;
+        $token = $client->createToken('ClientToken')->plainTextToken;
         $response = [
             'client' => $client,
             'token' => $token,
@@ -137,7 +137,7 @@ class ClientAuthController extends Controller
                 'response' => 'Please enter the right email or password!',
             ], 401);
         }
-        $token = $client->createToken('ClientToken', ['client'])->plainTextToken;
+        $token = $client->createToken('ClientToken')->plainTextToken;
         $response = [
             'client' => $client,
             'token' => $token,
@@ -196,7 +196,7 @@ class ClientAuthController extends Controller
                 'avatar' => $client->getAvatar(),
             ]
         );
-        $token = $client_created->createToken('Client', ['client'])->plainTextToken;
+        $token = $client_created->createToken('Client')->plainTextToken;
 
         return response()->json($client_created, 200, ['token' => $token]);
     }
@@ -319,7 +319,7 @@ class ClientAuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $client->createToken('ClientToken', ['client'])->plainTextToken;
+        $token = $client->createToken('ClientToken')->plainTextToken;
 
         return new JsonResponse(
             [
