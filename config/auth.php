@@ -40,9 +40,17 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'admin' => [
-            'driver' => 'session',
+        'admin-api' => [
+            'driver' => 'passport',
             'provider' => 'admins',
+        ],
+        'client-api' => [
+            'driver' => 'passport',
+            'provider' => 'clients',
+        ],
+        'barbershopOwner-api' => [
+            'driver' => 'passport',
+            'provider' => 'barbershopOwners',
         ],
 
     ],
@@ -72,6 +80,14 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Models\Admin::class,
+        ],
+        'clients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Client::class,
+        ],
+        'barbershopOwners' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\BarbershopOwner::class,
         ],
 
     ],

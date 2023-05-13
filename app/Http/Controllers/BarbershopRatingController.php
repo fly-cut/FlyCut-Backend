@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\BarbershopRating;
 use App\Models\Barbershop;
+use App\Models\BarbershopRating;
+use Illuminate\Http\Request;
 
 class BarbershopRatingController extends Controller
 {
-
     public function store(Request $request)
     {
         $request->validate([
@@ -60,6 +59,7 @@ class BarbershopRatingController extends Controller
     {
         $barbershop = Barbershop::find($id);
         $ratings = $barbershop->ratings()->get();
+
         return response()->json($ratings, 200);
     }
 }

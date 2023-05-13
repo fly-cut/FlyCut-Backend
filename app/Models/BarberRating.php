@@ -15,10 +15,12 @@ class BarberRating extends Model
         'rating',
         'review',
     ];
+
     public function barber()
     {
         return $this->belongsTo(Barber::class);
     }
+
     public function client()
     {
         return $this->belongsTo(Client::class);

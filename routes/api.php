@@ -2,15 +2,15 @@
 
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\BarberController;
+use App\Http\Controllers\BarberRatingController;
 use App\Http\Controllers\BarbershopController;
 use App\Http\Controllers\BarbershopOwnerAuthController;
 use App\Http\Controllers\BarbershopOwnerController;
+use App\Http\Controllers\BarbershopRatingController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VariationController;
-use App\Http\Controllers\BarberRatingController;
-use App\Http\Controllers\BarbershopRatingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('admins/register', [AdminAuthController::class, 'register']);
 Route::post('admins/login', [AdminAuthController::class, 'login']);
 
-Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+Route::middleware(['auth:admin-api'])->group(function () {
     Route::post('admins/logout', [AdminAuthController::class, 'logout']);
     Route::post('services', [ServiceController::class, 'store']);
     Route::put('services/{id}', [ServiceController::class, 'update']);
@@ -46,7 +46,7 @@ Route::group(['prefix' => 'barbershopOwners/'], function () {
     Route::post('verify/pin', [BarbershopOwnerAuthController::class, 'verifyPin']);
     Route::post('reset/password', [BarbershopOwnerAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum'], 'abilities:barbershopOwner')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('email/verify', [BarbershopOwnerAuthController::class, 'verifyEmail']);
         Route::middleware('verify.api')->group(function () {
             Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
@@ -66,7 +66,7 @@ Route::group(['prefix' => 'clients/'], function () {
     Route::post('verify/pin', [ClientAuthController::class, 'verifyPin']);
     Route::post('reset/password', [ClientAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum', 'abilities:client'])->group(function () {
+    Route::middleware(['auth:client-api'])->group(function () {
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::middleware('verify.api')->group(function () {
             Route::post('logout', [ClientController::class, 'logout']);
@@ -77,14 +77,13 @@ Route::group(['prefix' => 'clients/'], function () {
 });
 
 Route::group(['prefix' => 'barbers/'], function () {
-    Route::get('{id}', [BarberController::class, 'getBarbersOfBarbershop']);
     Route::post('', [BarberController::class, 'store']);
     Route::delete('{barber}', [BarberController::class, 'destroy']);
     Route::put('{barber}', [BarberController::class, 'update']);
 });
 
-Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('', [BarbershopController::class, 'indexBarbershop']);
+Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:barbershopOwner-api']], function () {
+    Route::get('get/all', [BarbershopController::class, 'indexBarbershop']);
     Route::post('', [BarbershopController::class, 'addBarbershop']);
     Route::get('{barbershop_id}', [BarbershopController::class, 'showBarbershop']);
     Route::put('{barbershop_id}', [BarbershopController::class, 'updateBarbershop']);
@@ -94,27 +93,29 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:sanctum']], fun
     Route::delete('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'removeServiceFromBarbershop']);
     Route::put('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'editServicePriceAndSlots']);
     Route::get('{barbershop_id}/services', [BarbershopController::class, 'getBarbershopServicesWithPriceAndSlots']);
+
+    Route::get('/{barbershop_id}/barbers', [BarbershopController::class, 'getBarbersOfBarbershop']);
 });
 
-Route::group(['prefix' => 'services/', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'services/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
     Route::get('', [ServiceController::class, 'index']);
     Route::get('{id}', [ServiceController::class, 'show']);
     Route::get('{service_id}/variations', [ServiceController::class, 'getServiceVariations']);
 });
 
-Route::group(['prefix' => 'variations/', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'variations/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
     Route::get('', [VariationController::class, 'index']);
     Route::get('{id}', [VariationController::class, 'show']);
 });
 
-Route::group(['prefix' => 'barber/ratings/', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'barber/ratings/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
     Route::post('', [BarberRatingController::class, 'store']);
     Route::put('{id}', [BarberRatingController::class, 'update']);
     Route::delete('{id}', [BarberRatingController::class, 'destroy']);
     Route::get('{id}', [BarberRatingController::class, 'getRatings']);
 });
 
-Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => ['auth:sanctum']], function () {
+Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
     Route::post('', [BarbershopRatingController::class, 'store']);
     Route::put('{id}', [BarbershopRatingController::class, 'update']);
     Route::delete('{id}', [BarbershopRatingController::class, 'destroy']);
