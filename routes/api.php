@@ -46,13 +46,11 @@ Route::group(['prefix' => 'barbershopOwners/'], function () {
     Route::post('verify/pin', [BarbershopOwnerAuthController::class, 'verifyPin']);
     Route::post('reset/password', [BarbershopOwnerAuthController::class, 'resetPassword']);
 
-    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware(['auth:barbershopOwner-api'])->group(function () {
         Route::post('email/verify', [BarbershopOwnerAuthController::class, 'verifyEmail']);
-        Route::middleware('verify.api')->group(function () {
-            Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
-            Route::put('changePassword', [BarbershopOwnerController::class, 'changePassword']);
-            Route::put('updateProfile', [BarbershopOwnerController::class, 'updateProfile']);
-        });
+        Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
+        Route::put('changePassword', [BarbershopOwnerController::class, 'changePassword']);
+        Route::put('updateProfile', [BarbershopOwnerController::class, 'updateProfile']);
     });
 });
 
@@ -68,11 +66,9 @@ Route::group(['prefix' => 'clients/'], function () {
 
     Route::middleware(['auth:client-api'])->group(function () {
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
-        Route::middleware('verify.api')->group(function () {
-            Route::post('logout', [ClientController::class, 'logout']);
-            Route::put('changePassword', [ClientController::class, 'changePassword']);
-            Route::put('updateProfile', [ClientController::class, 'updateProfile']);
-        });
+        Route::post('logout', [ClientAuthController::class, 'logout']);
+        Route::put('changePassword', [ClientAuthController::class, 'changePassword']);
+        Route::put('updateProfile', [ClientAuthController::class, 'updateProfile']);
     });
 });
 

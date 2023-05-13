@@ -132,7 +132,7 @@ class ClientAuthController extends Controller
             'password' => 'required|string',
         ]);
         $client = Client::where('email', $request->email)->first();
-        if (!Auth::guard('client-api')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember')))
+        if (!$client || !Hash::check($request->password, $client->password))
          {
             return response([
                 'response' => 'Please enter the right email or password!',
