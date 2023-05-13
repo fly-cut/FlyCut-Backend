@@ -11,7 +11,7 @@ class Client extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens;
 
-    protected $guard = 'client';
+    protected $guard = 'client-api';
 
     protected $fillable = [
         'name',
