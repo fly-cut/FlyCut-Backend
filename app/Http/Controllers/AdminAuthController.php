@@ -169,7 +169,7 @@ class AdminAuthController extends Controller
         ]);
         $admin = Admin::where('email', $request->email)->first();
         config(['auth.guards.admin-api.driver' => 'session']);
-        if (!Auth::guard('admin-api')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+        if (!$admin || !Hash::check($request->password, $admin->password)) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);

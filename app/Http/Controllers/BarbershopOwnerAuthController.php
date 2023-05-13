@@ -188,7 +188,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (!Auth::guard('barbershopOwner-api')->attempt(['email' => $request->email, 'password' => $request->password], $request->get('remember'))) {
+        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
                     'response' => 'Please enter the right email or password!',
