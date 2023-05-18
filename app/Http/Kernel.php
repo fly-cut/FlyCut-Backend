@@ -75,5 +75,6 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
+        'tri-guard' => \App\Http\Middleware\TriGuard::class,
     ];
 }
