@@ -239,7 +239,7 @@ class BarberController extends Controller
         }
         $barber->save();
 
-        return response()->json(['message' => 'Barber updated successfully']);
+        return response()->json(['message' => 'Barber updated successfully'], 200);
     }
 
     /**
@@ -312,14 +312,14 @@ class BarberController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barber found to be deleted!',
-            ]);
+            ], 404);
         } else {
             $barber->delete();
 
             return response()->json([
                 'status' => 200,
                 'message' => 'The barber has been deleted!',
-            ]);
+            ], 200);
         }
     }
 }

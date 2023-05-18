@@ -103,7 +103,7 @@ class ClientController extends Controller
             $image = $request->file('image');
             $image_name = time().'.'.$image->getClientOriginalExtension();
 
-            $image->move(public_path('images/owners'), $image_name);
+            $image->move(public_path('images/'), $image_name);
             $formData['image'] = $image_name;
         }
         $user->update($formData);

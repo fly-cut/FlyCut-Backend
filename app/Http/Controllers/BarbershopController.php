@@ -121,7 +121,7 @@ class BarbershopController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Barbershop has been added successfully',
-        ]);
+        ], 200);
     }
 
     /**
@@ -182,13 +182,13 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be shown!',
-            ]);
+            ], 404);
         }
 
         return response()->json([
             'status' => 200,
             'barbershop' => $barbershop,
-        ]);
+        ], 200);
     }
 
     /**
@@ -263,7 +263,7 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be updated!',
-            ]);
+            ], 404);
         }
         $barbershop->name = $request->name;
         $barbershop->description = $request->description;
@@ -287,7 +287,7 @@ class BarbershopController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Barbershop updated successfully',
-        ]);
+        ], 200);
     }
 
 
@@ -356,14 +356,14 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be deleted!',
-            ]);
+            ], 404);
         } else {
             $barbershop->delete();
 
             return response()->json([
                 'status' => 200,
                 'message' => 'The barbershop has been deleted!',
-            ]);
+            ], 200);
         }
     }
 
@@ -450,7 +450,7 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to add services to it!',
-            ]);
+            ], 404);
         }
         foreach ($request->services as $service) {
             $barbershop->services()->attach($service);
@@ -459,7 +459,7 @@ class BarbershopController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Services added successfully to the barbershop',
-        ]);
+        ], 200);
     }
 
     /**
@@ -535,14 +535,14 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to remove service from it!',
-            ]);
+            ], 404);
         }
         $barbershop->services()->detach($service_id);
 
         return response()->json([
             'status' => 200,
             'message' => 'Service removed successfully from the barbershop',
-        ]);
+        ], 200);
     }
 
     /**
@@ -641,7 +641,7 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to edit its services!',
-            ]);
+            ], 404);
         }
         $barbershop->services()->updateExistingPivot($service_id, [
             'price' => $request->price,
@@ -651,7 +651,7 @@ class BarbershopController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Service price and slots updated successfully',
-        ]);
+        ], 200);
     }
 
 
@@ -742,14 +742,14 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to get its services!',
-            ]);
+            ], 404);
         }
         $services = $barbershop->services()->withPivot('price', 'slots')->get();
 
         return response()->json([
             'status' => 200,
             'services' => $services,
-        ]);
+        ], 200);
     }
 
     /**
@@ -805,14 +805,14 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to get its reviews!',
-            ]);
+            ], 404);
         }
         $reviews = $barbershop->reviews;
 
         return response()->json([
             'status' => 200,
             'reviews' => $reviews,
-        ]);
+        ], 200);
     }
 
     /**
@@ -921,13 +921,13 @@ class BarbershopController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to get its barbers!',
-            ]);
+            ], 404);
         }
         $barbers = $barbershop->barbers;
 
         return response()->json([
             'status' => 200,
             'barbers' => $barbers,
-        ]);
+        ], 200);
     }
 }
