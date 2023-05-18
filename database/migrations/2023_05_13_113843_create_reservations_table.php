@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('clients');
             $table->foreignId('barber_id')->constrained('barbers');
+            $table->foreignId('barbershop_id')->constrained('barbershops');
+            $table->integer('price')->default(0);
             $table->timestamps();
         });
     }

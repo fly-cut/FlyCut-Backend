@@ -9,7 +9,9 @@ use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\BarbershopRatingController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SlotController;
 use App\Http\Controllers\VariationController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 
 Route::post('admins/register', [AdminAuthController::class, 'register']);
 Route::post('admins/login', [AdminAuthController::class, 'login']);
@@ -67,6 +70,7 @@ Route::group(['prefix' => 'clients/'], function () {
     Route::post('reset/password', [ClientAuthController::class, 'resetPassword']);
 
     Route::middleware(['auth:client-api'])->group(function () {
+        Route::post('reserve', [ReservationController::class, 'store']);
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::middleware('verify.api')->group(function () {
             Route::post('logout', [ClientController::class, 'logout']);
@@ -95,6 +99,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:barbershopOwner
     Route::get('{barbershop_id}/services', [BarbershopController::class, 'getBarbershopServicesWithPriceAndSlots']);
 
     Route::get('/{barbershop_id}/barbers', [BarbershopController::class, 'getBarbersOfBarbershop']);
+    Route::get('get/slots', [SlotController::class, 'getSlots']);
 });
 
 Route::group(['prefix' => 'services/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {

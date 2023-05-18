@@ -33,7 +33,7 @@ class Barbershop extends Model
 
     public function services()
     {
-        return $this->belongsToMany(Service::class);
+        return $this->belongsToMany(Service::class)->withPivot('slots', 'price');
     }
 
     public function ratings()
