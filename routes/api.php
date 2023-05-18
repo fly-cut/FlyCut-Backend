@@ -54,6 +54,7 @@ Route::group(['prefix' => 'barbershopOwners/'], function () {
         Route::post('logout', [BarbershopOwnerAuthController::class, 'logout']);
         Route::put('changePassword', [BarbershopOwnerController::class, 'changePassword']);
         Route::put('updateProfile', [BarbershopOwnerController::class, 'updateProfile']);
+        Route::get('get/barbershop', [BarbershopOwnerAuthController::class, 'getBarbershopOfBarbershopOwner']);
     });
 });
 

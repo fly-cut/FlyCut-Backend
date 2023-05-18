@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ResetPassword;
 use App\Mail\VerifyEmail;
 use App\Models\BarbershopOwner;
+use App\Models\Barbershop;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+
 
 class BarbershopOwnerAuthController extends Controller
 {
@@ -332,6 +334,28 @@ class BarbershopOwnerAuthController extends Controller
                 'success' => true,
                 'message' => 'Your password has been reset',
                 'token' => $token,
+            ],
+            200
+        );
+    }
+
+    //write a function to get the barbershop of a barbershop owner
+    public function getBarbershopOfBarbershopOwner()
+    {
+        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+        if (!$barbershop) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'message' => 'You do not have a barbershop',
+                ],
+                400
+            );
+        }
+        return new JsonResponse(
+            [
+                'success' => true,
+                'barbershop' => $barbershop,
             ],
             200
         );
