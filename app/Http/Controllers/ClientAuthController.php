@@ -30,7 +30,7 @@ class ClientAuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        /*if ($client) {
+        if ($client) {
             $verify2 = DB::table('password_reset_tokens')->where([
                 ['email', $request->all()['email']],
             ]);
@@ -47,7 +47,7 @@ class ClientAuthController extends Controller
                     ]
                 );
         }
-        Mail::to($request->email)->send(new VerifyEmail($pin));*/
+        Mail::to($request->email)->send(new VerifyEmail($pin));
         $token = $client->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
         $response = [
             'client' => $client,
@@ -132,8 +132,7 @@ class ClientAuthController extends Controller
             'password' => 'required|string',
         ]);
         $client = Client::where('email', $request->email)->first();
-        if (!$client || !Hash::check($request->password, $client->password))
-         {
+        if (!$client || !Hash::check($request->password, $client->password)) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
