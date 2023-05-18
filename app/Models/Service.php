@@ -20,4 +20,9 @@ class Service extends Model
     {
         return $this->hasMany(Variation::class);
     }
+
+    public function reservations()
+    {
+        return $this->belongsToMany(Reservation::class);
+    }
 }

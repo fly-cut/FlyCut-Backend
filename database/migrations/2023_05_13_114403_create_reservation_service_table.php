@@ -13,14 +13,9 @@ return new class extends Migration
     {
         Schema::create('reservation_service', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBiginteger('reservation_id')->unsigned();
-            $table->unsignedBiginteger('service_id')->unsigned();
-
-            $table->foreign('reservation_id')->references('id')
-                ->on('reservations')->onDelete('cascade');
-            $table->foreign('service_id')->references('id')
-                ->on('services')->onDelete('cascade');
-
+            $table->foreignId('reservation_id')->constrained('reservations');
+            $table->foreignId('service_id')->constrained('services');
+            $table->foreignId('variation_id')->constrained('variations')->nullable();
             $table->timestamps();
         });
     }
