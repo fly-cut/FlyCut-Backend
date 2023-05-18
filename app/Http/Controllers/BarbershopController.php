@@ -94,7 +94,7 @@ class BarbershopController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|max:255|regex:/(^([a-zA-Z ]+)(\d+)?$)/u',
-            'image' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             'description' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',
@@ -250,7 +250,7 @@ class BarbershopController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|max:255|regex:/(^([a-zA-Z ]+)(\d+)?$)/u',
-            'image' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             'description' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',

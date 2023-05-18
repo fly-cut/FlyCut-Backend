@@ -20,7 +20,7 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required||image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $path = $request->file('image');
@@ -54,7 +54,7 @@ class ServiceController extends Controller
         }
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $image = $request->file('image');
