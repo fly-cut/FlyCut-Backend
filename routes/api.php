@@ -82,7 +82,7 @@ Route::group(['prefix' => 'barbers/'], function () {
     Route::put('{barber}', [BarberController::class, 'update']);
 });
 
-Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:barbershopOwner-api']], function () {
+Route::group(['prefix' => 'barbershops/'], function () {
     Route::get('get/all', [BarbershopController::class, 'indexBarbershop']);
     Route::post('', [BarbershopController::class, 'addBarbershop']);
     Route::get('{barbershop_id}', [BarbershopController::class, 'showBarbershop']);
@@ -98,25 +98,25 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => ['auth:barbershopOwner
     Route::get('get/slots', [SlotController::class, 'getSlots']);
 });
 
-Route::group(['prefix' => 'services/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
+Route::group(['prefix' => 'services/'], function () {
     Route::get('', [ServiceController::class, 'index']);
     Route::get('{id}', [ServiceController::class, 'show']);
     Route::get('{service_id}/variations', [ServiceController::class, 'getServiceVariations']);
 });
 
-Route::group(['prefix' => 'variations/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
+Route::group(['prefix' => 'variations/'], function () {
     Route::get('', [VariationController::class, 'index']);
     Route::get('{id}', [VariationController::class, 'show']);
 });
 
-Route::group(['prefix' => 'barber/ratings/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
+Route::group(['prefix' => 'barber/ratings/'], function () {
     Route::post('', [BarberRatingController::class, 'store']);
     Route::put('{id}', [BarberRatingController::class, 'update']);
     Route::delete('{id}', [BarberRatingController::class, 'destroy']);
     Route::get('{id}', [BarberRatingController::class, 'getRatings']);
 });
 
-Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => ['auth:barbershopOwner-api, auth:client-api, auth:admin-api']], function () {
+Route::group(['prefix' => 'barbershop/ratings/'], function () {
     Route::post('', [BarbershopRatingController::class, 'store']);
     Route::put('{id}', [BarbershopRatingController::class, 'update']);
     Route::delete('{id}', [BarbershopRatingController::class, 'destroy']);
