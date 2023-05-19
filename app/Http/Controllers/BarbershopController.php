@@ -932,7 +932,7 @@ class BarbershopController extends Controller
         ], 200);
     }
 
-    
+
 
 
     public function search(Request $request)
@@ -940,12 +940,11 @@ class BarbershopController extends Controller
         $searchQuery = $request->get('searchQuery');
         $userLongitude = $request->get('userLongitude');
         $userLatitude = $request->get('userLatitude');
-        //$barbershops = DB::table('barbershops')->where('name', 'like', '%' . $search . '%')->orWhere('address', 'like', '%' . $search . '%')->orWhere('city', 'like', '%' . $search . '%')->get();
         $barbershops = Barbershop::query()
             ->where(function ($query) use ($searchQuery) {
-                $query->where('name', 'like', '%'.$searchQuery.'%')
-                    ->orWhere('city', 'like', '%'.$searchQuery.'%')
-                    ->orWhere('address', 'like', '%'.$searchQuery.'%');
+                $query->where('name', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('city', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('address', 'like', '%' . $searchQuery . '%');
             })
             ->orderByRaw(
                 "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
@@ -963,5 +962,4 @@ class BarbershopController extends Controller
             ], 404);
         }
     }
-
 }
