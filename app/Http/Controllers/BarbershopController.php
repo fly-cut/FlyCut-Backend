@@ -6,6 +6,7 @@ use App\Models\Barbershop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class BarbershopController extends Controller
 {
@@ -930,4 +931,37 @@ class BarbershopController extends Controller
             'barbers' => $barbers,
         ], 200);
     }
+
+    
+
+
+    public function search(Request $request)
+    {
+        $searchQuery = $request->get('searchQuery');
+        $userLongitude = $request->get('userLongitude');
+        $userLatitude = $request->get('userLatitude');
+        //$barbershops = DB::table('barbershops')->where('name', 'like', '%' . $search . '%')->orWhere('address', 'like', '%' . $search . '%')->orWhere('city', 'like', '%' . $search . '%')->get();
+        $barbershops = Barbershop::query()
+            ->where(function ($query) use ($searchQuery) {
+                $query->where('name', 'like', '%'.$searchQuery.'%')
+                    ->orWhere('city', 'like', '%'.$searchQuery.'%')
+                    ->orWhere('address', 'like', '%'.$searchQuery.'%');
+            })
+            ->orderByRaw(
+                "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
+            )
+            ->get();
+        if (count($barbershops) > 0) {
+            return response()->json([
+                'status' => 200,
+                'barbershops' => $barbershops,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'errors' => 'No barbershop found!',
+            ], 404);
+        }
+    }
+
 }
