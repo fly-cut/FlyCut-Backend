@@ -962,4 +962,26 @@ class BarbershopController extends Controller
             ], 404);
         }
     }
+
+    public function getNearbyBarbershops(Request $request)
+    {
+        $userLongitude = $request->get('userLongitude');
+        $userLatitude = $request->get('userLatitude');
+        $barbershops = Barbershop::orderByRaw(
+            "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
+        )
+            ->limit(5)
+            ->get();
+        if (count($barbershops) > 0) {
+            return response()->json([
+                'status' => 200,
+                'barbershops' => $barbershops,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'errors' => 'No barbershop found!',
+            ], 404);
+        }
+    }
 }
