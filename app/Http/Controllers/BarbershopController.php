@@ -942,9 +942,9 @@ class BarbershopController extends Controller
         $userLatitude = $request->get('userLatitude');
         $barbershops = Barbershop::query()
             ->where(function ($query) use ($searchQuery) {
-                $query->where('name', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('city', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('address', 'like', '%' . $searchQuery . '%');
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(address) LIKE ?', ['%' . strtolower($searchQuery) . '%']);
             })
             ->orderByRaw(
                 "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
