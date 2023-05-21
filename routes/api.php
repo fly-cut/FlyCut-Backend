@@ -1,19 +1,20 @@
 <?php
 
-use App\Http\Controllers\AdminAuthController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SlotController;
 use App\Http\Controllers\BarberController;
-use App\Http\Controllers\BarberRatingController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\HairCutController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\VariationController;
 use App\Http\Controllers\BarbershopController;
-use App\Http\Controllers\BarbershopOwnerAuthController;
+use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\BarberRatingController;
 use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\BarbershopRatingController;
-use App\Http\Controllers\ClientAuthController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ReservationController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\SlotController;
-use App\Http\Controllers\VariationController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BarbershopOwnerAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,4 +128,10 @@ Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => 'tri-guard'], f
     Route::put('{id}', [BarbershopRatingController::class, 'update']);
     Route::delete('{id}', [BarbershopRatingController::class, 'destroy']);
     Route::get('{id}', [BarbershopRatingController::class, 'getRatings']);
+});
+
+
+Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function () {
+    Route::get('', [HairCutController::class, 'getAllHaircuts']);
+    Route::get('haircut/search', [HairCutController::class, 'search']);
 });
