@@ -21,4 +21,15 @@ class HairCutController extends Controller
             'data' => $haircut_variations
         ], 200);
     }
+    public function search(Request $request)
+    {
+        //search for variations of haircut
+        $searchTerm = $request->input('hairCutName');
+        $haircuts_service_id = Service::whereRaw('LOWER(REPLACE(name, " ", "")) LIKE ?', ['%' . strtolower(str_replace(' ', '', 'haircut')) . '%'])
+            ->first()->id;
+        $haircuts = Variation::whereRaw('LOWER(REPLACE(name, " ", "")) LIKE ?', ['%' . strtolower(str_replace(' ', '', $searchTerm)) . '%'])
+            ->where('service_id', $haircuts_service_id)
+            ->get();
+        return $haircuts;
+    }
 }
