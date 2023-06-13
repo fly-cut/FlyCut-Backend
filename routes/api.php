@@ -133,5 +133,5 @@ Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => 'tri-guard'], f
 
 Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function () {
     Route::get('', [HairCutController::class, 'getAllHaircuts']);
-    Route::get('haircut/search', [HairCutController::class, 'search']);
+    Route::post('haircut/search', [HairCutController::class, 'search']);
 });
