@@ -14,6 +14,7 @@ class HairCutController extends Controller
         $haircuts_service = Service::whereRaw('LOWER(REPLACE(name, " ", "")) LIKE ?', ['%' . strtolower(str_replace(' ', '', $searchTerm)) . '%'])
             ->first();
         $haircut_service_id = $haircuts_service->id;
+        return $haircut_service_id;
         //search for all variations of haircut
         $haircut_variations = Variation::where('service_id', $haircut_service_id)->get();
         return response()->json([
