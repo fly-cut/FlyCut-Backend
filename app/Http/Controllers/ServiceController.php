@@ -83,15 +83,12 @@ class ServiceController extends Controller
         $user_id = Auth::guard('barbershopOwner-api')->user()->id;
         $barbershop = Barbershop::where('barbershop_owner_id', $user_id)->first();
 
-        foreach ($services as $service) {
-            $service = Service::find($service['id']);
-
-            $slots = $service['slots'];
-            return $service->pivot->slots;
+        foreach ($services as $servicee) {
+            $service = Service::find($servicee['id']);
 
             $barbershop->services()->syncWithoutDetaching([$service->id => [
-                'slots' => 6,
-                'price' => 3,
+                'slots' => $servicee['slots'],
+                'price' => $servicee['price'],
             ]]);
             $barbershop->save();
         }
