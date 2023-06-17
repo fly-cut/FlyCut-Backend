@@ -65,13 +65,14 @@ class ReservationService
         $startTime = $request->input('start_time');
         $start = Carbon::parse($startTime);
         $total_price = 0;
+        return $services;
         foreach ($services as $service) {
             $current_service = Service::where('name', $service['name'])->first();
             $id = $current_service->id;
 
             $barbershop = Barbershop::where('id', $request->barbershop_id)->first();
             $numberOfSlots = 0;
-
+            return $barbershop->services[0]->pivot;
             foreach ($barbershop->services as $service) {
                 if ($service->id == $id) {
                     $numberOfSlots = $service->pivot->slots;
