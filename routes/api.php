@@ -90,8 +90,8 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'auth:barbershopOwner-
     Route::put('{barbershop_id}', [BarbershopController::class, 'updateBarbershop']);
     Route::delete('{barbershop_id}', [BarbershopController::class, 'destroyBarbershop']);
 
-    Route::post('{barbershop_id}/services', [BarbershopController::class, 'addServicesToBarbershop']);
-    Route::delete('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'removeServiceFromBarbershop']);
+    Route::post('add/services', [BarbershopController::class, 'addServicesToBarbershop']);
+    Route::delete('remove/services', [BarbershopController::class, 'removeServiceFromBarbershop']);
     Route::put('{barbershop_id}/services/{service_id}', [BarbershopController::class, 'editServicePriceAndSlots']);
 });
 

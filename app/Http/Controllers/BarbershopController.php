@@ -441,12 +441,13 @@ class BarbershopController extends Controller
      * )
      */
 
-    public function addServicesToBarbershop(Request $request, $barbershop_id)
+    public function addServicesToBarbershop(Request $request)
     {
         $this->validate($request, [
             'services' => 'required|array',
         ]);
-        $barbershop = Barbershop::find($barbershop_id);
+
+        $barbershop = Barbershop::find(Auth::user()->id);
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
@@ -529,16 +530,21 @@ class BarbershopController extends Controller
      * )
      */
 
-    public function removeServiceFromBarbershop($barbershop_id, $service_id)
+    public function removeServiceFromBarbershop(Request $request)
     {
-        $barbershop = Barbershop::find($barbershop_id);
+        $this->validate($request, [
+            'service_id' => 'required|integer|array',
+        ]);
+        $barbershop = Barbershop::find(Auth::user()->id);
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to remove service from it!',
             ], 404);
         }
-        $barbershop->services()->detach($service_id);
+        foreach ($request->services as $service) {
+            $barbershop->services()->detach($service);
+        }
 
         return response()->json([
             'status' => 200,
