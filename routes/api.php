@@ -109,6 +109,7 @@ Route::group(['prefix' => 'services/', 'middleware' => 'tri-guard'], function ()
     Route::get('', [ServiceController::class, 'index']);
     Route::get('{id}', [ServiceController::class, 'show']);
     Route::get('{service_id}/variations', [ServiceController::class, 'getServiceVariations']);
+    Route::post('updateList', [ServiceController::class, 'updateListOfServices']);
 });
 
 Route::group(['prefix' => 'variations/', 'middleware' => 'tri-guard'], function () {
