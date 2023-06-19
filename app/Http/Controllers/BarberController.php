@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Slot;
 use App\Models\Barber;
 use App\Models\Barbershop;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use DateTime;
 
 class BarberController extends Controller
 {
@@ -96,7 +100,7 @@ class BarberController extends Controller
             ]
         );
         $image = $request->file('image');
-        $image_name = time().'.'.$image->getClientOriginalExtension();
+        $image_name = time() . '.' . $image->getClientOriginalExtension();
         $image->move(public_path('images'), $image_name);
 
         $barber = Barber::create([
@@ -227,13 +231,13 @@ class BarberController extends Controller
         $barber->barbershop_id = $request->barbershop_id;
 
         if ($request->hasFile('image')) {
-            $image_path = public_path('images/'.$barber->image);
+            $image_path = public_path('images/' . $barber->image);
             if (File::exists($image_path)) {
                 File::delete($image_path);
             }
 
             $image = $request->file('image');
-            $image_name = time().'.'.$image->getClientOriginalExtension();
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('/images'), $image_name);
             $barber->image = $image_name;
         }
@@ -321,5 +325,40 @@ class BarberController extends Controller
                 'message' => 'The barber has been deleted!',
             ], 200);
         }
+    }
+    public function checkAvailability(Request $request)
+    {
+        $startTime = $request->input('start_time');
+        $numberOfSlots = $request->input('number_of_slots');
+        $barberId = $request->input('barber_id');
+        // Parse the provided time string
+        $startTime = Carbon::parse($startTime);
+
+        // Calculate the end time based on the number of slots
+        $endTime = $startTime->copy()->addMinutes($numberOfSlots * 15);
+
+        // Fetch existing slots for the given barber within the provided time range
+        $existingSlots = Slot::where('barber_id', $barberId)
+            ->where('start_time', '>=', $startTime)
+            ->where('end_time', '<=', $endTime)
+            ->orderBy('start_time')
+            ->get();
+
+        // Check if there are any overlapping slots
+        $prevEndTime = null;
+        foreach ($existingSlots as $slot) {
+            if ($slot->start_time > $endTime) {
+                break; // No more overlapping slots
+            }
+
+            if ($slot->start_time > $prevEndTime) {
+                $message = 'No slots available';
+                return response($message, 201); // Gap found, slots are not after each other
+            }
+
+            $prevEndTime = $slot->end_time;
+        }
+        $message = 'Slots available';
+        return response($message, 201);
     }
 }
