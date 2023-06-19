@@ -82,6 +82,7 @@ Route::group(['prefix' => 'barbers/'], function () {
     Route::post('', [BarberController::class, 'store']);
     Route::delete('{barber}', [BarberController::class, 'destroy']);
     Route::put('{barber}', [BarberController::class, 'update']);
+    Route::get('checkAvailability', [BarberController::class, 'checkAvailability']);
 });
 
 Route::group(['prefix' => 'barbershops/', 'middleware' => 'auth:barbershopOwner-api'], function () {
