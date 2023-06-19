@@ -534,7 +534,7 @@ class BarbershopController extends Controller
     public function removeServiceFromBarbershop(Request $request)
     {
         $this->validate($request, [
-            'services' => 'required|integer|array',
+            'services' => 'required|array',
         ]);
         $barbershop = Barbershop::find(Auth::user()->id);
         if (is_null($barbershop) || empty($barbershop)) {
