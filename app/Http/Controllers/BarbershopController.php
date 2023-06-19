@@ -531,11 +531,9 @@ class BarbershopController extends Controller
      * )
      */
 
-    public function removeServiceFromBarbershop(Request $request)
+    public function removeServiceFromBarbershop($id)
     {
-        $this->validate($request, [
-            'services' => 'required|array',
-        ]);
+        
         $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
@@ -543,9 +541,9 @@ class BarbershopController extends Controller
                 'errors' => 'No barbershop found to remove service from it!',
             ], 404);
         }
-        foreach ($request->services as $service) {
-            $barbershop->services()->detach($service);
-        }
+
+        $barbershop->services()->detach($id);
+        
 
         return response()->json([
             'status' => 200,
