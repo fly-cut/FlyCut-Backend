@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barbershop;
+use App\Models\BarbershopOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -447,7 +448,7 @@ class BarbershopController extends Controller
             'services' => 'required|array',
         ]);
 
-        $barbershop = Barbershop::find(Auth::user()->id);
+        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
