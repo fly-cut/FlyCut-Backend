@@ -536,7 +536,7 @@ class BarbershopController extends Controller
         $this->validate($request, [
             'services' => 'required|array',
         ]);
-        $barbershop = Barbershop::find(Auth::user()->id);
+        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
