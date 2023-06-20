@@ -256,8 +256,8 @@ class BarbershopController extends Controller
             'description' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',
-            'longitude' => 'required',
-            'latitude' => 'required',
+            'longitude' => 'decimal',
+            'latitude' => 'decimal',
         ]);
 
         $barbershop = Barbershop::find($barbershop_id);
@@ -531,26 +531,30 @@ class BarbershopController extends Controller
      * )
      */
 
-    public function removeServiceFromBarbershop($id)
-    {
-        
-        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
-        if (is_null($barbershop) || empty($barbershop)) {
-            return response()->json([
-                'status' => 404,
-                'errors' => 'No barbershop found to remove service from it!',
-            ], 404);
-        }
-
-        $barbershop->services()->detach($id);
-        
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Service removed successfully from the barbershop',
-        ], 200);
-    }
-
+     public function removeServicesFromBarbershop(Request $request)
+     {
+         $this->validate($request, [
+             'services' => 'required|array',
+             'services.*' => 'required|numeric',
+         ]);
+     
+         $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+     
+         if (is_null($barbershop)) {
+             return response()->json([
+                 'status' => 404,
+                 'errors' => 'No barbershop found to remove services from!',
+             ], 404);
+         }
+     
+         $services = $request->input('services');
+         $barbershop->services()->detach($services);
+     
+         return response()->json([
+             'status' => 200,
+             'message' => 'Services removed successfully from the barbershop',
+         ], 200);
+     }     
     /**
      * @OA\Put(
      *     path="/api/barbershops/{barbershop_id}/services/{service_id}",
@@ -636,29 +640,38 @@ class BarbershopController extends Controller
      */
 
 
-    public function editServicePriceAndSlots(Request $request, $barbershop_id, $service_id)
-    {
-        $this->validate($request, [
-            'price' => 'required|numeric',
-            'slots' => 'required|numeric',
-        ]);
-        $barbershop = Barbershop::find($barbershop_id);
-        if (is_null($barbershop) || empty($barbershop)) {
-            return response()->json([
-                'status' => 404,
-                'errors' => 'No barbershop found to edit its services!',
-            ], 404);
-        }
-        $barbershop->services()->updateExistingPivot($service_id, [
-            'price' => $request->price,
-            'slots' => $request->slots,
-        ]);
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Service price and slots updated successfully',
-        ], 200);
-    }
+     public function editServicePriceAndSlots(Request $request)
+     {
+         $this->validate($request, [
+             'services' => 'required|array',
+             'services.*.id' => 'required|numeric',
+             'services.*.price' => 'required|numeric',
+             'services.*.slots' => 'required|numeric',
+         ]);
+     
+         $barbershop =  Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+     
+         if (is_null($barbershop)) {
+             return response()->json([
+                 'status' => 404,
+                 'errors' => 'No barbershop found to edit its services!',
+             ], 404);
+         }
+     
+         foreach ($request->services as $service) {
+             $service_id = $service['id'];
+             $price = $service['price'];
+             $slots = $service['slots'];
+     
+             $barbershop->services()->updateExistingPivot($service_id, compact('price', 'slots'));
+         }
+     
+         return response()->json([
+             'status' => 200,
+             'message' => 'Service prices and slots updated successfully',
+         ], 200);
+     }
+     
 
 
 
