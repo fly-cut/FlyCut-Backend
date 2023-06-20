@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barbershop;
 use App\Models\BarbershopOwner;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -456,6 +457,13 @@ class BarbershopController extends Controller
             ], 404);
         }
         foreach ($request->services as $service) {
+            if(!Service::find($service))
+            {
+                return response()->json([
+                    'status' => 404,
+                    'errors' => 'No service found to be added!',
+                ], 404);
+            }
             $barbershop->services()->attach($service);
         }
 
@@ -547,9 +555,16 @@ class BarbershopController extends Controller
              ], 404);
          }
      
-         $services = $request->input('services');
-         $barbershop->services()->detach($services);
-     
+         foreach ($request->services as $service) {
+            if(!Service::find($service))
+            {
+                return response()->json([
+                    'status' => 404,
+                    'errors' => 'No service found to be removed!',
+                ], 404);
+            }
+            $barbershop->services()->detach($service);
+        }
          return response()->json([
              'status' => 200,
              'message' => 'Services removed successfully from the barbershop',
