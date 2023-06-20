@@ -677,6 +677,13 @@ class BarbershopController extends Controller
              $service_id = $service['id'];
              $price = $service['price'];
              $slots = $service['slots'];
+             if(!Service::find($service_id))
+             {
+                 return response()->json([
+                     'status' => 404,
+                     'errors' => 'No service found to be edited!',
+                 ], 404);
+             }
      
              $barbershop->services()->updateExistingPivot($service_id, compact('price', 'slots'));
          }
