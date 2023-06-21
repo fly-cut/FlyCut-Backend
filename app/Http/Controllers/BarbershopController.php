@@ -253,7 +253,7 @@ class BarbershopController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|string|max:255|regex:/(^([a-zA-Z ]+)(\d+)?$)/u',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg',
             'description' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',
@@ -272,8 +272,10 @@ class BarbershopController extends Controller
         $barbershop->description = $request->description;
         $barbershop->address = $request->address;
         $barbershop->city = $request->city;
-        $barbershop->longitude = $request->longitude;
-        $barbershop->latitude = $request->latitude;
+        if ($request->has('longitude') && $request->has('latitude')) {
+            $barbershop->longitude = $request->longitude;
+            $barbershop->latitude = $request->latitude;
+        }
         if ($request->hasFile('image')) {
             if (File::exists(public_path('images/' . $barbershop->image))) {
                 File::delete(public_path('images/' . $barbershop->image));
@@ -457,8 +459,7 @@ class BarbershopController extends Controller
             ], 404);
         }
         foreach ($request->services as $service) {
-            if(!Service::find($service))
-            {
+            if (!Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be added!',
@@ -539,25 +540,24 @@ class BarbershopController extends Controller
      * )
      */
 
-     public function removeServicesFromBarbershop(Request $request)
-     {
-         $this->validate($request, [
-             'services' => 'required|array',
-             'services.*' => 'required|numeric',
-         ]);
-     
-         $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
-     
-         if (is_null($barbershop)) {
-             return response()->json([
-                 'status' => 404,
-                 'errors' => 'No barbershop found to remove services from!',
-             ], 404);
-         }
-     
-         foreach ($request->services as $service) {
-            if(!Service::find($service))
-            {
+    public function removeServicesFromBarbershop(Request $request)
+    {
+        $this->validate($request, [
+            'services' => 'required|array',
+            'services.*' => 'required|numeric',
+        ]);
+
+        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+
+        if (is_null($barbershop)) {
+            return response()->json([
+                'status' => 404,
+                'errors' => 'No barbershop found to remove services from!',
+            ], 404);
+        }
+
+        foreach ($request->services as $service) {
+            if (!Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be removed!',
@@ -565,11 +565,11 @@ class BarbershopController extends Controller
             }
             $barbershop->services()->detach($service);
         }
-         return response()->json([
-             'status' => 200,
-             'message' => 'Services removed successfully from the barbershop',
-         ], 200);
-     }     
+        return response()->json([
+            'status' => 200,
+            'message' => 'Services removed successfully from the barbershop',
+        ], 200);
+    }
     /**
      * @OA\Put(
      *     path="/api/barbershops/{barbershop_id}/services/{service_id}",
@@ -655,45 +655,44 @@ class BarbershopController extends Controller
      */
 
 
-     public function editServicePriceAndSlots(Request $request)
-     {
-         $this->validate($request, [
-             'services' => 'required|array',
-             'services.*.id' => 'required|numeric',
-             'services.*.price' => 'required|numeric',
-             'services.*.slots' => 'required|numeric',
-         ]);
-     
-         $barbershop =  Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
-     
-         if (is_null($barbershop)) {
-             return response()->json([
-                 'status' => 404,
-                 'errors' => 'No barbershop found to edit its services!',
-             ], 404);
-         }
-     
-         foreach ($request->services as $service) {
-             $service_id = $service['id'];
-             $price = $service['price'];
-             $slots = $service['slots'];
-             if(!Service::find($service_id))
-             {
-                 return response()->json([
-                     'status' => 404,
-                     'errors' => 'No service found to be edited!',
-                 ], 404);
-             }
-     
-             $barbershop->services()->updateExistingPivot($service_id, compact('price', 'slots'));
-         }
-     
-         return response()->json([
-             'status' => 200,
-             'message' => 'Service prices and slots updated successfully',
-         ], 200);
-     }
-     
+    public function editServicePriceAndSlots(Request $request)
+    {
+        $this->validate($request, [
+            'services' => 'required|array',
+            'services.*.id' => 'required|numeric',
+            'services.*.price' => 'required|numeric',
+            'services.*.slots' => 'required|numeric',
+        ]);
+
+        $barbershop =  Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+
+        if (is_null($barbershop)) {
+            return response()->json([
+                'status' => 404,
+                'errors' => 'No barbershop found to edit its services!',
+            ], 404);
+        }
+
+        foreach ($request->services as $service) {
+            $service_id = $service['id'];
+            $price = $service['price'];
+            $slots = $service['slots'];
+            if (!Service::find($service_id)) {
+                return response()->json([
+                    'status' => 404,
+                    'errors' => 'No service found to be edited!',
+                ], 404);
+            }
+
+            $barbershop->services()->updateExistingPivot($service_id, compact('price', 'slots'));
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Service prices and slots updated successfully',
+        ], 200);
+    }
+
 
 
 
