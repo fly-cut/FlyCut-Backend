@@ -272,7 +272,7 @@ class BarbershopController extends Controller
         $barbershop->description = $request->description;
         $barbershop->address = $request->address;
         $barbershop->city = $request->city;
-        if ($request->longitude && $request->latitude) {
+        if ($request->longitude != null && $request->latitude != null) {
             $barbershop->longitude = $request->longitude;
             $barbershop->latitude = $request->latitude;
         }
