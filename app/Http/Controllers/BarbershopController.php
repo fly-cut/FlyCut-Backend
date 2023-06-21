@@ -257,8 +257,8 @@ class BarbershopController extends Controller
             'description' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',
-            'longitude' => 'decimal',
-            'latitude' => 'decimal',
+            'longitude' => 'numeric',
+            'latitude' => 'numeric',
         ]);
 
         $barbershop = Barbershop::find($barbershop_id);
