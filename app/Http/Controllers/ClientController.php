@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Service;
+use App\Models\Variation;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -121,30 +122,33 @@ class ClientController extends Controller
         $user->id;
         $reservations = Reservation::where('user_id', $user->id)->orderBy('date')->get();
         $data = [];
+
         foreach ($reservations as $reservation) {
             $reservationId = $reservation->id;
             $services = Service::whereHas('reservations', function ($query) use ($reservationId) {
                 $query->where('reservation_id', $reservationId);
             })->get();
+
             $servicedata = [];
+
             foreach ($services as $service) {
-                $variations = Service::whereHas('reservations', function ($query) use ($reservationId) {
-                    $query->where('reservation_id', $reservationId);
-                })->with('variations')->get()->pluck('variations')->flatten();
-                $service = $service->toArray();
-                $variations = $variations->toArray();
-                $servicevariatons = array_merge($service, $variations);
-                $servicedata[] = [
-                    "service" => $servicevariatons
-                ];
+                $variations = Variation::where('service_id', $service->id)->get();
+                $variationData = $variations->toArray();
+
+                $serviceData = $service->toArray();
+                $serviceData['variation'] = $variationData[0] ?? null;
+
+                $servicedata[] = $serviceData;
             }
+
             $element = [
                 'reservation' => $reservation,
-                "services" => $servicedata
+                'services' => $servicedata
             ];
+
             $data[] = $element;
         }
-        $jsonObject = json_encode($data);
-        return $jsonObject;
+
+        return response()->json($data);
     }
 }
