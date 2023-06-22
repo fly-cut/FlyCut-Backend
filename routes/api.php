@@ -78,7 +78,7 @@ Route::group(['prefix' => 'clients/'], function () {
     });
 });
 
-Route::group(['prefix' => 'barbers/'], function () {
+Route::group(['prefix' => 'barbers/', 'middleware' => 'tri-guard'], function () {
     Route::post('', [BarberController::class, 'store']);
     Route::delete('{barber}', [BarberController::class, 'destroy']);
     Route::put('{barber}', [BarberController::class, 'update']);
