@@ -15,7 +15,6 @@ use App\Http\Controllers\BarberRatingController;
 use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\BarbershopRatingController;
 use App\Http\Controllers\BarbershopOwnerAuthController;
-use App\Models\Reservation;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +73,6 @@ Route::group(['prefix' => 'clients/'], function () {
         Route::post('reserve', [ReservationController::class, 'store']);
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::post('logout', [ClientAuthController::class, 'logout']);
-        Route::get('get/reservations', [ClientController::class, 'getReservations']);
         Route::put('changePassword', [ClientAuthController::class, 'changePassword']);
         Route::put('updateProfile', [ClientAuthController::class, 'updateProfile']);
     });

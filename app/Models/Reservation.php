@@ -12,5 +12,5 @@ class Reservation extends Model
     {
         return $this->belongsToMany(ReservationVariation::class);
     }
-    protected $fillable = ['barber_id', 'user_id', 'barbershop_id', 'price', 'date'];
+    protected $fillable = ['barber_id', 'user_id', 'barbershop_id', 'price'];
 }
