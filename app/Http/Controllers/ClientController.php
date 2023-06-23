@@ -92,10 +92,8 @@ class ClientController extends Controller
         return response($message, 200);
     }
 
-    //update profile
     public function updateProfile(Request $request)
     {
-        //access name from request object
         $formData = $request->validate([
             'name' => 'string',
             'email' => 'email',

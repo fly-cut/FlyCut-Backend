@@ -74,7 +74,7 @@ Route::group(['prefix' => 'clients/'], function () {
         Route::post('logout', [ClientAuthController::class, 'logout']);
         Route::get('get/reservations', [ClientController::class, 'getReservations']);
         Route::put('changePassword', [ClientAuthController::class, 'changePassword']);
-        Route::put('updateProfile', [ClientAuthController::class, 'updateProfile']);
+        Route::put('updateProfile', [ClientController::class, 'updateProfile']);
     });
 });
 
