@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Slot;
-use App\Models\Service;
-use App\Models\Reservation;
-use Illuminate\Http\Request;
-use App\Services\ReservationService;
-use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
+use App\Models\Reservation;
+use App\Services\ReservationService;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {

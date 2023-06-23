@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Slot;
 use App\Models\Barber;
 use App\Models\Barbershop;
+use App\Models\Slot;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
-use DateTime;
 
 class BarberController extends Controller
 {
@@ -100,7 +98,7 @@ class BarberController extends Controller
             ]
         );
         $image = $request->file('image');
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
+        $image_name = time().'.'.$image->getClientOriginalExtension();
         $image->move(public_path('images'), $image_name);
 
         $barber = Barber::create([
@@ -231,13 +229,13 @@ class BarberController extends Controller
         $barber->barbershop_id = $request->barbershop_id;
 
         if ($request->hasFile('image')) {
-            $image_path = public_path('images/' . $barber->image);
+            $image_path = public_path('images/'.$barber->image);
             if (File::exists($image_path)) {
                 File::delete($image_path);
             }
 
             $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image_name = time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('/images'), $image_name);
             $barber->image = $image_name;
         }
@@ -326,6 +324,7 @@ class BarberController extends Controller
             ], 200);
         }
     }
+
     public function checkAvailability(Request $request)
     {
         $startTime = $request->input('start_time');
@@ -353,12 +352,14 @@ class BarberController extends Controller
 
             if ($slot->start_time > $prevEndTime) {
                 $message = 'No slots available';
+
                 return response($message, 201); // Gap found, slots are not after each other
             }
 
             $prevEndTime = $slot->end_time;
         }
         $message = 'Slots available';
+
         return response($message, 201);
     }
 }

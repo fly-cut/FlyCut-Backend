@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained('clients');
             $table->integer('rating');
             $table->string('review')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

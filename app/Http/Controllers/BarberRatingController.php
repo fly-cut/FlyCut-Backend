@@ -86,8 +86,10 @@ class BarberRatingController extends Controller
         $request->validate([
             'barber_id' => 'required|exists:barbers,id',
             'client_id' => 'required|exists:clients,id',
+            'reservation_id' => 'required|exists:reservations,id',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string',
+            'image' => 'nullable|string',
         ]);
 
         $barberRating = BarberRating::create($request->all());
@@ -192,6 +194,7 @@ class BarberRatingController extends Controller
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string',
+            'image' => 'nullable|string',
         ]);
 
         $barberRating = BarberRating::find($id);
@@ -212,16 +215,19 @@ class BarberRatingController extends Controller
      *     summary="Delete a rating for a barber.",
      *     description="Delete a rating for a barber with the given ID.",
      *     tags={"Barber_Ratings"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="The ID of the rating to delete.",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=204,
      *         description="Rating deleted successfully"
@@ -229,7 +235,9 @@ class BarberRatingController extends Controller
      *     @OA\Response(
      *         response=404,
      *         description="Rating not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
@@ -242,17 +250,23 @@ class BarberRatingController extends Controller
      *     }
      * )
      */
-
     public function destroy($id)
     {
         $barberRating = BarberRating::find($id);
+        if (! $barberRating) {
+            return response()->json(['message' => 'Rating not found.'], 404);
+        }
         $barberRating->delete();
         $barber = Barber::find($barberRating->barber_id);
-        $barber->rating = $barber->ratings()->avg('rating');
+        if ($barber->ratings()->avg('rating')) {
+            $barber->rating = $barber->ratings()->avg('rating');
+        } else {
+            $barber->rating = 5.0;
+        }
         $barber->rating_count = $barber->ratings()->count();
         $barber->save();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Rating deleted successfully.'], 200);
     }
 
     /**
@@ -263,28 +277,36 @@ class BarberRatingController extends Controller
      *     summary="Get all ratings for a specific barber.",
      *     description="Get all ratings for a specific barber using the barber's ID.",
      *     tags={"Barber_Ratings"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="The ID of the barber.",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Ratings retrieved successfully.",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Barber not found.",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                 property="message",
      *                 type="string",
@@ -297,12 +319,13 @@ class BarberRatingController extends Controller
      *     }
      * )
      */
-
-
     public function getRatings($id)
     {
+        $barber = Barber::find($id);
+        if (! $barber) {
+            return response()->json(['message' => 'Barber not found.'], 404);
+        }
         $barberRatings = BarberRating::where('barber_id', $id)->get();
-
 
         return response()->json($barberRatings, 200);
     }

@@ -1,20 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SlotController;
-use App\Http\Controllers\BarberController;
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\HairCutController;
-use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\VariationController;
-use App\Http\Controllers\BarbershopController;
-use App\Http\Controllers\ClientAuthController;
-use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\BarberController;
 use App\Http\Controllers\BarberRatingController;
+use App\Http\Controllers\BarbershopController;
+use App\Http\Controllers\BarbershopOwnerAuthController;
 use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\BarbershopRatingController;
-use App\Http\Controllers\BarbershopOwnerAuthController;
+use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\HairCutController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SlotController;
+use App\Http\Controllers\VariationController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,7 +26,6 @@ use App\Http\Controllers\BarbershopOwnerAuthController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 
 Route::post('admins/register', [AdminAuthController::class, 'register']);
 Route::post('admins/login', [AdminAuthController::class, 'login']);
@@ -73,6 +72,7 @@ Route::group(['prefix' => 'clients/'], function () {
         Route::post('reserve', [ReservationController::class, 'store']);
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::post('logout', [ClientAuthController::class, 'logout']);
+        Route::get('get/reservations', [ClientController::class, 'getReservations']);
         Route::put('changePassword', [ClientAuthController::class, 'changePassword']);
         Route::put('updateProfile', [ClientAuthController::class, 'updateProfile']);
     });
@@ -86,7 +86,6 @@ Route::group(['prefix' => 'barbers/', 'middleware' => 'tri-guard'], function () 
 });
 
 Route::group(['prefix' => 'barbershops/', 'middleware' => 'auth:barbershopOwner-api'], function () {
-
     Route::post('', [BarbershopController::class, 'addBarbershop']);
     Route::put('{barbershop_id}', [BarbershopController::class, 'updateBarbershop']);
     Route::delete('{barbershop_id}', [BarbershopController::class, 'destroyBarbershop']);
@@ -130,7 +129,6 @@ Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => 'tri-guard'], f
     Route::delete('{id}', [BarbershopRatingController::class, 'destroy']);
     Route::get('{id}', [BarbershopRatingController::class, 'getRatings']);
 });
-
 
 Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function () {
     Route::get('', [HairCutController::class, 'getAllHaircuts']);

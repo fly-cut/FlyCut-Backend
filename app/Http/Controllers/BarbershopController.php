@@ -3,16 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barbershop;
-use App\Models\BarbershopOwner;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
 
 class BarbershopController extends Controller
 {
-
     /**
      * Get all barbershops.
      *
@@ -21,12 +18,16 @@ class BarbershopController extends Controller
      *     summary="Get all barbershops",
      *     description="Returns a list of all barbershops",
      *     tags={"Barbershop"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of barbershops",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(
+     *
      *                 @OA\Property(property="id", type="integer", example=1),
      *                 @OA\Property(property="name", type="string", example="Barbershop name"),
      *                 @OA\Property(property="image", type="string", example="barbershop.jpg"),
@@ -43,7 +44,6 @@ class BarbershopController extends Controller
      *     }
      * )
      */
-
     public function indexBarbershop()
     {
         return Barbershop::all();
@@ -57,10 +57,13 @@ class BarbershopController extends Controller
      *     summary="Add a new barbershop",
      *     description="Creates a new barbershop based on the provided parameters",
      *     tags={"Barbershop"},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         description="Barbershop details",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="name", type="string", example="Barbershop name"),
      *             @OA\Property(property="image", type="string", format="binary", description="Image file of the barbershop"),
      *             @OA\Property(property="description", type="string", example="Barbershop description"),
@@ -70,18 +73,24 @@ class BarbershopController extends Controller
      *             @OA\Property(property="latitude", type="number", format="float", example=42.12345),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Barbershop added successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="integer", example=200),
      *             @OA\Property(property="message", type="string", example="Barbershop has been added successfully"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=422,
      *         description="Validation error",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="integer", example=422),
      *             @OA\Property(property="errors", type="object", example={"name": {"The name field is required."}}),
      *         )
@@ -91,8 +100,6 @@ class BarbershopController extends Controller
      *     }
      * )
      */
-
-
     public function addBarbershop(Request $request)
     {
         $this->validate($request, [
@@ -115,7 +122,7 @@ class BarbershopController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path() . '/images';
+        $destinationPath = public_path().'/images';
         $path->move($destinationPath, $filename);
         $barbershop->image = $filename;
 
@@ -135,21 +142,26 @@ class BarbershopController extends Controller
      *     summary="Show a barbershop by ID",
      *     description="Returns a specific barbershop by ID",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         description="ID of the barbershop to show",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="The requested barbershop",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="id", type="integer", example=1),
      *             @OA\Property(property="name", type="string", example="Barbershop name"),
      *             @OA\Property(property="image", type="string", example="barbershop.jpg"),
@@ -162,10 +174,13 @@ class BarbershopController extends Controller
      *             @OA\Property(property="updated_at", type="string", format="date-time", example="2021-01-01 00:00:00"),
      *         ),
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Barbershop not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="integer", example=404),
      *             @OA\Property(property="errors", type="string", example="No barbershop found to be shown!"),
      *         ),
@@ -175,9 +190,6 @@ class BarbershopController extends Controller
      *     }
      * )
      */
-
-
-
     public function showBarbershop($barbershop_id)
     {
         $barbershop = Barbershop::find($barbershop_id);
@@ -202,21 +214,26 @@ class BarbershopController extends Controller
      *     summary="Update a barbershop",
      *     description="Updates an existing barbershop",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop to be updated",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         description="Fields to be updated",
+     *
      *         @OA\JsonContent(
      *             required={"name","image","description","address","city","longitude","latitude"},
+     *
      *             @OA\Property(property="name", type="string", example="John's Barbershop"),
      *             @OA\Property(property="image", type="file"),
      *             @OA\Property(property="description", type="string", example="The best barbershop in town"),
@@ -226,18 +243,24 @@ class BarbershopController extends Controller
      *             @OA\Property(property="latitude", type="number", example="40.730610")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Barbershop updated successfully",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="integer", example=200),
      *             @OA\Property(property="message", type="string", example="Barbershop updated successfully")
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="No barbershop found to be updated",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="integer", example=404),
      *             @OA\Property(property="errors", type="string", example="No barbershop found to be updated!")
      *         )
@@ -247,8 +270,6 @@ class BarbershopController extends Controller
      *     }
      * )
      */
-
-
     public function updateBarbershop(Request $request, $barbershop_id)
     {
         $this->validate($request, [
@@ -262,7 +283,7 @@ class BarbershopController extends Controller
         ]);
 
         $barbershop = Barbershop::find($barbershop_id);
-        if (!$barbershop || empty($barbershop)) {
+        if (! $barbershop || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be updated!',
@@ -277,11 +298,11 @@ class BarbershopController extends Controller
             $barbershop->latitude = $request->latitude;
         }
         if ($request->hasFile('image')) {
-            if (File::exists(public_path('images/' . $barbershop->image))) {
-                File::delete(public_path('images/' . $barbershop->image));
+            if (File::exists(public_path('images/'.$barbershop->image))) {
+                File::delete(public_path('images/'.$barbershop->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path() . '/images';
+                $destinationPath = public_path().'/images';
                 $path->move($destinationPath, $filename);
                 $barbershop->image = $filename;
             }
@@ -295,7 +316,6 @@ class BarbershopController extends Controller
         ], 200);
     }
 
-
     /**
      * Delete a barbershop.
      *
@@ -304,20 +324,25 @@ class BarbershopController extends Controller
      *     summary="Delete a barbershop",
      *     description="Deletes a barbershop from the database",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop to be deleted",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Success message",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -330,11 +355,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Barbershop not found",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -352,8 +380,6 @@ class BarbershopController extends Controller
      *     }
      * )
      */
-
-
     public function destroyBarbershop($barbershop_id)
     {
         $barbershop = Barbershop::find($barbershop_id);
@@ -372,31 +398,36 @@ class BarbershopController extends Controller
         }
     }
 
-
     /**
      * @OA\Post(
      *     path="/api/barbershops/{barbershop_id}/services",
      *     summary="Add services to a barbershop",
      *     description="Adds services to the specified barbershop",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\RequestBody(
      *         description="Services to be added",
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="services",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="integer",
      *                     format="int64"
@@ -405,11 +436,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Services added successfully to the barbershop",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -422,11 +456,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="No barbershop found to add services to it!",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -444,7 +481,6 @@ class BarbershopController extends Controller
      *   }
      * )
      */
-
     public function addServicesToBarbershop(Request $request)
     {
         $this->validate($request, [
@@ -459,7 +495,7 @@ class BarbershopController extends Controller
             ], 404);
         }
         foreach ($request->services as $service) {
-            if (!Service::find($service)) {
+            if (! Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be added!',
@@ -480,31 +516,38 @@ class BarbershopController extends Controller
      *     summary="Remove a service from a barbershop",
      *     description="Removes a service from the specified barbershop",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\Parameter(
      *         name="service_id",
      *         in="path",
      *         description="ID of the service to be removed",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Service removed successfully from the barbershop",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -517,11 +560,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="No barbershop found to remove service from it!",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -539,7 +585,6 @@ class BarbershopController extends Controller
      *  }
      * )
      */
-
     public function removeServicesFromBarbershop(Request $request)
     {
         $this->validate($request, [
@@ -557,7 +602,7 @@ class BarbershopController extends Controller
         }
 
         foreach ($request->services as $service) {
-            if (!Service::find($service)) {
+            if (! Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be removed!',
@@ -565,42 +610,51 @@ class BarbershopController extends Controller
             }
             $barbershop->services()->detach($service);
         }
+
         return response()->json([
             'status' => 200,
             'message' => 'Services removed successfully from the barbershop',
         ], 200);
     }
+
     /**
      * @OA\Put(
      *     path="/api/barbershops/{barbershop_id}/services/{service_id}",
      *     summary="Edit the price and slots of a service in a barbershop",
      *     description="Updates the price and slots of the specified service in the specified barbershop",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\Parameter(
      *         name="service_id",
      *         in="path",
      *         description="ID of the service",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\RequestBody(
      *         description="New price and slots of the service",
      *         required=true,
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="price",
      *                 type="number",
@@ -614,11 +668,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Service price and slots updated successfully",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -631,11 +688,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="No barbershop found to edit its services!",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -653,8 +713,6 @@ class BarbershopController extends Controller
      * }
      * )
      */
-
-
     public function editServicePriceAndSlots(Request $request)
     {
         $this->validate($request, [
@@ -664,7 +722,7 @@ class BarbershopController extends Controller
             'services.*.slots' => 'required|numeric',
         ]);
 
-        $barbershop =  Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
 
         if (is_null($barbershop)) {
             return response()->json([
@@ -677,7 +735,7 @@ class BarbershopController extends Controller
             $service_id = $service['id'];
             $price = $service['price'];
             $slots = $service['slots'];
-            if (!Service::find($service_id)) {
+            if (! Service::find($service_id)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be edited!',
@@ -693,30 +751,32 @@ class BarbershopController extends Controller
         ], 200);
     }
 
-
-
-
     /**
      * @OA\Get(
      *     path="/api/barbershops/{barbershop_id}/services",
      *     summary="Get barbershop services with price and slots",
      *     description="Retrieves the services of the specified barbershop along with their prices and available slots",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Returns the services of the barbershop along with their prices and available slots",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -725,8 +785,10 @@ class BarbershopController extends Controller
      *             @OA\Property(
      *                 property="services",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="object",
+     *
      *                     @OA\Property(
      *                         property="id",
      *                         type="integer",
@@ -751,11 +813,14 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="No barbershop found to get its services!",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="status",
      *                 type="integer",
@@ -773,8 +838,6 @@ class BarbershopController extends Controller
      *  }
      * )
      */
-
-
     public function getBarbershopServicesWithPriceAndSlots($barbershop_id)
     {
         $barbershop = Barbershop::find($barbershop_id);
@@ -800,23 +863,29 @@ class BarbershopController extends Controller
      *     summary="Get reviews for a barbershop",
      *     description="Returns a list of reviews for the specified barbershop",
      *     tags={"Barbershop"},
+     *
      *     @OA\Parameter(
      *         name="barbershop_id",
      *         in="path",
      *         description="ID of the barbershop to get reviews for",
      *         required=true,
+     *
      *         @OA\Schema(
      *             type="integer",
      *             format="int64",
      *             example=1
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of reviews",
+     *
      *         @OA\JsonContent(
      *             type="array",
+     *
      *             @OA\Items(
+     *
      *                 @OA\Property(property="barber_id", type="integer", example=1),
      *                 @OA\Property(property="client_id", type="integer", example=1),
      *                 @OA\Property(property="rating", type="integer", example=4),
@@ -824,10 +893,13 @@ class BarbershopController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=404,
      *         description="Barbershop not found",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="integer", example=404),
      *             @OA\Property(property="errors", type="string", example="No barbershop found to get its reviews!")
      *         )
@@ -837,7 +909,6 @@ class BarbershopController extends Controller
      *     }
      * )
      */
-
     public function getBarbershopReviews($barbershop_id)
     {
         $barbershop = Barbershop::find($barbershop_id);
@@ -924,7 +995,7 @@ class BarbershopController extends Controller
      *                        property="barbershop_id",
      *                        type="integer",
      *                        example=1
-     *                     ),     
+     *                     ),
      *                 )
      *             )
      *         )
@@ -971,9 +1042,6 @@ class BarbershopController extends Controller
         ], 200);
     }
 
-
-
-
     public function search(Request $request)
     {
         $searchQuery = $request->get('searchQuery');
@@ -981,9 +1049,9 @@ class BarbershopController extends Controller
         $userLatitude = $request->get('userLatitude');
         $barbershops = Barbershop::query()
             ->where(function ($query) use ($searchQuery) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
-                    ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
-                    ->orWhereRaw('LOWER(address) LIKE ?', ['%' . strtolower($searchQuery) . '%']);
+                $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($searchQuery).'%'])
+                    ->orWhereRaw('LOWER(city) LIKE ?', ['%'.strtolower($searchQuery).'%'])
+                    ->orWhereRaw('LOWER(address) LIKE ?', ['%'.strtolower($searchQuery).'%']);
             })
             ->orderByRaw(
                 "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
