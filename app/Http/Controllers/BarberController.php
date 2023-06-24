@@ -98,7 +98,7 @@ class BarberController extends Controller
             ]
         );
         $image = $request->file('image');
-        $image_name = time().'.'.$image->getClientOriginalExtension();
+        $image_name = time() . '.' . $image->getClientOriginalExtension();
         $image->move(public_path('images'), $image_name);
 
         $barber = Barber::create([
@@ -229,13 +229,13 @@ class BarberController extends Controller
         $barber->barbershop_id = $request->barbershop_id;
 
         if ($request->hasFile('image')) {
-            $image_path = public_path('images/'.$barber->image);
+            $image_path = public_path('images/' . $barber->image);
             if (File::exists($image_path)) {
                 File::delete($image_path);
             }
 
             $image = $request->file('image');
-            $image_name = time().'.'.$image->getClientOriginalExtension();
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
             $image->move(public_path('/images'), $image_name);
             $barber->image = $image_name;
         }
@@ -325,11 +325,8 @@ class BarberController extends Controller
         }
     }
 
-    public function checkAvailability(Request $request)
+    public static function checkAvailability($startTime, $numberOfSlots, $barberId)
     {
-        $startTime = $request->input('start_time');
-        $numberOfSlots = $request->input('number_of_slots');
-        $barberId = $request->input('barber_id');
         // Parse the provided time string
         $startTime = Carbon::parse($startTime);
 
@@ -353,13 +350,13 @@ class BarberController extends Controller
             if ($slot->start_time > $prevEndTime) {
                 $message = 'No slots available';
 
-                return response($message, 201); // Gap found, slots are not after each other
+                return response($message, 401); // Gap found, slots are not after each other
             }
 
             $prevEndTime = $slot->end_time;
         }
         $message = 'Slots available';
 
-        return response($message, 201);
+        return response($message, 200);
     }
 }
