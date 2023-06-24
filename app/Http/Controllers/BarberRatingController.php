@@ -89,7 +89,7 @@ class BarberRatingController extends Controller
             'reservation_id' => 'required|exists:reservations,id',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         $barberRating = BarberRating::create($request->all());
@@ -253,7 +253,7 @@ class BarberRatingController extends Controller
     public function destroy($id)
     {
         $barberRating = BarberRating::find($id);
-        if (! $barberRating) {
+        if (!$barberRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
         $barberRating->delete();
@@ -322,7 +322,7 @@ class BarberRatingController extends Controller
     public function getRatings($id)
     {
         $barber = Barber::find($id);
-        if (! $barber) {
+        if (!$barber) {
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = BarberRating::where('barber_id', $id)->get();
