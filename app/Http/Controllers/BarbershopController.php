@@ -1101,10 +1101,12 @@ class BarbershopController extends Controller
             'barbershop_id' => 'required|integer',
         ]);
 
-        $reservations = Reservation::where('barbershop_id', $request->barbershop_id)->get();
+        $reservations = Reservation::where('barbershop_id', $request->barbershop_id)->orderBy("date", 'asc')->get();
+
         $data = [];
 
         foreach ($reservations as $reservation) {
+            ReservationController::getStatus($reservation);
             $reservationId = $reservation->id;
             $services = Service::whereHas('reservations', function ($query) use ($reservationId) {
                 $query->where('reservation_id', $reservationId);

@@ -37,14 +37,14 @@ class ReservationService
     private function createReservation(Request $request)
     {
         $dateString = $request->input('start_time');
-        $dateTime = Carbon::parse($dateString);
-        $date = $dateTime->format('Y-m-d');
+        //$dateTime = Carbon::parse($dateString);
+        //$date = $dateTime->format('Y-m-d');
 
         return Reservation::create([
             'barber_id' => $request->barber_id,
             'user_id' => auth()->user()->id,
             'barbershop_id' => $request->barbershop_id,
-            'date' => $date,
+            'date' => $dateString,
         ]);
     }
 
