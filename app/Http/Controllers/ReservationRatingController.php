@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ReservationRating;
 use App\Models\Barber;
 use App\Models\Barbershop;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class ReservationRatingController extends Controller
@@ -96,6 +97,10 @@ class ReservationRatingController extends Controller
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = ReservationRating::where('barber_id', $id)->get();
+        foreach ($barberRatings as $rating) {
+            $rating->client_name = Client::find($rating->client_id)->name;
+            $rating->client_image = Client::find($rating->client_id)->image;
+        }
 
         return response()->json($barberRatings, 200);
     }
@@ -107,6 +112,11 @@ class ReservationRatingController extends Controller
             return response()->json(['message' => 'Barbershop not found.'], 404);
         }
         $barbershopRatings = ReservationRating::where('barbershop_id', $id)->get();
+        //attach the client name and image to the rating
+        foreach ($barbershopRatings as $rating) {
+            $rating->client_name = Client::find($rating->client_id)->name;
+            $rating->client_image = Client::find($rating->client_id)->image;
+        }
 
         return response()->json($barbershopRatings, 200);
     }
