@@ -23,12 +23,7 @@ class ReservationController extends Controller
         ]);
 
         $reservationService = new ReservationService();
-        $reservation = $reservationService->store($request);
-
-        return response()->json([
-            'message' => 'Reservation created successfully',
-            'reservation' => $reservation,
-        ], 201);
+        return $reservationService->store($request);
     }
 
     /**
