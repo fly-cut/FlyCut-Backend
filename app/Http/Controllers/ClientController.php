@@ -111,7 +111,7 @@ class ClientController extends Controller
         $user->update($formData);
         $message = [
             'message' => 'Profile updated successfully',
-            'user' => $user,
+            'client' => $user,
         ];
 
         return response($message, 200);
