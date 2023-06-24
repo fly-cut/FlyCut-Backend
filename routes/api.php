@@ -73,7 +73,7 @@ Route::group(['prefix' => 'clients/'], function () {
         Route::post('email/verify', [ClientAuthController::class, 'verifyEmail']);
         Route::post('logout', [ClientAuthController::class, 'logout']);
         Route::get('get/reservations', [ClientController::class, 'getReservations']);
-        Route::put('changePassword', [ClientAuthController::class, 'changePassword']);
+        Route::put('changePassword', [ClientController::class, 'changePassword']);
         Route::put('updateProfile', [ClientController::class, 'updateProfile']);
     });
 });
