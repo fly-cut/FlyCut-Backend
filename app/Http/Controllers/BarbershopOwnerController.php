@@ -110,7 +110,7 @@ class BarbershopOwnerController extends Controller
         $user->update($formData);
         $message = [
             'message' => 'Profile updated successfully',
-            'client' => $user,
+            'barbershopOwner' => $user,
         ];
 
         return response($message, 200);
