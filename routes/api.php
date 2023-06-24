@@ -13,6 +13,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\ReservationRatingController;
+use App\Models\Barbershop;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -101,6 +102,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'tri-guard'], function
     Route::get('get/slots', [SlotController::class, 'getSlots']);
     Route::post('search', [BarbershopController::class, 'search']);
     Route::post('nearby', [BarbershopController::class, 'getNearbyBarbershops']);
+    Route::get('get/reservations', [BarbershopController::class, 'getReservations']);
 });
 
 Route::group(['prefix' => 'services/', 'middleware' => 'tri-guard'], function () {
