@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Barbershop;
 use App\Models\Service;
+use App\Models\Variation;
+use App\Models\Barbershop;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -122,7 +124,7 @@ class BarbershopController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path().'/images';
+        $destinationPath = public_path() . '/images';
         $path->move($destinationPath, $filename);
         $barbershop->image = $filename;
 
@@ -283,7 +285,7 @@ class BarbershopController extends Controller
         ]);
 
         $barbershop = Barbershop::find($barbershop_id);
-        if (! $barbershop || empty($barbershop)) {
+        if (!$barbershop || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be updated!',
@@ -298,11 +300,11 @@ class BarbershopController extends Controller
             $barbershop->latitude = $request->latitude;
         }
         if ($request->hasFile('image')) {
-            if (File::exists(public_path('images/'.$barbershop->image))) {
-                File::delete(public_path('images/'.$barbershop->image));
+            if (File::exists(public_path('images/' . $barbershop->image))) {
+                File::delete(public_path('images/' . $barbershop->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path().'/images';
+                $destinationPath = public_path() . '/images';
                 $path->move($destinationPath, $filename);
                 $barbershop->image = $filename;
             }
@@ -495,7 +497,7 @@ class BarbershopController extends Controller
             ], 404);
         }
         foreach ($request->services as $service) {
-            if (! Service::find($service)) {
+            if (!Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be added!',
@@ -602,7 +604,7 @@ class BarbershopController extends Controller
         }
 
         foreach ($request->services as $service) {
-            if (! Service::find($service)) {
+            if (!Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be removed!',
@@ -735,7 +737,7 @@ class BarbershopController extends Controller
             $service_id = $service['id'];
             $price = $service['price'];
             $slots = $service['slots'];
-            if (! Service::find($service_id)) {
+            if (!Service::find($service_id)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be edited!',
@@ -1049,9 +1051,9 @@ class BarbershopController extends Controller
         $userLatitude = $request->get('userLatitude');
         $barbershops = Barbershop::query()
             ->where(function ($query) use ($searchQuery) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($searchQuery).'%'])
-                    ->orWhereRaw('LOWER(city) LIKE ?', ['%'.strtolower($searchQuery).'%'])
-                    ->orWhereRaw('LOWER(address) LIKE ?', ['%'.strtolower($searchQuery).'%']);
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(address) LIKE ?', ['%' . strtolower($searchQuery) . '%']);
             })
             ->orderByRaw(
                 "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
@@ -1090,5 +1092,44 @@ class BarbershopController extends Controller
                 'errors' => 'No barbershop found!',
             ], 404);
         }
+    }
+    public function getReservations(Request $request)
+    {
+        //$user = $request->user();
+        //$user->id;
+        $request->validate([
+            'barbershop_id' => 'required|integer',
+        ]);
+
+        $reservations = Reservation::where('barbershop_id', $request->barbershop_id)->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            $reservationId = $reservation->id;
+            $services = Service::whereHas('reservations', function ($query) use ($reservationId) {
+                $query->where('reservation_id', $reservationId);
+            })->get();
+
+            $servicedata = [];
+
+            foreach ($services as $service) {
+                $variations = Variation::where('service_id', $service->id)->get();
+                $variationData = $variations->toArray();
+
+                $serviceData = $service->toArray();
+                $serviceData['variation'] = $variationData[0] ?? null;
+
+                $servicedata[] = $serviceData;
+            }
+
+            $element = [
+                'reservation' => $reservation,
+                'services' => $servicedata,
+            ];
+
+            $data[] = $element;
+        }
+
+        return response()->json($data);
     }
 }
