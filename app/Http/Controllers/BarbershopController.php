@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barbershop;
+use App\Models\Client;
 use App\Models\Reservation;
 use App\Models\Service;
 use App\Models\Variation;
@@ -1096,15 +1097,12 @@ class BarbershopController extends Controller
         }
     }
 
-    public function getReservations(Request $request)
+    public function getReservations()
     {
-        //$user = $request->user();
-        //$user->id;
-        $request->validate([
-            'barbershop_id' => 'required|integer',
-        ]);
+        $barbershop_id = Barbershop::where('barbershop_owner_id', auth()->user()->id)->first()->id;
+        
 
-        $reservations = Reservation::where('barbershop_id', $request->barbershop_id)->orderBy('date', 'asc')->get();
+        $reservations = Reservation::where('barbershop_id', $barbershop_id)->orderBy('date', 'asc')->get();
 
         $data = [];
 
@@ -1126,10 +1124,12 @@ class BarbershopController extends Controller
 
                 $servicedata[] = $serviceData;
             }
+            $client = Client::where('id', $reservation->user_id)->first();
 
             $element = [
                 'reservation' => $reservation,
                 'services' => $servicedata,
+                'client' => $client,
             ];
 
             $data[] = $element;
