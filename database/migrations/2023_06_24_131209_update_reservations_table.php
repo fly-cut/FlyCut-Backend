@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reservations', function (Blueprint $table) {
+            $table->string('date')->nullable();
             $table->string('status')->default('Upcoming');
         });
     }
@@ -21,8 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('barber_ratings', function (Blueprint $table) {
+        Schema::table('reservations', function (Blueprint $table) {
             $table->dropColumn('date');
+            $table->dropColumn('status');
         });
     }
 };
