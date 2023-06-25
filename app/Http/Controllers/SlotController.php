@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Slot;
 use App\Models\Barber;
+use App\Models\Slot;
 use Illuminate\Http\Request;
 
 class SlotController extends Controller
@@ -24,7 +24,7 @@ class SlotController extends Controller
                 'message' => 'Barber does not work in this barbershop',
             ], 403);
         }
-        $slots = Slot::where('start_time', 'LIKE', $request->day . '%')
+        $slots = Slot::where('start_time', 'LIKE', $request->day.'%')
             ->where('barber_id', $request->barber_id)
             ->get();
         //check that barber really works in the barbershop

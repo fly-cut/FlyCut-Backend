@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReservationRating;
 use App\Models\Barber;
 use App\Models\Barbershop;
 use App\Models\Client;
+use App\Models\ReservationRating;
 use Illuminate\Http\Request;
 
 class ReservationRatingController extends Controller
@@ -65,7 +65,7 @@ class ReservationRatingController extends Controller
     public function destroy($id)
     {
         $reservationRating = ReservationRating::find($id);
-        if (!$reservationRating) {
+        if (! $reservationRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
 
@@ -90,10 +90,11 @@ class ReservationRatingController extends Controller
 
         return response()->json(['message' => 'Rating deleted successfully.'], 200);
     }
+
     public function getBarberRatings($id)
     {
         $barber = Barber::find($id);
-        if (!$barber) {
+        if (! $barber) {
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = ReservationRating::where('barber_id', $id)->get();
@@ -108,7 +109,7 @@ class ReservationRatingController extends Controller
     public function getBarbershopRatings($id)
     {
         $barbershop = Barbershop::find($id);
-        if (!$barbershop) {
+        if (! $barbershop) {
             return response()->json(['message' => 'Barbershop not found.'], 404);
         }
         $barbershopRatings = ReservationRating::where('barbershop_id', $id)->get();

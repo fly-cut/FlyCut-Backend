@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barber;
-use App\Models\Barbershop;
 use App\Models\Slot;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -98,7 +97,7 @@ class BarberController extends Controller
             ]
         );
         $image = $request->file('image');
-        $image_name = time() . '.' . $image->getClientOriginalExtension();
+        $image_name = time().'.'.$image->getClientOriginalExtension();
         $image->move(public_path('images'), $image_name);
 
         $barber = Barber::create([
@@ -229,13 +228,13 @@ class BarberController extends Controller
         $barber->barbershop_id = $request->barbershop_id;
 
         if ($request->hasFile('image')) {
-            $image_path = public_path('images/' . $barber->image);
+            $image_path = public_path('images/'.$barber->image);
             if (File::exists($image_path)) {
                 File::delete($image_path);
             }
 
             $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image_name = time().'.'.$image->getClientOriginalExtension();
             $image->move(public_path('/images'), $image_name);
             $barber->image = $image_name;
         }

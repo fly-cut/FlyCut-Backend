@@ -9,11 +9,10 @@ use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HairCutController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ReservationRatingController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\VariationController;
-use App\Http\Controllers\ReservationRatingController;
-use App\Models\Barbershop;
 use Illuminate\Support\Facades\Route;
 
 /*

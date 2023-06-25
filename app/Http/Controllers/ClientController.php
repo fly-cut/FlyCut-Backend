@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Client;
-use App\Models\Service;
-use App\Models\Variation;
-use App\Models\Reservation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Models\Client;
+use App\Models\Reservation;
+use App\Models\Service;
+use App\Models\Variation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
@@ -78,7 +77,7 @@ class ClientController extends Controller
         $user = $request->user();
         $current_password = $request->current_password;
         $new_password = $request->new_password;
-        if (!Hash::check($current_password, $user->password)) {
+        if (! Hash::check($current_password, $user->password)) {
             $message = [
                 'message' => 'Password isn\'t correct',
             ];
@@ -103,7 +102,7 @@ class ClientController extends Controller
         $user = $request->user();
         if ($request->file('image')) {
             $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image_name = time().'.'.$image->getClientOriginalExtension();
 
             $image->move(public_path('images/'), $image_name);
             $formData['image'] = $image_name;

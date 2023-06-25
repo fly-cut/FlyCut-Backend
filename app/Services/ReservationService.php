@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\Controllers\BarberController;
-use App\Models\Barber;
 use App\Models\Barbershop;
 use App\Models\Reservation;
 use App\Models\Service;
@@ -44,6 +43,7 @@ class ReservationService
     private function createReservation(Request $request)
     {
         $dateString = $request->input('start_time');
+
         return Reservation::create([
             'barber_id' => $request->barber_id,
             'user_id' => auth()->user()->id,
@@ -71,6 +71,7 @@ class ReservationService
 
         $barberId = $request->input('barber_id');
         $response = BarberController::checkAvailability($startTime, $totalslots, $barberId);
+
         return $response;
     }
 

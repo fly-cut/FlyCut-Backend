@@ -253,7 +253,7 @@ class BarberRatingController extends Controller
     public function destroy($id)
     {
         $barberRating = BarberRating::find($id);
-        if (!$barberRating) {
+        if (! $barberRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
         $barberRating->delete();
@@ -322,7 +322,7 @@ class BarberRatingController extends Controller
     public function getRatings($id)
     {
         $barber = Barber::find($id);
-        if (!$barber) {
+        if (! $barber) {
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = BarberRating::where('barber_id', $id)->get();

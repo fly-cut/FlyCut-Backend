@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ReservationRating extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'barbershop_id',
         'barber_id',

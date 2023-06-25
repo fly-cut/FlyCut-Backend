@@ -6,8 +6,8 @@ use App\Http\Requests\UpdateReservationRequest;
 use App\Models\Reservation;
 use App\Models\Slot;
 use App\Services\ReservationService;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
@@ -25,6 +25,7 @@ class ReservationController extends Controller
         ]);
 
         $reservationService = new ReservationService();
+
         return $reservationService->store($request);
     }
 
@@ -75,6 +76,7 @@ class ReservationController extends Controller
     {
         //
     }
+
     public static function getStatus(Reservation $reservation)
     {
         $timeNow = Carbon::now('Africa/Cairo');
