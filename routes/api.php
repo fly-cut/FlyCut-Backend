@@ -91,6 +91,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'auth:barbershopOwner-
     Route::post('add/services', [BarbershopController::class, 'addServicesToBarbershop']);
     Route::post('remove/services', [BarbershopController::class, 'removeServicesFromBarbershop']);
     Route::put('edit/services/price/slot', [BarbershopController::class, 'editServicePriceAndSlots']);
+    Route::get('get/reservations', [BarbershopController::class, 'getReservations']);
 });
 
 Route::group(['prefix' => 'barbershops/', 'middleware' => 'tri-guard'], function () {
@@ -101,7 +102,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'tri-guard'], function
     Route::get('get/slots', [SlotController::class, 'getSlots']);
     Route::post('search', [BarbershopController::class, 'search']);
     Route::post('nearby', [BarbershopController::class, 'getNearbyBarbershops']);
-    Route::get('get/reservations', [BarbershopController::class, 'getReservations']);
+    
 });
 
 Route::group(['prefix' => 'services/', 'middleware' => 'tri-guard'], function () {
