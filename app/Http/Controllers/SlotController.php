@@ -33,8 +33,6 @@ class SlotController extends Controller
         $slots = Slot::where('start_time', 'LIKE', $request->day . '%')
             ->where('barber_id', $request->barber_id)
             ->get();
-        $message = 'Slots for ' . $request->day;
-        return response()->json(['message' => $message, 'slots' => $slots]);
         $data = [];
         foreach ($slots as $slot) {;
             $slotData = [
