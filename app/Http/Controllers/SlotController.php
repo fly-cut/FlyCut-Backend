@@ -13,7 +13,11 @@ class SlotController extends Controller
 {
     public function index()
     {
-        return response()->json(Slot::all());
+        return Slot::all();
+    }
+    public function show($id)
+    {
+        return response()->json(Slot::findOrFail($id));
     }
     public function getSlots(Request $request)
     {

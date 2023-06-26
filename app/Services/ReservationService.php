@@ -121,7 +121,7 @@ class ReservationService
                     'reservation_id' => $reservation->id,
                     'status' => 'reserved'
                 ]);
-                $slot->save();
+
                 $start = $intervalEnd;
             }
         }
