@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('reservation_id')->constrained('reservations');
             $table->foreignId('service_id')->constrained('services');
-            $table->foreignId('variation_id')->constrained('variations')->nullable();
+            $table->foreignId('variation_id')->nullable()->constrained('variations')->nullable();
             $table->timestamps();
         });
     }

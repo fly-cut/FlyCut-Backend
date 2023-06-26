@@ -80,15 +80,18 @@ class ReservationService
         $services = $request->input('services');
         foreach ($services as $service) {
             $current_service = Service::where('name', $service['name'])->first();
-            if ($service['variation_name']) {
+            if (isset($service['variation_name'])) {
                 $service_variation = Variation::where('name', $service['variation_name'])->first();
-                $variaton_id = $service_variation->id;
-                $current_service->reservations()->attach($reservation->id, ['variation_id' => $variaton_id]);
+                $variation_id = $service_variation->id;
+                $current_service->reservations()->attach($reservation->id, ['variation_id' => $variation_id]);
             } else {
                 $current_service->reservations()->attach($reservation->id);
             }
         }
     }
+
+
+
 
     private function createSlotsForReservation(Request $request, Reservation $reservation)
     {
