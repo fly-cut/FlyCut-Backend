@@ -92,7 +92,7 @@ class BarbershopOwnerAuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-        ]);
+        ]);/*
         if ($barbershop_owner) {
             $verify2 = DB::table('password_reset_tokens')->where([
                 ['email', $request->all()['email']],
@@ -111,6 +111,7 @@ class BarbershopOwnerAuthController extends Controller
                 );
         }
         Mail::to($request->email)->send(new VerifyEmail($pin));
+        */
         $token = $barbershop_owner->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
         $response = [
             'barbershopOwner' => $barbershop_owner,
@@ -196,7 +197,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (! $barbershop_owner || ! Hash::check($request->password, $barbershop_owner->password)) {
+        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
                     'Response' => 'Please enter the right email or password!',
@@ -350,7 +351,7 @@ class BarbershopOwnerAuthController extends Controller
     public function getBarbershopOfBarbershopOwner()
     {
         $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
-        if (! $barbershop) {
+        if (!$barbershop) {
             return new JsonResponse(
                 [
                     'success' => false,

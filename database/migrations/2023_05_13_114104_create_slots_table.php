@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('start_time');
             $table->string('end_time');
             $table->foreignId('barber_id')->constrained('barbers');
-            $table->foreignId('reservation_id')->constrained('reservations');
+            $table->foreignId('reservation_id')->nullable()->constrained('reservations');
+            $table->string('status')->default('reserved');
             $table->timestamps();
         });
     }

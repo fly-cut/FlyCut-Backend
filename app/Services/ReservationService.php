@@ -115,6 +115,7 @@ class ReservationService
                     'end_time' => $intervalEnd->format('Y-m-d H:i:s'),
                     'barber_id' => $request->barber_id,
                     'reservation_id' => $reservation->id,
+                    'status' => 'reserved'
                 ]);
 
                 $start = $intervalEnd;
