@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 
 class SlotController extends Controller
 {
+    public function index()
+    {
+        return response()->json(Slot::all());
+    }
     public function getSlots(Request $request)
     {
         // Check if the request is valid

@@ -104,6 +104,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'tri-guard'], function
     Route::post('nearby', [BarbershopController::class, 'getNearbyBarbershops']);
     Route::put('/slots/changeStausToFree', [SlotController::class, 'changeStatusToFree']);
     Route::put('/slots/changeStausToBusy', [SlotController::class, 'changeStatusToBusy']);
+    Route::get('slots/get/all', [SlotController::class, 'index']);
 });
 
 Route::group(['prefix' => 'services/', 'middleware' => 'tri-guard'], function () {
