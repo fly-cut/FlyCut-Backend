@@ -111,6 +111,7 @@ class ReservationService
                     $total_price += $service->pivot->price;
                 }
             }
+
             for ($i = 0; $i < $numberOfSlots; $i++) {
                 $intervalEnd = $start->copy()->addMinutes(15);
                 $slot = Slot::create([
@@ -120,7 +121,7 @@ class ReservationService
                     'reservation_id' => $reservation->id,
                     'status' => 'reserved'
                 ]);
-
+                $slot->save();
                 $start = $intervalEnd;
             }
         }
