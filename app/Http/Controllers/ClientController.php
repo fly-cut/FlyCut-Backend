@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Slot;
+use App\Models\Barber;
 use App\Models\Client;
 use App\Models\Service;
 use App\Models\Variation;
