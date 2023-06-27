@@ -14,6 +14,7 @@ use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\VariationController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,4 +134,8 @@ Route::group(['prefix' => 'barbershop/ratings/', 'middleware' => 'tri-guard'], f
 Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function () {
     Route::get('', [HairCutController::class, 'getAllHaircuts']);
     Route::post('haircut/search', [HairCutController::class, 'search']);
+});
+
+Route::group(['prefix' => 'payments/'], function (){
+    Route::post('return', [PaymentController::class, 'payment']);
 });
