@@ -109,6 +109,8 @@ class ClientController extends Controller
             $formData['image'] = $image_name;
         }
         $user->update($formData);
+        $user->update(['email_verified_at' => null]);
+        
         $message = [
             'message' => 'Profile updated successfully',
             'client' => $user,
