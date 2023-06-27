@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Models\Barbershop;
 use App\Models\Client;
 use App\Models\Reservation;
 use App\Models\Service;
@@ -141,10 +142,16 @@ class ClientController extends Controller
 
                 $servicedata[] = $serviceData;
             }
+            $barbershop = Barbershop::find($reservation->barbershop_id);
+            $barber = Barber::find($reservation->barber_id);
 
             $element = [
                 'reservation' => $reservation,
                 'services' => $servicedata,
+                'barbershop_image' => $barbershop->image,
+                'barbershop_name' => $barbershop->name,
+                'barbershop_city' => $barbershop->city,
+                'barber_image' => $barber->image,
             ];
 
             $data[] = $element;
