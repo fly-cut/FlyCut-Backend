@@ -125,7 +125,7 @@ class ReservationRatingController extends Controller
             $services_ids = DB::table('reservation_service')->where('reservation_id', $rating->reservation_id)->pluck('service_id');
             foreach ($services_ids as $service_id) {
                 $service = Service::find($service_id);
-                array_push($services, $service->name);
+                array_push($services, $service);
             }
             $rating->services = $services;
         }
