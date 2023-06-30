@@ -6,6 +6,9 @@ use App\Models\Barber;
 use App\Models\Barbershop;
 use App\Models\Client;
 use App\Models\ReservationRating;
+use App\Models\Reservation;
+use App\Models\Service;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ReservationRatingController extends Controller
@@ -65,7 +68,7 @@ class ReservationRatingController extends Controller
     public function destroy($id)
     {
         $reservationRating = ReservationRating::find($id);
-        if (! $reservationRating) {
+        if (!$reservationRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
 
@@ -94,7 +97,7 @@ class ReservationRatingController extends Controller
     public function getBarberRatings($id)
     {
         $barber = Barber::find($id);
-        if (! $barber) {
+        if (!$barber) {
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = ReservationRating::where('barber_id', $id)->get();
@@ -109,7 +112,7 @@ class ReservationRatingController extends Controller
     public function getBarbershopRatings($id)
     {
         $barbershop = Barbershop::find($id);
-        if (! $barbershop) {
+        if (!$barbershop) {
             return response()->json(['message' => 'Barbershop not found.'], 404);
         }
         $barbershopRatings = ReservationRating::where('barbershop_id', $id)->get();
@@ -117,6 +120,14 @@ class ReservationRatingController extends Controller
         foreach ($barbershopRatings as $rating) {
             $rating->client_name = Client::find($rating->client_id)->name;
             $rating->client_image = Client::find($rating->client_id)->image;
+            $rating->barber_name = Barber::find($rating->barber_id)->name;
+            $services = [];
+            $services_ids = DB::table('reservation_service')->where('reservation_id', $rating->reservation_id)->pluck('service_id');
+            foreach ($services_ids as $service_id) {
+                $service = Service::find($service_id);
+                array_push($services, $service->name);
+            }
+            $rating->services = $services;
         }
 
         return response()->json($barbershopRatings, 200);
