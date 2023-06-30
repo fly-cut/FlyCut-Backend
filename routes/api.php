@@ -74,6 +74,7 @@ Route::group(['prefix' => 'clients/'], function () {
         Route::get('get/reservations', [ClientController::class, 'getReservations']);
         Route::put('changePassword', [ClientController::class, 'changePassword']);
         Route::put('updateProfile', [ClientController::class, 'updateProfile']);
+        Route::get('checkBarberAvailability', [ClientController::class, 'checkBarberAvailability']);
     });
 });
 
@@ -81,7 +82,6 @@ Route::group(['prefix' => 'barbers/', 'middleware' => 'tri-guard'], function () 
     Route::post('', [BarberController::class, 'store']);
     Route::delete('{barber}', [BarberController::class, 'destroy']);
     Route::put('{barber}', [BarberController::class, 'update']);
-    Route::get('checkAvailability', [BarberController::class, 'checkAvailability']);
 });
 
 Route::group(['prefix' => 'barbershops/', 'middleware' => 'auth:barbershopOwner-api'], function () {
