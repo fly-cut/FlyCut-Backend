@@ -10,14 +10,9 @@ class PaymentController extends Controller
     public function pay(Request $request)
     {
         $request->validate([
-            'auth_token' => 'required',
             'delivery_needed' => 'required',
             'amount_cents' => 'required',
-            'currency' => 'required',
-            'items.*.name' => 'required',
-            'items.*.[amount_cents]' => 'required',
-            'items.*.[description]' => 'required',
-            'items.*.[quantity]' => 'required',
+            'items' => 'required',
         ]);
 
         $request_new_token = Http::withHeaders(['content-type' => 'application/json'])
@@ -26,6 +21,24 @@ class PaymentController extends Controller
                 "username" => '01118080632',
                 "password" => 'zfsQ4tD8/pju&Z/',
             ])->json();
+
+        $auth_token = $request_new_token['token'];
+
+        $reqeust_new_order = Http::withHeaders([
+            'content-type' => 'application/json',
+        ])->post('https://accept.paymob.com/api/ecommerce/orders', [
+            "auth_token" => $auth_token,
+            "delivery_needed" => $request->delivery_needed,
+            "amount_cents" => $request->amount_cents,
+            "currency" => "EGP",
+            "items" => $request->items,
+        ])->json();
+
+        return response()->json([
+            'success' => true,
+            'data' => $reqeust_new_order,
+        ]);
+
         
         
     }
