@@ -137,5 +137,6 @@ Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function ()
 });
 
 Route::group(['prefix' => 'payments/'], function (){
-    Route::post('return', [PaymentController::class, 'pay']);
+    Route::post('get/payment/token', [PaymentController::class, 'pay']);
+    Route::get('callback', [PaymentController::class, 'callback']);
 });
