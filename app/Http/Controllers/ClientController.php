@@ -2,76 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Slot;
 use App\Models\Barber;
-use App\Models\Client;
-use App\Models\Service;
-use App\Models\Variation;
 use App\Models\Barbershop;
 use App\Models\Reservation;
+use App\Models\Service;
+use App\Models\Slot;
+use App\Models\Variation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreClientRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Client $client)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Client $client)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateClientRequest $request, Client $client)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Client $client)
-    {
-        //
-    }
-
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -81,7 +23,7 @@ class ClientController extends Controller
         $user = $request->user();
         $current_password = $request->current_password;
         $new_password = $request->new_password;
-        if (!Hash::check($current_password, $user->password)) {
+        if (! Hash::check($current_password, $user->password)) {
             $message = [
                 'message' => 'Password isn\'t correct',
             ];
@@ -106,7 +48,7 @@ class ClientController extends Controller
         $user = $request->user();
         if ($request->file('image')) {
             $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
+            $image_name = time().'.'.$image->getClientOriginalExtension();
 
             $image->move(public_path('images/'), $image_name);
             $formData['image'] = $image_name;
@@ -164,6 +106,7 @@ class ClientController extends Controller
 
         return response()->json($data);
     }
+
     public function checkBarberAvailability(Request $request)
     {
         $barberId = $request->input('barberId');

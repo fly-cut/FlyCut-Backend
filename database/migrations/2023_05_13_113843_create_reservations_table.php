@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('price')->default(0);
             $table->string('date')->nullable();
             $table->string('status')->default('Upcoming');
+            $table->boolean('is_rated')->default(false);
             $table->timestamps();
         });
     }

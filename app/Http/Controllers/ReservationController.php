@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateReservationRequest;
 use App\Models\Reservation;
 use App\Models\Slot;
 use App\Services\ReservationService;

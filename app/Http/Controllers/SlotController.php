@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Slot;
 use App\Models\Barber;
 use App\Models\Client;
 use App\Models\Reservation;
+use App\Models\Slot;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SlotController extends Controller
@@ -15,10 +15,12 @@ class SlotController extends Controller
     {
         return Slot::all();
     }
+
     public function show($id)
     {
         return response()->json(Slot::findOrFail($id));
     }
+
     public function getSlots(Request $request)
     {
         // Check if the request is valid
@@ -38,11 +40,11 @@ class SlotController extends Controller
             ], 403);
         }
 
-        $slots = Slot::where('start_time', 'LIKE', $request->day . '%')
+        $slots = Slot::where('start_time', 'LIKE', $request->day.'%')
             ->where('barber_id', $request->barber_id)
             ->get();
         $data = [];
-        foreach ($slots as $slot) {;
+        foreach ($slots as $slot) {
             $slotData = [
                 'start_time' => $slot->start_time,
                 'end_time' => $slot->end_time,
@@ -66,8 +68,6 @@ class SlotController extends Controller
         return response()->json($data);
     }
 
-
-
     public function changeStatusToBusy(Request $request)
     {
         $startTime = $request->input('start_time');
@@ -79,11 +79,12 @@ class SlotController extends Controller
             'start_time' => $start,
             'end_time' => $end,
             'barber_id' => $barber_id,
-            "reservation_id" => null,
+            'reservation_id' => null,
         ]);
         $slot->status = 'busy';
         $slot->save();
         $message = 'Slot status changed to busy';
+
         return response()->json(['message' => $message, 'slot' => $slot]);
     }
 
@@ -95,6 +96,7 @@ class SlotController extends Controller
         if ($slot->status == 'busy') {
             $slot->delete();
             $message = 'Slot status changed to free';
+
             return response()->json(['message' => $message]);
         }
     }

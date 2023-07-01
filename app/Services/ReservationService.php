@@ -90,9 +90,6 @@ class ReservationService
         }
     }
 
-
-
-
     private function createSlotsForReservation(Request $request, Reservation $reservation)
     {
         $services = $request->input('services');
@@ -119,7 +116,7 @@ class ReservationService
                     'end_time' => $intervalEnd->format('Y-m-d H:i:s'),
                     'barber_id' => $request->barber_id,
                     'reservation_id' => $reservation->id,
-                    'status' => 'reserved'
+                    'status' => 'reserved',
                 ]);
 
                 $start = $intervalEnd;

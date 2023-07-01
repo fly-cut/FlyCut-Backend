@@ -1100,7 +1100,6 @@ class BarbershopController extends Controller
     public function getReservations(Request $request)
     {
         $barbershop_id = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first()->id;
-        
 
         $reservations = Reservation::where('barbershop_id', $barbershop_id)->orderBy('date', 'asc')->get();
 

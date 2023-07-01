@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Barber;
 use App\Models\Barbershop;
 use App\Models\Client;
-use App\Models\ReservationRating;
 use App\Models\Reservation;
+use App\Models\ReservationRating;
 use App\Models\Service;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReservationRatingController extends Controller
 {
@@ -27,6 +27,9 @@ class ReservationRatingController extends Controller
         ]);
 
         $reservationRating = ReservationRating::create($request->all());
+        $reservation = Reservation::find($request->reservation_id);
+        $reservation->is_rated = true;
+        $reservation->save();
         $barber = Barber::find($request->barber_id);
         $barber->rating = ReservationRating::where('barber_id', $request->barber_id)->avg('barber_rating');
         $barber->rating_count = ReservationRating::where('barber_id', $request->barber_id)->count();
@@ -68,12 +71,14 @@ class ReservationRatingController extends Controller
     public function destroy($id)
     {
         $reservationRating = ReservationRating::find($id);
-        if (!$reservationRating) {
+        if (! $reservationRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
 
         $barber = Barber::find($reservationRating->barber_id);
         $barbershop = Barbershop::find($reservationRating->barbershop_id);
+        $reservation = Reservation::find($reservationRating->reservation_id);
+        $reservation->is_rated = false;
         $reservationRating->delete();
         if (ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->count() > 0) {
             $barbershop->rating = ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->avg('barbershop_rating');
@@ -97,7 +102,7 @@ class ReservationRatingController extends Controller
     public function getBarberRatings($id)
     {
         $barber = Barber::find($id);
-        if (!$barber) {
+        if (! $barber) {
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = ReservationRating::where('barber_id', $id)->get();
@@ -112,7 +117,7 @@ class ReservationRatingController extends Controller
     public function getBarbershopRatings($id)
     {
         $barbershop = Barbershop::find($id);
-        if (!$barbershop) {
+        if (! $barbershop) {
             return response()->json(['message' => 'Barbershop not found.'], 404);
         }
         $barbershopRatings = ReservationRating::where('barbershop_id', $id)->get();

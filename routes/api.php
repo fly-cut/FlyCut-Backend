@@ -8,12 +8,12 @@ use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HairCutController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReservationRatingController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\VariationController;
-use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,7 +133,7 @@ Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function ()
     Route::post('haircut/search', [HairCutController::class, 'search']);
 });
 
-Route::group(['prefix' => 'payments/'], function (){
+Route::group(['prefix' => 'payments/'], function () {
     Route::post('get/payment/token', [PaymentController::class, 'pay']);
     Route::get('callback', [PaymentController::class, 'callback']);
 });
