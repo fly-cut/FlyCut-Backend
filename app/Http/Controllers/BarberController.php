@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barber;
-use App\Models\Barbershop;
 use App\Models\Slot;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -325,11 +324,8 @@ class BarberController extends Controller
         }
     }
 
-    public function checkAvailability(Request $request)
+    public static function checkAvailability($startTime, $numberOfSlots, $barberId)
     {
-        $startTime = $request->input('start_time');
-        $numberOfSlots = $request->input('number_of_slots');
-        $barberId = $request->input('barber_id');
         // Parse the provided time string
         $startTime = Carbon::parse($startTime);
 
@@ -353,13 +349,13 @@ class BarberController extends Controller
             if ($slot->start_time > $prevEndTime) {
                 $message = 'No slots available';
 
-                return response($message, 201); // Gap found, slots are not after each other
+                return response($message, 401); // Gap found, slots are not after each other
             }
 
             $prevEndTime = $slot->end_time;
         }
         $message = 'Slots available';
 
-        return response($message, 201);
+        return response($message, 200);
     }
 }

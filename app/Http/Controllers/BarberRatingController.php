@@ -89,7 +89,7 @@ class BarberRatingController extends Controller
             'reservation_id' => 'required|exists:reservations,id',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'nullable|string',
-            'image' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
         $barberRating = BarberRating::create($request->all());

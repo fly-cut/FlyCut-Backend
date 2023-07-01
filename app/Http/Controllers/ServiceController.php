@@ -27,7 +27,7 @@ class ServiceController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path().'/images';
+        $destinationPath = public_path() . '/images';
         $path->move($destinationPath, $filename);
 
         $service = Service::create([
@@ -41,7 +41,7 @@ class ServiceController extends Controller
     public function show($id): JsonResponse
     {
         $service = Service::find($id);
-        if (! $service) {
+        if (!$service) {
             return response()->json(['message' => 'Service not found'], 404);
         }
 
@@ -51,7 +51,7 @@ class ServiceController extends Controller
     public function update(Request $request, $id): JsonResponse
     {
         $service = Service::find($id);
-        if (! $service) {
+        if (!$service) {
             return response()->json(['message' => 'Service not found'], 404);
         }
         $validatedData = $request->validate([
@@ -61,11 +61,11 @@ class ServiceController extends Controller
 
         $image = $request->file('image');
         if ($image) {
-            if (File::exists(public_path('images/'.$service->image))) {
-                File::delete(public_path('images/'.$service->image));
+            if (File::exists(public_path('images/' . $service->image))) {
+                File::delete(public_path('images/' . $service->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path().'/images';
+                $destinationPath = public_path() . '/images';
                 $path->move($destinationPath, $filename);
                 $service->image = $filename;
             }
@@ -85,7 +85,6 @@ class ServiceController extends Controller
 
         foreach ($services as $servicee) {
             $service = Service::find($servicee['id']);
-
             $barbershop->services()->syncWithoutDetaching([$service->id => [
                 'slots' => $servicee['slots'],
                 'price' => $servicee['price'],
@@ -97,10 +96,10 @@ class ServiceController extends Controller
     public function destroy($id): JsonResponse
     {
         $service = Service::find($id);
-        if (File::exists(public_path('images/'.$service->image))) {
-            File::delete(public_path('images/'.$service->image));
+        if (File::exists(public_path('images/' . $service->image))) {
+            File::delete(public_path('images/' . $service->image));
         }
-        if (! $service) {
+        if (!$service) {
             return response()->json(['message' => 'Service not found'], 404);
         }
         $service->delete();
@@ -117,7 +116,7 @@ class ServiceController extends Controller
     public function getServiceVariations($service_id)
     {
         $service = Service::find($service_id);
-        if (! $service) {
+        if (!$service) {
             return response()->json(['error' => 'There is no such service exists!'], 404);
         }
         $variations = $service->variations;
