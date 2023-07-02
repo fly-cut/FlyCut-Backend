@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('date')->nullable();
             $table->string('status')->default('Upcoming');
             $table->boolean('is_rated')->default(false);
+            $table->string('payment_method')->default('Cash');
+            $table->string('payment_status')->default('Unpaid');
             $table->timestamps();
         });
     }
