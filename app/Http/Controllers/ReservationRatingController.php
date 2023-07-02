@@ -52,7 +52,7 @@ class ReservationRatingController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
         ]);
 
-        $reservationRating = ReservationRating::find($id);
+        $reservationRating = ReservationRating::where('reservation_id', $id)->first();
         $reservationRating->update($request->all());
 
         $barber = Barber::find($reservationRating->barber_id);
@@ -71,7 +71,7 @@ class ReservationRatingController extends Controller
     public function destroy($id)
     {
         $reservationRating = ReservationRating::find($id);
-        if (! $reservationRating) {
+        if (!$reservationRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
 
@@ -102,7 +102,7 @@ class ReservationRatingController extends Controller
     public function getBarberRatings($id)
     {
         $barber = Barber::find($id);
-        if (! $barber) {
+        if (!$barber) {
             return response()->json(['message' => 'Barber not found.'], 404);
         }
         $barberRatings = ReservationRating::where('barber_id', $id)->get();
@@ -117,7 +117,7 @@ class ReservationRatingController extends Controller
     public function getBarbershopRatings($id)
     {
         $barbershop = Barbershop::find($id);
-        if (! $barbershop) {
+        if (!$barbershop) {
             return response()->json(['message' => 'Barbershop not found.'], 404);
         }
         $barbershopRatings = ReservationRating::where('barbershop_id', $id)->get();
@@ -141,7 +141,7 @@ class ReservationRatingController extends Controller
     public function getRatingByReservationId($id)
     {
         $rating = ReservationRating::where('reservation_id', $id)->first();
-        if (! $rating) {
+        if (!$rating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
         $rating->client_name = Client::find($rating->client_id)->name;
