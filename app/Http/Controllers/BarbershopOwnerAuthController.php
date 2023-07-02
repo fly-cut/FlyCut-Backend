@@ -196,7 +196,7 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $barbershop_owner = BarbershopOwner::where('email', $request->email)->first();
-        if (! $barbershop_owner || ! Hash::check($request->password, $barbershop_owner->password)) {
+        if (!$barbershop_owner || !Hash::check($request->password, $barbershop_owner->password)) {
             return response(
                 [
                     'Response' => 'Please enter the right email or password!',
@@ -350,7 +350,7 @@ class BarbershopOwnerAuthController extends Controller
     public function getBarbershopOfBarbershopOwner()
     {
         $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
-        if (! $barbershop) {
+        if (!$barbershop) {
             return new JsonResponse(
                 [
                     'success' => false,

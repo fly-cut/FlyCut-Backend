@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use App\Http\Controllers\BarberController;
+use Carbon\Carbon;
+use App\Models\Slot;
+use App\Models\Service;
+use App\Models\Variation;
 use App\Models\Barbershop;
 use App\Models\Reservation;
-use App\Models\Service;
-use App\Models\Slot;
-use App\Models\Variation;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\BarberController;
+use App\Services\NotificationService;
 
 class ReservationService
 {
@@ -24,6 +25,7 @@ class ReservationService
         }
 
         $reservation = $this->createReservation($request);
+        NotificationService::sendNotification($reservation);
         $this->attachServicesToReservation($request, $reservation);
         $this->createSlotsForReservation($request, $reservation);
 

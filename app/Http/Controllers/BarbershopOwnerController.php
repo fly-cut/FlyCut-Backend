@@ -16,7 +16,7 @@ class BarbershopOwnerController extends Controller
         $user = $request->user();
         $current_password = $request->current_password;
         $new_password = $request->new_password;
-        if (! Hash::check($current_password, $user->password)) {
+        if (!Hash::check($current_password, $user->password)) {
             $message = [
                 'message' => 'Password isn\'t correct',
             ];
@@ -43,7 +43,7 @@ class BarbershopOwnerController extends Controller
         $user = $request->user();
         if ($request->file('image')) {
             $image = $request->file('image');
-            $image_name = time().'.'.$image->getClientOriginalExtension();
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
 
             $image->move(public_path('images/'), $image_name);
             $formData['image'] = $image_name;
@@ -54,6 +54,16 @@ class BarbershopOwnerController extends Controller
             'barbershopOwner' => $user,
         ];
 
+        return response($message, 200);
+    }
+    public function assignToken(Request $request)
+    {
+        $owner = $request->user();
+        $owner->token = $request->token;
+        $owner->save();
+        $message = [
+            'message' => 'Token assigned successfully',
+        ];
         return response($message, 200);
     }
 }
