@@ -49,31 +49,39 @@ class BarberService
     {
         $barbershopOwner = Auth::guard('barbershopOwner-api')->user();
         $barber = $this->barberRepository->find($barberId);
+
         if (is_null($barber)) {
             throw new BarberNotFoundException('Barber not found');
         }
+
         $barbershop = Barbershop::find($data['barbershop_id']);
+
         if ($barbershop->barbershop_owner_id !== $barbershopOwner->id) {
             throw new \Exception('You are not authorized to update this barber');
         }
-        $barber->name = $data['name'];
-        $barber->barbershop_id = $data['barbershop_id'];
 
-        if (isset($data['image'])) {
-            $image_path = public_path('images/' . $barber->image);
-            if (File::exists($image_path)) {
-                File::delete($image_path);
+        try {
+            $barber->name = $data['name'];
+            $barber->barbershop_id = $data['barbershop_id'];
+
+            if (isset($data['image'])) {
+                $image_path = public_path('images/' . $barber->image);
+                if (File::exists($image_path)) {
+                    File::delete($image_path);
+                }
+
+                $image = $data['image'];
+                $image_name = time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('/images'), $image_name);
+                $barber->image = $image_name;
             }
 
-            $image = $data['image'];
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('/images'), $image_name);
-            $barber->image = $image_name;
+            $this->barberRepository->save($barber);
+
+            return $barber;
+        } catch (\Exception $e) {
+            throw new \Exception('Failed to update barber: ' . $e->getMessage());
         }
-
-        $this->barberRepository->save($barber);
-
-        return $barber;
     }
 
     public function destroy($barberId)
