@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Slot;
 use Carbon\Carbon;
+use App\Models\Slot;
 
-class SlotAvailabilityService
+class BarberAvailabilityService
 {
     public function checkAvailability($startTime, $numberOfSlots, $barberId)
     {

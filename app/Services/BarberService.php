@@ -10,15 +10,16 @@ use Illuminate\Support\Facades\File;
 use App\Repositories\BarberRepository;
 use App\Exceptions\BarberNotFoundException;
 use App\Models\Barbershop;
+use App\Services\BarberAvailabilityService;
 
 class BarberService
 {
     protected $barberRepository;
-    protected $slotAvailabilityService;
-    public function __construct(BarberRepository $barberRepository, SlotAvailabilityService $slotAvailabilityService)
+    protected $barberAvailabilityService;
+    public function __construct(BarberRepository $barberRepository, BarberAvailabilityService $barberAvailabilityService)
     {
         $this->barberRepository = $barberRepository;
-        $this->slotAvailabilityService = $slotAvailabilityService;
+        $this->barberAvailabilityService = $barberAvailabilityService;
     }
 
     public function store(array $data)
@@ -97,6 +98,6 @@ class BarberService
 
     public function checkAvailability($startTime, $numberOfSlots, $barberId)
     {
-        return $this->slotAvailabilityService->checkAvailability($startTime, $numberOfSlots, $barberId);
+        return $this->barberAvailabilityService->checkAvailability($startTime, $numberOfSlots, $barberId);
     }
 }
