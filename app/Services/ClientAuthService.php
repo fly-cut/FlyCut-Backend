@@ -2,26 +2,35 @@
 
 namespace App\Services;
 
+namespace App\Services;
+
 use Carbon\Carbon;
-use App\Models\Client;
 use App\Mail\VerifyEmail;
-use App\Mail\ResetPassword;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\ClientRepository;
 use Laravel\Socialite\Facades\Socialite;
 use GuzzleHttp\Exception\ClientException;
+use App\Services\ClientPasswordResetService;
+use App\Services\ClientEmailVerificationService;
 use App\Repositories\PasswordResetTokenRepository;
 
 class ClientAuthService
 {
     private $clientRepository;
+    private $clientEmailVerificationService;
+    private $clientPasswordResetService;
     private $passwordResetTokenRepository;
-    public function __construct(ClientRepository $clientRepository, PasswordResetTokenRepository $passwordResetTokenRepository)
-    {
+    public function __construct(
+        ClientRepository $clientRepository,
+        ClientEmailVerificationService $clientEmailVerificationService,
+        ClientPasswordResetService $clientPasswordResetService,
+        PasswordResetTokenRepository $passwordResetTokenRepository
+    ) {
         $this->clientRepository = $clientRepository;
+        $this->clientEmailVerificationService = $clientEmailVerificationService;
+        $this->clientPasswordResetService = $clientPasswordResetService;
         $this->passwordResetTokenRepository = $passwordResetTokenRepository;
     }
 
@@ -51,43 +60,6 @@ class ClientAuthService
         return $response;
     }
 
-    public function verifyEmail(array $data)
-    {
-        $email = Auth::guard('client-api')->user()->email;
-        $token = $data['token'];
-
-        $this->deletePasswordResetToken($email, $token);
-
-        $client = $this->clientRepository->findByEmail($email);
-        $client->email_verified_at = Carbon::now()->toDateTimeString();
-        $client->save();
-
-        $response = [
-            'success' => true,
-            'message' => 'Email is verified',
-        ];
-
-        return $response;
-    }
-
-    public function resendPin(array $data)
-    {
-        $email = $data['email'];
-
-        $this->deleteExistingPasswordResetToken($email);
-
-        $token = random_int(100000, 999999);
-        $this->storePasswordResetToken($email, $token);
-
-        Mail::to($email)->send(new VerifyEmail($token));
-
-        $response = [
-            'success' => true,
-            'message' => 'A verification mail has been resent',
-        ];
-
-        return $response;
-    }
 
     public function login(array $data)
     {
@@ -165,83 +137,7 @@ class ClientAuthService
         return $clientCreated->toArray() + ['token' => $token];
     }
 
-    public function forgotPassword(array $data)
-    {
-        $email = $data['email'];
 
-        if (!$this->clientRepository->existsByEmail($email)) {
-            return [
-                'success' => false,
-                'message' => 'This email does not exist',
-            ];
-        }
-
-        $this->deleteExistingPasswordResetToken($email);
-
-        $token = random_int(100000, 999999);
-        $this->storePasswordResetToken($email, $token);
-
-        Mail::to($email)->send(new ResetPassword($token));
-
-        $response = [
-            'success' => true,
-            'message' => 'Please check your email for a 6 digit pin',
-        ];
-
-        return $response;
-    }
-
-    public function verifyPin(array $data)
-    {
-        $email = $data['email'];
-        $token = $data['token'];
-
-        $check = $this->passwordResetTokenRepository->exists($email, $token);
-
-        if (!$check) {
-            return [
-                'success' => false,
-                'message' => 'Invalid token',
-            ];
-        }
-
-        $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
-        if ($difference > 3600) {
-            return [
-                'success' => false,
-                'message' => 'Token Expired',
-            ];
-        }
-
-        $this->deletePasswordResetToken($email, $token);
-
-        $response = [
-            'success' => true,
-            'message' => 'You can now reset your password',
-        ];
-
-        return $response;
-    }
-
-    public function resetPassword(array $data)
-    {
-        $email = $data['email'];
-        $password = $data['password'];
-
-        $this->clientRepository->updatePasswordByEmail($email, $password);
-
-        $client = $this->clientRepository->findByEmail($email);
-
-        $token = $client->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
-
-        $response = [
-            'success' => true,
-            'message' => 'Your password has been reset',
-            'token' => $token,
-        ];
-
-        return $response;
-    }
 
     protected function validateProvider($provider)
     {
@@ -266,5 +162,30 @@ class ClientAuthService
     protected function deletePasswordResetToken($email, $token)
     {
         $this->passwordResetTokenRepository->deleteByEmailAndToken($email, $token);
+    }
+
+    public function forgotPassword(array $data)
+    {
+        return $this->clientPasswordResetService->forgotPassword($data);
+    }
+
+    public function verifyPin(array $data)
+    {
+        return $this->clientPasswordResetService->verifyPin($data);
+    }
+
+    public function resetPassword(array $data)
+    {
+        return $this->clientPasswordResetService->resetPassword($data);
+    }
+
+    public function verifyEmail(array $data)
+    {
+        return $this->clientEmailVerificationService->verifyEmail($data);
+    }
+
+    public function resendPin(array $data)
+    {
+        return $this->clientEmailVerificationService->resendPin($data);
     }
 }
