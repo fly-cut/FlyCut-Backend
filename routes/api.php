@@ -127,6 +127,7 @@ Route::group(['prefix' => 'reservation/ratings/', 'middleware' => 'tri-guard'], 
     Route::delete('{id}', [ReservationRatingController::class, 'destroy']);
     Route::get('barbershop/{id}', [ReservationRatingController::class, 'getBarbershopRatings']);
     Route::get('barber/{id}', [ReservationRatingController::class, 'getBarberRatings']);
+    Route::get('get/by/reservation/{id}', [ReservationRatingController::class, 'getRatingByReservationId']);
 });
 
 Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function () {
