@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\Reservation;
 use App\Models\Variation;
 use App\Models\Client;
+use App\Models\Barber;
 use App\Http\Controllers\ReservationController;
 
 class BarbershopRepository
@@ -40,7 +41,8 @@ class BarbershopRepository
         $path->move($destinationPath, $filename);
         $barbershop->image = $filename;
         $barbershop->save();
-
+        Auth::user()->has_barbershop = true;
+        $barbershop->barbershop_owner = Auth::user();
         return $barbershop;
     }
 
@@ -168,11 +170,13 @@ class BarbershopRepository
                 $servicedata[] = $serviceData;
             }
             $client = Client::where('id', $reservation->user_id)->first();
+            $barber_name = Barber::where('id', $reservation->barber_id)->first()->name;
 
             $element = [
                 'reservation' => $reservation,
                 'services' => $servicedata,
                 'client' => $client,
+                'barber_name' => $barber_name,
             ];
 
             $data[] = $element;
