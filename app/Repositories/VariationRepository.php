@@ -63,4 +63,13 @@ class VariationRepository
         Variation::destroy($id);
     }
 
+    public function getByServiceId($serviceId)
+    {
+        return Variation::where('service_id', $serviceId)->get();
+    }
+
+    public function searchByName($name)
+    {
+        return Variation::where('name', 'like', '%' . $name . '%')->get();
+    }
 }

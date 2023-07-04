@@ -58,5 +58,9 @@ class ServiceRepository
         }
         Service::destroy($id);
     }
-
+  
+    public function getByName($name)
+    {
+        return Service::where('name', $name)->first();
+    }
 }

@@ -56,7 +56,6 @@ class BarbershopController extends Controller
         ], 200);
     }
 
-
     public function updateBarbershop(UpdateBarbershopRequest $request, $barbershop_id)
     {
         $barbershop = $this->barbershopService->getBarbershopById($barbershop_id);
@@ -67,7 +66,6 @@ class BarbershopController extends Controller
             ], 404);
         }
         $barbershop = $this->barbershopService->updateBarbershop($barbershop_id, $request);
-
         return response()->json([
             'status' => 200,
             'message' => 'Barbershop updated successfully',
@@ -94,7 +92,6 @@ class BarbershopController extends Controller
         }
     }
 
-
     public function addServicesToBarbershop(AddServicesToBarbershopRequest $request)
     {
         $this->barbershopService->addServicesToBarbershop($request);
@@ -103,8 +100,7 @@ class BarbershopController extends Controller
             'message' => 'Services added successfully to the barbershop',
         ], 200);
     }
-
-
+  
     public function removeServicesFromBarbershop(RemoveServicesFromBarbershopRequest $request)
     {
         $this->barbershopService->removeServicesFromBarbershop($request);
@@ -113,7 +109,6 @@ class BarbershopController extends Controller
             'message' => 'Services removed successfully from the barbershop',
         ], 200);
     }
-
 
     public function editServicePriceAndSlots(EditServicePriceAndSlotsRequest $request)
     {

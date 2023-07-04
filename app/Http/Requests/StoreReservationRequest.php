@@ -11,7 +11,7 @@ class StoreReservationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'barber_id' => 'required|exists:barbers,id',
+            'start_time' => 'required',
+            'services' => 'required|array|min:1',
+            'barbershop_id' => 'required|exists:barbershops,id',
+            'services.*.name' => 'required|string|exists:services,name',
+            'services.*.variation_name' => 'nullable|string',
         ];
     }
 }

@@ -48,7 +48,6 @@ class VariationController extends Controller
         }
 
         $variation = $this->variationService->updateVariation($request, $id);
-
         return response()->json(['data' => $variation], 200);
     }
 
@@ -56,7 +55,7 @@ class VariationController extends Controller
     {
         $variation = $this->variationService->getVariationById($id);
 
-        if (! $variation) {
+        if (!$variation) {
             return response()->json(['error' => 'Variation not found'], 404);
         }
         $this->variationService->deleteVariation($id);

@@ -101,7 +101,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'tri-guard'], function
     Route::get('{barbershop_id}', [BarbershopController::class, 'showBarbershop']);
     Route::get('{barbershop_id}/services', [BarbershopController::class, 'getBarbershopServicesWithPriceAndSlots']);
     Route::get('/{barbershop_id}/barbers', [BarbershopController::class, 'getBarbersOfBarbershop']);
-    Route::get('get/slots', [SlotController::class, 'getSlots']);
+    Route::get('get/slots', [SlotController::class, 'getReservedSlots']);
     Route::post('search', [BarbershopController::class, 'search']);
     Route::post('nearby', [BarbershopController::class, 'getNearbyBarbershops']);
     Route::put('/slots/changeStausToFree', [SlotController::class, 'changeStatusToFree']);
@@ -127,6 +127,7 @@ Route::group(['prefix' => 'reservation/ratings/', 'middleware' => 'tri-guard'], 
     Route::delete('{id}', [ReservationRatingController::class, 'destroy']);
     Route::get('barbershop/{id}', [ReservationRatingController::class, 'getBarbershopRatings']);
     Route::get('barber/{id}', [ReservationRatingController::class, 'getBarberRatings']);
+    Route::get('get/by/reservation/{id}', [ReservationRatingController::class, 'getRatingByReservationId']);
 });
 
 Route::group(['prefix' => 'haircuts/', 'middleware' => 'tri-guard'], function () {

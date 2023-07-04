@@ -2,48 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Service;
-use App\Models\Variation;
-use Illuminate\Http\Request;
+use App\Http\Requests\HairCutSearchRequest;
+use App\Http\Requests\SearchHairCutRequest;
+use App\Services\HairCutService;
 
 class HairCutController extends Controller
 {
-    public function getAllHaircuts()
-    {
-        $service = Service::where('name', 'haircut')->get()->first();
-        if (! $service) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No service found',
-            ]);
-        }
-        $haircuts = Variation::where('service_id', $service->id)->get();
-        if ($haircuts->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No haircuts found',
-            ]);
-        }
+    private $hairCutService;
 
-        return response()->json([
-            'success' => true,
-            'data' => $haircuts,
-        ]);
+    public function __construct(HairCutService $hairCutService)
+    {
+        $this->hairCutService = $hairCutService;
     }
 
-    public function search(Request $request)
+    public function getAllHaircuts()
     {
-        $haircut = Variation::where('name', 'like', '%'.$request->name.'%')->get();
-        if ($haircut->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No haircut found',
-            ]);
-        }
+        $haircuts = $this->hairCutService->getAllHaircuts();
 
-        return response()->json([
-            'success' => true,
-            'data' => $haircut,
-        ]);
+        return response()->json($haircuts);
+    }
+
+    public function search(SearchHairCutRequest $request)
+    {
+        $name = $request->input('name');
+        $haircut = $this->hairCutService->searchByName($name);
+
+        return response()->json($haircut);
     }
 }
