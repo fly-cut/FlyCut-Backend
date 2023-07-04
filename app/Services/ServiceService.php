@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ServiceRepository;
 
-class BarbershopService
+class ServiceService
 {
     protected $serviceRepository;
 
@@ -23,9 +23,9 @@ class BarbershopService
         return $this->serviceRepository->create($data);
     }
 
-    public function updateService($id, $data)
+    public function updateService($data, $id)
     {
-        return $this->serviceRepository->update($id, $data);
+        return $this->serviceRepository->update($data, $id);
     }
 
     public function getServiceById($id)

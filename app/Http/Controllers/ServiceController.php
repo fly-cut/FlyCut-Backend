@@ -41,12 +41,16 @@ class ServiceController extends Controller
 
     public function update(UpdateServiceRequest $request, $id): JsonResponse
     {
-        $service = $this->updateService($request, $id);
+        $service = $this->serviceService->getServiceById($id);
+        if (! $service) {
+            return response()->json(['message' => 'Service not found'], 404);
+        }
+        $service = $this->serviceService->updateService($request, $id);
         return response()->json($service, 200);
     }
     public function destroy($id): JsonResponse
     {
-        $service = $this->serviceService->findServiceById($id);
+        $service = $this->serviceService->getServiceById($id);
         if (! $service) {
             return response()->json(['message' => 'Service not found'], 404);
         }

@@ -31,7 +31,7 @@ class ServiceRepository
         return $service;
     }
 
-    public function update($id, $data)
+    public function update($data, $id)
     {
         $service = Service::find($id);
         $image = $data->file('image');
