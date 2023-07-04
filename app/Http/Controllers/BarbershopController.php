@@ -125,7 +125,7 @@ class BarbershopController extends Controller
 
         $path = $request->file('image');
         $filename = $path->getClientOriginalName();
-        $destinationPath = public_path().'/images';
+        $destinationPath = public_path() . '/images';
         $path->move($destinationPath, $filename);
         $barbershop->image = $filename;
 
@@ -287,7 +287,7 @@ class BarbershopController extends Controller
         ]);
 
         $barbershop = Barbershop::find($barbershop_id);
-        if (! $barbershop || empty($barbershop)) {
+        if (!$barbershop || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be updated!',
@@ -302,11 +302,11 @@ class BarbershopController extends Controller
             $barbershop->latitude = $request->latitude;
         }
         if ($request->hasFile('image')) {
-            if (File::exists(public_path('images/'.$barbershop->image))) {
-                File::delete(public_path('images/'.$barbershop->image));
+            if (File::exists(public_path('images/' . $barbershop->image))) {
+                File::delete(public_path('images/' . $barbershop->image));
                 $path = $request->file('image');
                 $filename = $path->getClientOriginalName();
-                $destinationPath = public_path().'/images';
+                $destinationPath = public_path() . '/images';
                 $path->move($destinationPath, $filename);
                 $barbershop->image = $filename;
             }
@@ -500,7 +500,7 @@ class BarbershopController extends Controller
             ], 404);
         }
         foreach ($request->services as $service) {
-            if (! Service::find($service)) {
+            if (!Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be added!',
@@ -607,7 +607,7 @@ class BarbershopController extends Controller
         }
 
         foreach ($request->services as $service) {
-            if (! Service::find($service)) {
+            if (!Service::find($service)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be removed!',
@@ -740,7 +740,7 @@ class BarbershopController extends Controller
             $service_id = $service['id'];
             $price = $service['price'];
             $slots = $service['slots'];
-            if (! Service::find($service_id)) {
+            if (!Service::find($service_id)) {
                 return response()->json([
                     'status' => 404,
                     'errors' => 'No service found to be edited!',
@@ -1054,9 +1054,9 @@ class BarbershopController extends Controller
         $userLatitude = $request->get('userLatitude');
         $barbershops = Barbershop::query()
             ->where(function ($query) use ($searchQuery) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($searchQuery).'%'])
-                    ->orWhereRaw('LOWER(city) LIKE ?', ['%'.strtolower($searchQuery).'%'])
-                    ->orWhereRaw('LOWER(address) LIKE ?', ['%'.strtolower($searchQuery).'%']);
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(address) LIKE ?', ['%' . strtolower($searchQuery) . '%']);
             })
             ->orderByRaw(
                 "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"

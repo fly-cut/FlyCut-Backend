@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBarberRequest extends FormRequest
+class ClientLoginRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,9 +14,8 @@ class UpdateBarberRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'barbershop_id' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ];
     }
 }
