@@ -39,6 +39,7 @@ class SlotRepository
             ->where('barber_id', $barberId)
             ->firstOrFail();
     }
+
     public function getOverlappingSlot($start, $end, $barberId)
     {
         return Slot::where('barber_id', $barberId)
