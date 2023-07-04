@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBarbershopRequest extends FormRequest
+class StoreVariationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,18 +17,14 @@ class StoreBarbershopRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|regex:/(^([a-zA-Z ]+)(\d+)?$)/u',
+            'name' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description' => 'required|string',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'longitude' => 'required|numeric',
-            'latitude' => 'required|numeric',
+            'service_id' => 'required|integer|exists:services,id',
         ];
     }
 }

@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\AdminAuthController;
@@ -33,7 +34,6 @@ Route::post('admins/login', [AdminAuthController::class, 'login']);
 Route::middleware(['auth:admin-api'])->group(function () {
     Route::post('admins/logout', [AdminAuthController::class, 'logout']);
     Route::post('services', [ServiceController::class, 'store']);
-    Route::put('services/{id}', [ServiceController::class, 'update']);
     Route::delete('services/{id}', [ServiceController::class, 'destroy']);
 
     Route::post('variations', [VariationController::class, 'store']);
@@ -113,7 +113,7 @@ Route::group(['prefix' => 'services/', 'middleware' => 'tri-guard'], function ()
     Route::get('', [ServiceController::class, 'index']);
     Route::get('{id}', [ServiceController::class, 'show']);
     Route::get('{service_id}/variations', [ServiceController::class, 'getServiceVariations']);
-    Route::post('updateList', [ServiceController::class, 'updateListOfServices']);
+    Route::put('{id}', [ServiceController::class, 'update']);
 });
 
 Route::group(['prefix' => 'variations/', 'middleware' => 'tri-guard'], function () {
