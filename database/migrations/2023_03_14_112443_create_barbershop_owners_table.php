@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->string('image')->nullable();
             $table->string('device_token')->nullable();
-            $table->bool('has_barbershop')->default(false);
+            $table->boolean('has_barbershop')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
