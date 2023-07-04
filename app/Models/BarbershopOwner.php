@@ -12,7 +12,7 @@ class BarbershopOwner extends Authenticatable
 {
     use HasFactory, Notifiable,  HasApiTokens;
 
-    protected $guard = 'barbershopOwner';
+    protected $guard = 'barbershopOwner-api';
 
     protected $fillable = [
         'name',

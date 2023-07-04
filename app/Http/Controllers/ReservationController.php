@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Slot;
-use App\Models\Service;
 use App\Models\Reservation;
-use Illuminate\Http\Request;
+use App\Models\Slot;
 use App\Services\ReservationService;
-use App\Http\Requests\StoreReservationRequest;
-use App\Http\Requests\UpdateReservationRequest;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ReservationController extends Controller
 {
@@ -27,59 +24,26 @@ class ReservationController extends Controller
         ]);
 
         $reservationService = new ReservationService();
-        $reservation = $reservationService->store($request);
 
-        return response()->json([
-            'message' => 'Reservation created successfully',
-            'reservation' => $reservation,
-        ], 201);
+        return $reservationService->store($request);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public static function getStatus(Reservation $reservation)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateReservationRequest $request, Reservation $reservation)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Reservation $reservation)
-    {
-        //
+        $timeNow = Carbon::now('Africa/Cairo');
+        $currentTime = Carbon::parse($timeNow)->subHours(12)->addHour();
+        $slotCount = Slot::where('reservation_id', $reservation->id)->count();
+        $reservationDateTime = Carbon::parse($reservation->date, 'Africa/Cairo')->subHours(12);
+        $reservationEndTime = $reservationDateTime->copy()->addMinutes(15 * $slotCount);
+        if ($currentTime < $reservationDateTime) {
+            $reservation->status = 'upcoming';
+            $reservation->save();
+        } elseif ($currentTime >= $reservationDateTime && $currentTime <= $reservationEndTime) {
+            $reservation->status = 'in-progress';
+            $reservation->save();
+        } else {
+            $reservation->status = 'completed';
+            $reservation->save();
+        }
     }
 }

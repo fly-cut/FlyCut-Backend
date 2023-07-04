@@ -8,5 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Slot extends Model
 {
     use HasFactory;
+
     protected $fillable = ['barber_id', 'start_time', 'end_time', 'reservation_id'];
 }

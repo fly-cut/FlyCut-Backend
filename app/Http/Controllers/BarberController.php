@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barber;
-use App\Models\Barbershop;
+use App\Models\Slot;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -239,7 +240,7 @@ class BarberController extends Controller
         }
         $barber->save();
 
-        return response()->json(['message' => 'Barber updated successfully']);
+        return response()->json(['message' => 'Barber updated successfully'], 200);
     }
 
     /**
@@ -312,14 +313,49 @@ class BarberController extends Controller
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barber found to be deleted!',
-            ]);
+            ], 404);
         } else {
             $barber->delete();
 
             return response()->json([
                 'status' => 200,
                 'message' => 'The barber has been deleted!',
-            ]);
+            ], 200);
         }
+    }
+
+    public static function checkAvailability($startTime, $numberOfSlots, $barberId)
+    {
+        // Parse the provided time string
+        $startTime = Carbon::parse($startTime);
+
+        // Calculate the end time based on the number of slots
+        $endTime = $startTime->copy()->addMinutes($numberOfSlots * 15);
+
+        // Fetch existing slots for the given barber within the provided time range
+        $existingSlots = Slot::where('barber_id', $barberId)
+            ->where('start_time', '>=', $startTime)
+            ->where('end_time', '<=', $endTime)
+            ->orderBy('start_time')
+            ->get();
+
+        // Check if there are any overlapping slots
+        $prevEndTime = null;
+        foreach ($existingSlots as $slot) {
+            if ($slot->start_time > $endTime) {
+                break; // No more overlapping slots
+            }
+
+            if ($slot->start_time > $prevEndTime) {
+                $message = 'No slots available';
+
+                return response($message, 401); // Gap found, slots are not after each other
+            }
+
+            $prevEndTime = $slot->end_time;
+        }
+        $message = 'Slots available';
+
+        return response($message, 200);
     }
 }

@@ -12,8 +12,10 @@ class BarberRating extends Model
     protected $fillable = [
         'barber_id',
         'client_id',
+        'reservation_id',
         'rating',
         'review',
+        'image',
     ];
 
     public function barber()
@@ -24,5 +26,10 @@ class BarberRating extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function reservation()
+    {
+        return $this->belongsTo(Reservation::class);
     }
 }

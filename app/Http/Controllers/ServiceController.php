@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barbershop;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 
 class ServiceController extends Controller
@@ -20,7 +22,7 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'required||image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $path = $request->file('image');
@@ -54,7 +56,7 @@ class ServiceController extends Controller
         }
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $image = $request->file('image');
@@ -73,6 +75,22 @@ class ServiceController extends Controller
         $service->save();
 
         return response()->json($service);
+    }
+
+    public function updateListOfServices(Request $request)
+    {
+        $services = $request->input('services');
+        $user_id = Auth::guard('barbershopOwner-api')->user()->id;
+        $barbershop = Barbershop::where('barbershop_owner_id', $user_id)->first();
+
+        foreach ($services as $servicee) {
+            $service = Service::find($servicee['id']);
+            $barbershop->services()->syncWithoutDetaching([$service->id => [
+                'slots' => $servicee['slots'],
+                'price' => $servicee['price'],
+            ]]);
+            $barbershop->save();
+        }
     }
 
     public function destroy($id): JsonResponse

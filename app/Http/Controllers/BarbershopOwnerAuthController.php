@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ResetPassword;
 use App\Mail\VerifyEmail;
+use App\Models\Barbershop;
 use App\Models\BarbershopOwner;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\Validator;
 
 class BarbershopOwnerAuthController extends Controller
 {
-
     /**
      * Register a new barbershop owner.
      *
@@ -25,21 +25,27 @@ class BarbershopOwnerAuthController extends Controller
      * summary="Register a new barbershop owner",
      * description="Creates a new barbershop owner and sends an email to verify the email address",
      * tags={"BarbershopOwner_Auth"},
+     *
      * @OA\RequestBody(
      * required=true,
      * description="Provide barbershop owner credentials",
+     *
      * @OA\JsonContent(
      * required={"name","email","password","password_confirmation"},
+     *
      * @OA\Property(property="name", type="string", example="John Doe"),
      * @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
      * @OA\Property(property="password", type="string", format="password", example="password"),
      * @OA\Property(property="password_confirmation", type="string", format="password", example="password"),
      * ),
      * ),
+     *
      * @OA\Response(
      * response=201,
      * description="Barbershop owner registered successfully",
+     *
      * @OA\JsonContent(
+     *
      * @OA\Property(property="barbershopOwner", type="object",
      * @OA\Property(property="name", type="string", example="John Doe"),
      * @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
@@ -53,10 +59,13 @@ class BarbershopOwnerAuthController extends Controller
      * @OA\Property(property="message", type="string", example="Barbershop owner registered successfully"),
      * ),
      * ),
+     *
      * @OA\Response(
      * response=422,
      * description="Invalid input data",
+     *
      * @OA\JsonContent(
+     *
      * @OA\Property(property="message", type="object",
      * @OA\Property(property="name", type="array", @OA\Items(type="string")),
      * @OA\Property(property="email", type="array", @OA\Items(type="string")),
@@ -64,14 +73,13 @@ class BarbershopOwnerAuthController extends Controller
      * ),
      * ),
      * ),
+     *
      * @OA\Response(
      * response=500,
      * description="Internal server error",
      * )
      * )
      */
-
-
     public function register(Request $request)
     {
         $this->validate($request, [
@@ -85,7 +93,7 @@ class BarbershopOwnerAuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        /*if ($barbershop_owner) {
+        if ($barbershop_owner) {
             $verify2 = DB::table('password_reset_tokens')->where([
                 ['email', $request->all()['email']],
             ]);
@@ -102,7 +110,7 @@ class BarbershopOwnerAuthController extends Controller
                     ]
                 );
         }
-        Mail::to($request->email)->send(new VerifyEmail($pin));*/
+        Mail::to($request->email)->send(new VerifyEmail($pin));
         $token = $barbershop_owner->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
         $response = [
             'barbershopOwner' => $barbershop_owner,
@@ -327,11 +335,35 @@ class BarbershopOwnerAuthController extends Controller
         ]);
 
         $token = $barbershop_owner->first()->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
+
         return new JsonResponse(
             [
                 'success' => true,
                 'message' => 'Your password has been reset',
                 'token' => $token,
+            ],
+            200
+        );
+    }
+
+    //write a function to get the barbershop of a barbershop owner
+    public function getBarbershopOfBarbershopOwner()
+    {
+        $barbershop = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first();
+        if (!$barbershop) {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'message' => 'You do not have a barbershop',
+                ],
+                400
+            );
+        }
+
+        return new JsonResponse(
+            [
+                'success' => true,
+                'barbershop' => $barbershop,
             ],
             200
         );

@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Hash;
 
 class AdminAuthController extends Controller
 {
@@ -169,7 +168,7 @@ class AdminAuthController extends Controller
         ]);
         $admin = Admin::where('email', $request->email)->first();
         config(['auth.guards.admin-api.driver' => 'session']);
-        if (!$admin || !Hash::check($request->password, $admin->password)) {
+        if (! $admin || ! Hash::check($request->password, $admin->password)) {
             return response([
                 'response' => 'Please enter the right email or password!',
             ], 401);
@@ -212,7 +211,7 @@ class AdminAuthController extends Controller
     public function logout()
     {
         Auth::user()->token()->revoke();
-    
+
         return response(['message' => 'Successfully logged out.'], 200);
     }
 }

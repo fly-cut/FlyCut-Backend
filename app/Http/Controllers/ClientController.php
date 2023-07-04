@@ -2,69 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
-use App\Models\Client;
+use App\Models\Barber;
+use App\Models\Barbershop;
+use App\Models\Reservation;
+use App\Models\Service;
+use App\Models\Slot;
+use App\Models\Variation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class ClientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreClientRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Client $client)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Client $client)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateClientRequest $request, Client $client)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Client $client)
-    {
-        //
-    }
-
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -89,10 +38,8 @@ class ClientController extends Controller
         return response($message, 200);
     }
 
-    //update profile
     public function updateProfile(Request $request)
     {
-        //access name from request object
         $formData = $request->validate([
             'name' => 'string',
             'email' => 'email',
@@ -103,13 +50,96 @@ class ClientController extends Controller
             $image = $request->file('image');
             $image_name = time().'.'.$image->getClientOriginalExtension();
 
-            $image->move(public_path('images/owners'), $image_name);
+            $image->move(public_path('images/'), $image_name);
             $formData['image'] = $image_name;
         }
         $user->update($formData);
+        $user->update(['email_verified_at' => null]);
+
         $message = [
             'message' => 'Profile updated successfully',
+            'client' => $user,
         ];
+
+        return response($message, 200);
+    }
+
+    public function getReservations(Request $request)
+    {
+        $user = $request->user();
+        $user->id;
+        $reservations = Reservation::where('user_id', $user->id)->orderBy('date')->get();
+        $data = [];
+
+        foreach ($reservations as $reservation) {
+            ReservationController::getStatus($reservation);
+            $reservationId = $reservation->id;
+            $services = Service::whereHas('reservations', function ($query) use ($reservationId) {
+                $query->where('reservation_id', $reservationId);
+            })->get();
+
+            $servicedata = [];
+
+            foreach ($services as $service) {
+                $variations = Variation::where('service_id', $service->id)->get();
+                $variationData = $variations->toArray();
+
+                $serviceData = $service->toArray();
+                $serviceData['variation'] = $variationData[0] ?? null;
+
+                $servicedata[] = $serviceData;
+            }
+            $barbershop = Barbershop::find($reservation->barbershop_id);
+            $barber = Barber::find($reservation->barber_id);
+
+            $element = [
+                'reservation' => $reservation,
+                'services' => $servicedata,
+                'barbershop_image' => $barbershop->image,
+                'barbershop_name' => $barbershop->name,
+                'barbershop_city' => $barbershop->city,
+                'barber_image' => $barber->image,
+            ];
+
+            $data[] = $element;
+        }
+
+        return response()->json($data);
+    }
+
+    public function checkBarberAvailability(Request $request)
+    {
+        $barberId = $request->input('barberId');
+        $start_time = $request->input('start_time');
+        $numberOfSlots = $request->input('numberOfSlots');
+        // Parse the provided time string
+        $startTime = Carbon::parse($start_time);
+
+        // Calculate the end time based on the number of slots
+        $endTime = $startTime->copy()->addMinutes($numberOfSlots * 15);
+
+        // Fetch existing slots for the given barber within the provided time range
+        $existingSlots = Slot::where('barber_id', $barberId)
+            ->where('start_time', '>=', $startTime)
+            ->where('end_time', '<=', $endTime)
+            ->orderBy('start_time')
+            ->get();
+
+        $prevEndTime = null;
+        foreach ($existingSlots as $slot) {
+            if ($slot->start_time > $endTime) {
+                break; // No more overlapping slots
+            }
+
+            if ($slot->start_time > $prevEndTime) {
+                $message = 'No slots available';
+
+                return response($message, 401); // Gap found, slots are not after each other
+            }
+
+            $prevEndTime = $slot->end_time;
+        }
+        $message = 'Slots available';
 
         return response($message, 200);
     }

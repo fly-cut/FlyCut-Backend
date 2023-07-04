@@ -5,22 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BarbershopRating extends Model
+class ReservationRating extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'barbershop_id',
+        'barber_id',
         'client_id',
         'reservation_id',
-        'rating',
+        'barber_rating',
+        'barbershop_rating',
         'review',
         'image',
     ];
 
-    public function barbershop()
+    public function barber()
     {
-        return $this->belongsTo(Barbershop::class);
+        return $this->belongsTo(Barber::class);
     }
 
     public function client()
@@ -31,5 +33,10 @@ class BarbershopRating extends Model
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);
+    }
+
+    public function barbershop()
+    {
+        return $this->belongsTo(Barbershop::class);
     }
 }

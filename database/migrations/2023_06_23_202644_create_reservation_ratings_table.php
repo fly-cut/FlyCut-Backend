@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('barber_ratings', function (Blueprint $table) {
+        Schema::create('reservation_ratings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('barbershop_id')->constrained('barbershops');
             $table->foreignId('barber_id')->constrained('barbers');
             $table->foreignId('client_id')->constrained('clients');
-            $table->integer('rating');
+            $table->foreignId('reservation_id')->constrained('reservations');
+            $table->integer('barber_rating');
+            $table->integer('barbershop_rating');
             $table->string('review')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('barber_ratings');
+        Schema::dropIfExists('reservation_ratings');
     }
 };
