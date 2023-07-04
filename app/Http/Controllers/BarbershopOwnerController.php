@@ -2,68 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangePasswordBarbershopOwnerRequest;
+use App\Http\Requests\UpdateProfileBarbershopOwnerRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Services\BarbershopOwnerService;
+
 
 class BarbershopOwnerController extends Controller
 {
-    public function changePassword(Request $request)
+    protected $barbershopOwnerService;
+
+    public function __construct(BarbershopOwnerService $barbershopOwnerService)
     {
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|string|min:6|confirmed',
-        ]);
-        $user = $request->user();
-        $current_password = $request->current_password;
-        $new_password = $request->new_password;
-        if (!Hash::check($current_password, $user->password)) {
-            $message = [
-                'message' => 'Password isn\'t correct',
-            ];
-
-            return response($message, 422);
-        }
-        $user->update(['password' => Hash::make($new_password)]);
-        $message = [
-            'message' => 'Password changed successfully',
-        ];
-
-        return response($message, 200);
+        $this->barbershopOwnerService = $barbershopOwnerService;
     }
 
-    //update profile
-    public function updateProfile(Request $request)
+    public function changePassword(ChangePasswordBarbershopOwnerRequest $request)
     {
-        //access name from request object
-        $formData = $request->validate([
-            'name' => 'string',
-            'email' => 'email',
-        ]);
+        return $this->barbershopOwnerService->changePassword($request);
+    }
 
-        $user = $request->user();
-        if ($request->file('image')) {
-            $image = $request->file('image');
-            $image_name = time() . '.' . $image->getClientOriginalExtension();
-
-            $image->move(public_path('images/'), $image_name);
-            $formData['image'] = $image_name;
-        }
-        $user->update($formData);
-        $message = [
-            'message' => 'Profile updated successfully',
-            'barbershopOwner' => $user,
-        ];
-
-        return response($message, 200);
+    public function updateProfile(UpdateProfileBarbershopOwnerRequest $request)
+    {
+        return $this->barbershopOwnerService->updateProfile($request);
     }
     public function assignToken(Request $request)
     {
-        $owner = $request->user();
-        $owner->token = $request->token;
-        $owner->save();
-        $message = [
-            'message' => 'Token assigned successfully',
-        ];
-        return response($message, 200);
+        return $this->barbershopOwnerService->assignToken($request);
     }
 }

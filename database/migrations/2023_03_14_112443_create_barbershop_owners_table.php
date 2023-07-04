@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->date('birth_date')->nullable();
             $table->string('image')->nullable();
-            $table->string('token')->nullable();
+            $table->string('device_token')->nullable();
+            $table->bool('has_barbershop')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
