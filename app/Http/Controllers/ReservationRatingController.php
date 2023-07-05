@@ -30,6 +30,14 @@ class ReservationRatingController extends Controller
         $reservation = Reservation::find($request->reservation_id);
         $reservation->is_rated = true;
         $reservation->save();
+        if ($request->file('image')) {
+            $image = $request->file('image');
+            $image_name = time() . '.' . $image->getClientOriginalExtension();
+
+            $image->move(public_path('images/'), $image_name);
+            $reservationRating->image = $image_name;
+            $reservationRating->save();
+        }
         $barber = Barber::find($request->barber_id);
         $barber->rating = ReservationRating::where('barber_id', $request->barber_id)->avg('barber_rating');
         $barber->rating_count = ReservationRating::where('barber_id', $request->barber_id)->count();
