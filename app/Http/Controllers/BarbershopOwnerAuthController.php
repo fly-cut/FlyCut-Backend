@@ -92,7 +92,9 @@ class BarbershopOwnerAuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'has_barbershop' => false,
         ]);
+        
         $token = $barbershop_owner->guard(['barbershopOwner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
         $response = [
             'barbershopOwner' => $barbershop_owner,
