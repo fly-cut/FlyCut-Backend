@@ -126,6 +126,8 @@ class ReservationRatingController extends Controller
             $rating->client_name = Client::find($rating->client_id)->name;
             $rating->client_image = Client::find($rating->client_id)->image;
             $rating->barber_name = Barber::find($rating->barber_id)->name;
+            $rating->barber_image = Barber::find($rating->barber_id)->image;
+            $rating->date = Reservation::find($rating->reservation_id)->date;
             $services = [];
             $services_ids = DB::table('reservation_service')->where('reservation_id', $rating->reservation_id)->pluck('service_id');
             foreach ($services_ids as $service_id) {

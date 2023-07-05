@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Reservation;
 use App\Models\Service;
 use App\Models\Variation;
+use App\Models\Barber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -131,10 +132,13 @@ class BarbershopController extends Controller
 
         $barbershop->save();
 
+        Auth::user()->has_barbershop = true;
+
         return response()->json([
             'status' => 200,
             'message' => 'Barbershop has been added successfully',
             'barbershop' => $barbershop,
+            'barbershop_owner' => Auth::user(),
         ], 200);
     }
 
@@ -1129,6 +1133,7 @@ class BarbershopController extends Controller
                 'reservation' => $reservation,
                 'services' => $servicedata,
                 'client' => $client,
+                'barber_name' => Barber::where('id', $reservation->barber_id)->first()->name,
             ];
 
             $data[] = $element;
