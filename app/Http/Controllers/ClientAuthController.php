@@ -30,24 +30,6 @@ class ClientAuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
         ]);
-        if ($client) {
-            $verify2 = DB::table('password_reset_tokens')->where([
-                ['email', $request->all()['email']],
-            ]);
-
-            if ($verify2->exists()) {
-                $verify2->delete();
-            }
-            $pin = rand(100000, 999999);
-            DB::table('password_reset_tokens')
-                ->insert(
-                    [
-                        'email' => $request->all()['email'],
-                        'token' => $pin,
-                    ]
-                );
-        }
-        Mail::to($request->email)->send(new VerifyEmail($pin));
         $token = $client->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
         $response = [
             'client' => $client,
