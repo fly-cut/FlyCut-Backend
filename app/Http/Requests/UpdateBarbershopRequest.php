@@ -11,7 +11,7 @@ class UpdateBarbershopRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,13 +22,7 @@ class UpdateBarbershopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255|regex:/(^([a-zA-Z ]+)(\d+)?$)/u',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description' => 'required|string',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'longitude' => 'numeric',
-            'latitude' => 'numeric',
+            //
         ];
     }
 }

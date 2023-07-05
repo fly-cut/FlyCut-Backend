@@ -9,78 +9,61 @@ use App\Models\Variation;
 use App\Models\Barbershop;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
-use App\Services\BarberService;
-use App\Services\ReservationServiceAttachment;
-use App\Repositories\SlotRepository;
-use App\Services\NotificationService;
-use App\Repositories\ClientRepository;
 use App\Http\Controllers\BarberController;
-use App\Repositories\ReservationRepository;
-use App\Services\ReservationSlotAttachment;
-use App\Services\ReservationCreationService;
-use App\Services\BarberAvailabilityService;
+use App\Services\NotificationService;
 
 class ReservationService
 {
-    private $reservationCreationService;
-    private $reservationServiceAttachment;
-    private $reservationSlotAttachment;
-    private $notificationService;
-    private $barberAvailability;
-    public function __construct(
-        ReservationCreationService $reservationCreationService,
-        ReservationServiceAttachment $reservationServiceAttachment,
-        ReservationSlotAttachment $reservationSlotAttachment,
-        BarberAvailabilityService $barberAvailability,
-        NotificationService $notificationService,
-    ) {
-        $this->reservationCreationService = $reservationCreationService;
-        $this->reservationServiceAttachment = $reservationServiceAttachment;
-        $this->reservationSlotAttachment = $reservationSlotAttachment;
-        $this->notificationService = $notificationService;
-        $this->barberAvailability = $barberAvailability;
-    }
-
-    public function store($request)
+    public function store(Request $request)
     {
+        $this->validateRequest($request);
+
         $availability = $this->checkBarberAvailability($request);
 
-        if (!$availability) {
+        if ($availability->getStatusCode() !== 200) {
             return response()->json(['message' => 'No slots available'], 422);
         }
 
-        try {
-            $reservation = $this->reservationCreationService->createReservation($request);
-            $this->notificationService->sendNotification($reservation);
-            $this->reservationServiceAttachment->attachServicesToReservation($request, $reservation);
-            $this->reservationSlotAttachment->attachSlotsToReservation($request, $reservation);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-        }
+        $reservation = $this->createReservation($request);
+        NotificationService::sendNotification($reservation);
+        $this->attachServicesToReservation($request, $reservation);
+        $this->createSlotsForReservation($request, $reservation);
 
         return response()->json(['message' => 'Reservation created', 'reservation' => $reservation]);
     }
 
-    private function checkBarberAvailability($request)
+    private function validateRequest(Request $request)
     {
-        $startTime = $request['start_time'];
-        $services = $request['services'];
-        $totalslots = $this->calculateTotalSlots($request, $services);
-        $barberId = $request['barber_id'];
-        $response = $this->barberAvailability->checkAvailability($startTime, $totalslots, $barberId);
-
-        return $response;
+        $request->validate([
+            'barber_id' => 'required|exists:barbers,id',
+            'start_time' => 'required',
+            'services' => 'required|array|min:1',
+            'services.*.name' => 'required|string|exists:services,name',
+        ]);
     }
 
-    private function calculateTotalSlots($request, array $services)
+    private function createReservation(Request $request)
     {
+        $dateString = $request->input('start_time');
+
+        return Reservation::create([
+            'barber_id' => $request->barber_id,
+            'user_id' => auth()->user()->id,
+            'barbershop_id' => $request->barbershop_id,
+            'date' => $dateString,
+        ]);
+    }
+
+    private function checkBarberAvailability(Request $request)
+    {
+        $startTime = $request->input('start_time');
+        $services = $request->input('services');
         $totalslots = 0;
 
         foreach ($services as $service) {
             $currentService = Service::where('name', $service['name'])->first();
             $id = $currentService->id;
-            $barbershop = Barbershop::where('id', $request['barbershop_id'])->first();
-
+            $barbershop = Barbershop::where('id', $request->barbershop_id)->first();
             foreach ($barbershop->services as $service) {
                 if ($service->id == $id) {
                     $totalslots += $service->pivot->slots;
@@ -88,6 +71,60 @@ class ReservationService
             }
         }
 
-        return $totalslots;
+        $barberId = $request->input('barber_id');
+        $response = BarberController::checkAvailability($startTime, $totalslots, $barberId);
+
+        return $response;
+    }
+
+    private function attachServicesToReservation(Request $request, Reservation $reservation)
+    {
+        $services = $request->input('services');
+        foreach ($services as $service) {
+            $current_service = Service::where('name', $service['name'])->first();
+            if (isset($service['variation_name'])) {
+                $service_variation = Variation::where('name', $service['variation_name'])->first();
+                $variation_id = $service_variation->id;
+                $current_service->reservations()->attach($reservation->id, ['variation_id' => $variation_id]);
+            } else {
+                $current_service->reservations()->attach($reservation->id);
+            }
+        }
+    }
+
+    private function createSlotsForReservation(Request $request, Reservation $reservation)
+    {
+        $services = $request->input('services');
+
+        $startTime = $request->input('start_time');
+        $start = Carbon::parse($startTime);
+        $total_price = 0;
+        foreach ($services as $service) {
+            $current_service = Service::where('name', $service['name'])->first();
+            $id = $current_service->id;
+            $barbershop = Barbershop::where('id', $request->barbershop_id)->first();
+            $numberOfSlots = 0;
+            foreach ($barbershop->services as $service) {
+                if ($service->id == $id) {
+                    $numberOfSlots = $service->pivot->slots;
+                    $total_price += $service->pivot->price;
+                }
+            }
+
+            for ($i = 0; $i < $numberOfSlots; $i++) {
+                $intervalEnd = $start->copy()->addMinutes(15);
+                $slot = Slot::create([
+                    'start_time' => $start->format('Y-m-d H:i:s'),
+                    'end_time' => $intervalEnd->format('Y-m-d H:i:s'),
+                    'barber_id' => $request->barber_id,
+                    'reservation_id' => $reservation->id,
+                    'status' => 'reserved',
+                ]);
+
+                $start = $intervalEnd;
+            }
+        }
+        $reservation->price = $total_price;
+        $reservation->save();
     }
 }

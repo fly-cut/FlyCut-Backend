@@ -21,8 +21,6 @@ class BarbershopOwner extends Authenticatable
         'phone',
         'birth_date',
         'image',
-        'device_token',
-        'has_barbershop',
     ];
 
     protected $hidden = [

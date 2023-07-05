@@ -7,6 +7,7 @@ use App\Models\Barbershop;
 use App\Models\Reservation;
 use App\Models\BarbershopOwner;
 
+
 class NotificationService
 {
     public static function sendNotification(Reservation $reservation)
