@@ -8,6 +8,7 @@ use App\Models\Reservation;
 use App\Models\Service;
 use App\Models\Variation;
 use App\Models\Barber;
+use App\Models\BarbershopOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -132,13 +133,16 @@ class BarbershopController extends Controller
 
         $barbershop->save();
 
-        Auth::user()->has_barbershop = true;
+        $barbershop_owner = BarbershopOwner::find(Auth::id());
+        //update barbershop_owner has_barbershop to true
+        $barbershop_owner->has_barbershop = true;
+        $barbershop_owner->save();
 
         return response()->json([
             'status' => 200,
             'message' => 'Barbershop has been added successfully',
             'barbershop' => $barbershop,
-            'barbershop_owner' => Auth::user(),
+            'barbershop_owner' => $barbershop_owner,
         ], 200);
     }
 
