@@ -59,7 +59,7 @@ class BarbershopOwnerController extends Controller
     public function assignToken(Request $request)
     {
         $owner = $request->user();
-        $owner->token = $request->token;
+        $owner->device_token = $request->token;
         $owner->save();
         $message = [
             'message' => 'Token assigned successfully',
