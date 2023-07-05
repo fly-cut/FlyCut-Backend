@@ -24,7 +24,7 @@ class NotificationService
         $data = [
 
             "registration_ids" => [
-                $barbershop_owner->token
+                $barbershop_owner->device_token
             ],
 
             "notification" => [
