@@ -134,7 +134,7 @@ class ClientAuthService
 
         $token = $clientCreated->guard(['client-api'])->createToken('ClientAccessToken')->accessToken;
 
-        return $clientCreated->toArray() + ['token' => $token];
+        return  response()->json($clientCreated, 200, ['token' => $token]);
     }
 
 

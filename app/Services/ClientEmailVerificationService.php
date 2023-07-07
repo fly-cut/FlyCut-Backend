@@ -37,12 +37,7 @@ class ClientEmailVerificationService
         $client->email_verified_at = Carbon::now()->toDateTimeString();
         $client->save();
 
-        $response = [
-            'success' => true,
-            'message' => 'Email is verified',
-        ];
-
-        return $response;
+        return new JsonResponse(['success' => true, 'message' => 'Email is verified'], 200);
     }
 
     public function resendPin(array $data)
