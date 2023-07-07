@@ -8,6 +8,7 @@ use App\Http\Controllers\BarbershopOwnerController;
 use App\Http\Controllers\ClientAuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HairCutController;
+use App\Http\Controllers\HaircutRecommenderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ReservationRatingController;
@@ -77,6 +78,7 @@ Route::group(['prefix' => 'clients/'], function () {
         Route::put('changePassword', [ClientController::class, 'changePassword']);
         Route::put('updateProfile', [ClientController::class, 'updateProfile']);
         Route::get('checkBarberAvailability', [ClientController::class, 'checkBarberAvailability']);
+        Route::post('haircut/recommender', [HaircutRecommenderController::class, 'recommendHaircut']);
     });
 });
 
