@@ -13,12 +13,11 @@ class PasswordResetTokenRepository
             ->delete();
     }
 
-    public function deleteByEmailAndToken(string $email, string $token): int
+    public function deleteByEmailAndToken(string $email, string $token)
     {
         return DB::table('password_reset_tokens')
             ->where('email', $email)
-            ->where('token', $token)
-            ->delete();
+            ->where('token', $token);
     }
 
     public function create(string $email, string $token): bool

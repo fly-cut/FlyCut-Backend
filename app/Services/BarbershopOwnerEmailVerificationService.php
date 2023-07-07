@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\BarbershopOwnerRepository;
 use App\Repositories\PasswordResetTokenRepository;
+use Illuminate\Http\JsonResponse;
 
 class BarbershopOwnerEmailVerificationService
 {
@@ -22,10 +23,14 @@ class BarbershopOwnerEmailVerificationService
 
     public function verifyEmail(array $data)
     {
-        $email = Auth::guard('barbershop-owner-api')->user()->email;
+        $email = Auth::user()->email;
         $token = $data['token'];
 
-        $this->deletePasswordResetToken($email, $token);
+        $select = $this->deletePasswordResetToken($email, $token);
+        if ($select->get()->isEmpty()) {
+            return new JsonResponse(['success' => false, 'message' => 'Invalid PIN'], 400);
+        }
+        $select->delete();
 
         $barbershopOwner = $this->barbershopOwnerRepository->findByEmail($email);
         $barbershopOwner->email_verified_at = Carbon::now()->toDateTimeString();
@@ -70,6 +75,6 @@ class BarbershopOwnerEmailVerificationService
 
     protected function deletePasswordResetToken($email, $token)
     {
-        $this->passwordResetTokenRepository->deleteByEmailAndToken($email, $token);
+        return $this->passwordResetTokenRepository->deleteByEmailAndToken($email, $token);
     }
 }
