@@ -32,7 +32,7 @@ class BarbershopOwnerRepository
         return $barbershopOwner->delete();
     }
 
-    public function existsByEmail(string $email): bool
+    public function existsByEmail(string $email)
     {
         return BarbershopOwner::where('email', $email);
     }
