@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use Carbon\Carbon;
-use App\Mail\VerifyEmail;
 use App\Mail\ResetPassword;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\ClientRepository;
 use App\Repositories\PasswordResetTokenRepository;
@@ -25,7 +26,6 @@ class ClientPasswordResetService
     public function forgotPassword(array $data)
     {
         $email = $data['email'];
-
         if (!$this->clientRepository->existsByEmail($email)) {
             return [
                 'success' => false,
@@ -42,7 +42,7 @@ class ClientPasswordResetService
 
         $response = [
             'success' => true,
-            'message' => 'Please check your email for a 6 digit pin',
+            'message' => 'Please check your email for a 6-digit PIN',
         ];
 
         return $response;
@@ -53,31 +53,32 @@ class ClientPasswordResetService
         $email = $data['email'];
         $token = $data['token'];
 
-        $check = $this->passwordResetTokenRepository->exists($email, $token);
+        $check = $this->passwordResetTokenRepository->findResetToken($email, $token);
 
-        if (!$check) {
-            return [
-                'success' => false,
-                'message' => 'Invalid token',
-            ];
+        if ($check->exists()) {
+            $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
+            if ($difference > 3600) {
+                return new JsonResponse(['success' => false, 'message' => 'Token Expired'], 400);
+            }
+
+            $delete = $this->passwordResetTokenRepository->findResetToken($email, $token)->delete();
+
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'message' => 'You can now reset your password',
+                ],
+                200
+            );
+        } else {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'message' => 'Invalid token',
+                ],
+                401
+            );
         }
-
-        $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
-        if ($difference > 3600) {
-            return [
-                'success' => false,
-                'message' => 'Token Expired',
-            ];
-        }
-
-        $this->deletePasswordResetToken($email, $token);
-
-        $response = [
-            'success' => true,
-            'message' => 'You can now reset your password',
-        ];
-
-        return $response;
     }
 
     public function resetPassword(array $data)
@@ -107,14 +108,6 @@ class ClientPasswordResetService
 
     protected function storePasswordResetToken($email, $token)
     {
-        $this->passwordResetTokenRepository->create(
-            $email,
-            $token,
-        );
-    }
-
-    protected function deletePasswordResetToken($email, $token)
-    {
-        $this->passwordResetTokenRepository->deleteByEmailAndToken($email, $token);
+        $this->passwordResetTokenRepository->create($email, $token);
     }
 }

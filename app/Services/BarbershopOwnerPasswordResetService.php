@@ -55,29 +55,6 @@ class BarbershopOwnerPasswordResetService
 
         $check = $this->passwordResetTokenRepository->findResetToken($email, $token);
 
-        /*if (!$check->exists()) {
-            return [
-                'success' => false,
-                'message' => 'Invalid token',
-            ];
-        }
-
-        $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
-        if ($difference > 3600) {
-            return [
-                'success' => false,
-                'message' => 'Token expired',
-            ];
-        }
-
-        $this->deletePasswordResetToken($email, $token);
-
-        $response = [
-            'success' => true,
-            'message' => 'You can now reset your password',
-        ];
-
-        return $response;*/
         if ($check->exists()) {
             $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
             if ($difference > 3600) {
@@ -133,9 +110,4 @@ class BarbershopOwnerPasswordResetService
     {
         $this->passwordResetTokenRepository->create($email, $token);
     }
-
-    /*protected function deletePasswordResetToken($email, $token)
-    {
-        $this->passwordResetTokenRepository->deleteByEmailAndToken($email, $token);
-    }*/
 }
