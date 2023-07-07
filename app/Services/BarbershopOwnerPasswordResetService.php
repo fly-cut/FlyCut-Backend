@@ -24,7 +24,6 @@ class BarbershopOwnerPasswordResetService
     public function forgotPassword(array $data)
     {
         $email = $data['email'];
-        return $email;
         return $this->barbershopOwnerRepository->existsByEmail($email);
         if (!$this->barbershopOwnerRepository->existsByEmail($email)) {
             return [
