@@ -2,14 +2,14 @@
 
 namespace App\Repositories;
 
+use App\Models\Barber;
+use App\Models\Client;
+use App\Models\Service;
+use App\Models\Variation;
 use App\Models\Barbershop;
+use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use App\Models\Service;
-use App\Models\Reservation;
-use App\Models\Variation;
-use App\Models\Client;
-use App\Models\Barber;
 use App\Http\Controllers\ReservationController;
 
 class BarbershopRepository
@@ -35,14 +35,8 @@ class BarbershopRepository
         $barbershop->city = $data['city'];
         $barbershop->barbershop_owner_id = Auth::id();
 
-        $path = $data->file('image');
-        $filename = $path->getClientOriginalName();
-        $destinationPath = public_path().'/images';
-        $path->move($destinationPath, $filename);
-        $barbershop->image = $filename;
         $barbershop->save();
-        Auth::user()->has_barbershop = true;
-        $barbershop->barbershop_owner = Auth::user();
+
         return $barbershop;
     }
 
@@ -57,18 +51,9 @@ class BarbershopRepository
             $barbershop->longitude = $data->longitude;
             $barbershop->latitude = $data->latitude;
         }
-        if ($data->hasFile('image')) {
-            if (File::exists(public_path('images/'.$barbershop->image))) {
-                File::delete(public_path('images/'.$barbershop->image));
-                $path = $data->file('image');
-                $filename = $path->getClientOriginalName();
-                $destinationPath = public_path().'/images';
-                $path->move($destinationPath, $filename);
-                $barbershop->image = $filename;
-            }
-        }
 
         $barbershop->update();
+
         return $barbershop;
     }
 
@@ -82,6 +67,12 @@ class BarbershopRepository
         return Barbershop::where('barbershop_owner_id', $ownerId)->get();
     }
 
+    public function getBarbershopServices($barbershop_id)
+    {
+        $barbershop = $this->getById($barbershop_id);
+        $services = $barbershop->services()->get();
+        return $services;
+    }
     public function addServices($request)
     {
         $barbershop = $this->getByOwnerId(Auth::id())->first();
@@ -105,14 +96,6 @@ class BarbershopRepository
         }
     }
 
-    public function getBarbershopServicesWithPriceAndSlots($barbershop_id)
-    {
-        $barbershop = $this->getById($barbershop_id);
-        $services = $barbershop->services()->withPivot('price', 'slots')->get();
-        return $services;
-        
-    }
-
     public function search($request)
     {
         $searchQuery = $request->get('searchQuery');
@@ -120,9 +103,9 @@ class BarbershopRepository
         $userLatitude = $request->get('userLatitude');
         $barbershops = Barbershop::query()
             ->where(function ($query) use ($searchQuery) {
-                $query->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($searchQuery).'%'])
-                    ->orWhereRaw('LOWER(city) LIKE ?', ['%'.strtolower($searchQuery).'%'])
-                    ->orWhereRaw('LOWER(address) LIKE ?', ['%'.strtolower($searchQuery).'%']);
+                $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(city) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(address) LIKE ?', ['%' . strtolower($searchQuery) . '%']);
             })
             ->orderByRaw(
                 "ABS(latitude - $userLatitude) + ABS(longitude - $userLongitude)"
@@ -143,45 +126,10 @@ class BarbershopRepository
         return $barbershops;
     }
 
-    public function getReservations($request)
+    public function getBarbers($barbershop_id)
     {
-        $barbershop_id = Barbershop::where('barbershop_owner_id', Auth::user()->id)->first()->id;
-
-        $reservations = Reservation::where('barbershop_id', $barbershop_id)->orderBy('date', 'asc')->get();
-
-        $data = [];
-
-        foreach ($reservations as $reservation) {
-            ReservationController::getStatus($reservation);
-            $reservationId = $reservation->id;
-            $services = Service::whereHas('reservations', function ($query) use ($reservationId) {
-                $query->where('reservation_id', $reservationId);
-            })->get();
-
-            $servicedata = [];
-
-            foreach ($services as $service) {
-                $variations = Variation::where('service_id', $service->id)->get();
-                $variationData = $variations->toArray();
-
-                $serviceData = $service->toArray();
-                $serviceData['variation'] = $variationData[0] ?? null;
-
-                $servicedata[] = $serviceData;
-            }
-            $client = Client::where('id', $reservation->user_id)->first();
-            $barber_name = Barber::where('id', $reservation->barber_id)->first()->name;
-
-            $element = [
-                'reservation' => $reservation,
-                'services' => $servicedata,
-                'client' => $client,
-                'barber_name' => $barber_name,
-            ];
-
-            $data[] = $element;
-        }
-
-        return $data;
+        $barbershop = $this->getById($barbershop_id);
+        $barbers = $barbershop->barbers;
+        return $barbers;
     }
 }

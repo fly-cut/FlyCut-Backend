@@ -42,7 +42,7 @@ class BarbershopController extends Controller
 
     public function showBarbershop($barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopById($barbershop_id);
+        $barbershop = $this->barbershopService->getBarbershopByOwnerId($barbershop_id);
         if (is_null($barbershop)) {
             return response()->json([
                 'status' => 404,
@@ -58,8 +58,8 @@ class BarbershopController extends Controller
 
     public function updateBarbershop(UpdateBarbershopRequest $request, $barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopById($barbershop_id);
-        if (! $barbershop || empty($barbershop)) {
+        $barbershop = $this->barbershopService->getBarbershopByOwnerId($barbershop_id);
+        if (!$barbershop || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to be updated!',
@@ -76,7 +76,7 @@ class BarbershopController extends Controller
 
     public function destroyBarbershop($barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopById($barbershop_id);
+        $barbershop = $this->barbershopService->getBarbershopByOwnerId($barbershop_id);
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
@@ -100,7 +100,7 @@ class BarbershopController extends Controller
             'message' => 'Services added successfully to the barbershop',
         ], 200);
     }
-  
+
     public function removeServicesFromBarbershop(RemoveServicesFromBarbershopRequest $request)
     {
         $this->barbershopService->removeServicesFromBarbershop($request);
@@ -122,14 +122,14 @@ class BarbershopController extends Controller
 
     public function getBarbershopServicesWithPriceAndSlots($barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopById($barbershop_id);
+        $barbershop = $this->barbershopService->getBarbershopByOwnerId($barbershop_id);
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to get its services!',
             ], 404);
         }
-        $services = $this->barbershopService->getBarbershopServicesWithPriceAndSlots($barbershop_id);
+        $services = $this->barbershopService->getBarbershopServices($barbershop_id);
 
         return response()->json([
             'status' => 200,
@@ -139,14 +139,14 @@ class BarbershopController extends Controller
 
     public function getBarbersOfBarbershop($barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopById($barbershop_id);
+        $barbershop = $this->barbershopService->getBarbershop($barbershop_id);
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
                 'errors' => 'No barbershop found to get its barbers!',
             ], 404);
         }
-        $barbers = $barbershop->barbers;
+        $barbers = $this->barbershopService->getBarbers($barbershop_id);
 
         return response()->json([
             'status' => 200,
