@@ -70,7 +70,7 @@ class BarbershopRepository
     public function getBarbershopServices($barbershop_id)
     {
         $barbershop = $this->getById($barbershop_id);
-        $services = $barbershop->services()->get();
+        $services = $barbershop->services()->withPivot('price', 'slots')->get();
         return $services;
     }
     public function addServices($request)
