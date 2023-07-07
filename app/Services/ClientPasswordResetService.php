@@ -85,7 +85,13 @@ class ClientPasswordResetService
     {
         $email = $data['email'];
         $password = $data['password'];
-
+        $email = $data['email'];
+        if (!$this->clientRepository->existsByEmail($email)) {
+            return [
+                'success' => false,
+                'message' => 'This email does not exist',
+            ];
+        }
         $this->clientRepository->updatePasswordByEmail($email, $password);
 
         $client = $this->clientRepository->findByEmail($email);

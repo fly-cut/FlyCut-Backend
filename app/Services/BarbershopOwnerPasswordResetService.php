@@ -85,7 +85,12 @@ class BarbershopOwnerPasswordResetService
     {
         $email = $data['email'];
         $password = $data['password'];
-
+        if (!$this->barbershopOwnerRepository->existsByEmail($email)) {
+            return [
+                'success' => false,
+                'message' => 'This email does not exist',
+            ];
+        }
         $this->barbershopOwnerRepository->updatePasswordByEmail($email, $password);
 
         $barbershopOwner = $this->barbershopOwnerRepository->findByEmail($email);
