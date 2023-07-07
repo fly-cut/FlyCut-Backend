@@ -34,7 +34,7 @@ class BarbershopOwnerRepository
 
     public function existsByEmail(string $email)
     {
-        return BarbershopOwner::where('email', $email)->first();
+        return BarbershopOwner::where('email', $email)->exists();
     }
 
     public function firstOrCreate(array $attributes, array $values = []): BarbershopOwner
