@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ChangePasswordBarbershopOwnerRequest;
 use App\Http\Requests\UpdateProfileBarbershopOwnerRequest;
+use App\Models\BarbershopOwner;
 use Illuminate\Http\Request;
 use App\Services\BarbershopOwnerService;
 
@@ -11,7 +12,10 @@ use App\Services\BarbershopOwnerService;
 class BarbershopOwnerController extends Controller
 {
     protected $barbershopOwnerService;
-
+    public function index()
+    {
+        return BarbershopOwner::all();
+    }
     public function __construct(BarbershopOwnerService $barbershopOwnerService)
     {
         $this->barbershopOwnerService = $barbershopOwnerService;

@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\AdminAuthController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\ReservationRatingController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\VariationController;
+use App\Models\BarbershopOwner;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -108,7 +108,7 @@ Route::group(['prefix' => 'barbershops/', 'middleware' => 'tri-guard'], function
     Route::put('/slots/changeStausToBusy', [SlotController::class, 'changeStatusToBusy']);
     Route::get('slots/get/all', [SlotController::class, 'index']);
 });
-
+Route::get('getallbarbers', [BarbershopOwnerController::class, 'index']);
 Route::group(['prefix' => 'services/', 'middleware' => 'tri-guard'], function () {
     Route::get('', [ServiceController::class, 'index']);
     Route::get('{id}', [ServiceController::class, 'show']);
