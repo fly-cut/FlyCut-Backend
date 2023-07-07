@@ -54,7 +54,7 @@ class BarbershopOwnerAuthService
 
         $token = $barbershopOwner->guard(['barbershop-owner-api'])->createToken('BarbershopOwnerAccessToken')->accessToken;
         $response = [
-            'barbershop_owner' => $barbershopOwner,
+            'barbershopOwner' => $barbershopOwner,
             'token' => $token,
             'message' => 'Barbershop owner registered successfully',
         ];
