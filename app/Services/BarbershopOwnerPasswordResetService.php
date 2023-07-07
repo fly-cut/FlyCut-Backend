@@ -4,6 +4,8 @@ namespace App\Services;
 
 use Carbon\Carbon;
 use App\Mail\ResetPassword;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\BarbershopOwnerRepository;
 use App\Repositories\PasswordResetTokenRepository;
@@ -51,9 +53,9 @@ class BarbershopOwnerPasswordResetService
         $email = $data['email'];
         $token = $data['token'];
 
-        $check = $this->passwordResetTokenRepository->exists($email, $token);
+        $check = $this->passwordResetTokenRepository->findResetToken($email, $token);
 
-        if (!$check) {
+        /*if (!$check->exists()) {
             return [
                 'success' => false,
                 'message' => 'Invalid token',
@@ -75,7 +77,31 @@ class BarbershopOwnerPasswordResetService
             'message' => 'You can now reset your password',
         ];
 
-        return $response;
+        return $response;*/
+        if ($check->exists()) {
+            $difference = Carbon::now()->diffInSeconds($check->first()->created_at);
+            if ($difference > 3600) {
+                return new JsonResponse(['success' => false, 'message' => 'Token Expired'], 400);
+            }
+
+            $delete = $this->passwordResetTokenRepository->findResetToken($email, $token)->delete();
+
+            return new JsonResponse(
+                [
+                    'success' => true,
+                    'message' => 'You can now reset your password',
+                ],
+                200
+            );
+        } else {
+            return new JsonResponse(
+                [
+                    'success' => false,
+                    'message' => 'Invalid token',
+                ],
+                401
+            );
+        }
     }
 
     public function resetPassword(array $data)
@@ -108,8 +134,8 @@ class BarbershopOwnerPasswordResetService
         $this->passwordResetTokenRepository->create($email, $token);
     }
 
-    protected function deletePasswordResetToken($email, $token)
+    /*protected function deletePasswordResetToken($email, $token)
     {
         $this->passwordResetTokenRepository->deleteByEmailAndToken($email, $token);
-    }
+    }*/
 }

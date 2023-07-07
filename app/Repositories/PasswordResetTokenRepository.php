@@ -30,11 +30,10 @@ class PasswordResetTokenRepository
             ]);
     }
 
-    public function exists(string $email, string $token): bool
+    public function findResetToken(string $email, string $token)
     {
         return DB::table('password_reset_tokens')
             ->where('email', $email)
-            ->where('token', $token)
-            ->exists();
+            ->where('token', $token);
     }
 }
