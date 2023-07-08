@@ -20,6 +20,11 @@ class ReservationRatingService
         $this->reservationRatingRepository = $reservationRatingRepository;
     }
 
+    public function getById($id)
+    {
+        return ReservationRating::find($id);
+    }
+
     public function create($request)
     {
         $reservationRating = $this->reservationRatingRepository->create($request->all());
