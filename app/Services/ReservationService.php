@@ -90,22 +90,24 @@ class ReservationService
 
         return $totalslots;
     }
-    public static function getStatus(Reservation $reservation)
+    public function getStatus(Reservation $reservation)
     {
         $timeNow = Carbon::now('Africa/Cairo');
         $currentTime = Carbon::parse($timeNow)->subHours(12)->addHour();
         $slotCount = Slot::where('reservation_id', $reservation->id)->count();
         $reservationDateTime = Carbon::parse($reservation->date, 'Africa/Cairo')->subHours(12);
         $reservationEndTime = $reservationDateTime->copy()->addMinutes(15 * $slotCount);
-        if ($currentTime < $reservationDateTime) {
+        if ($reservation->id == 11) {
+            echo $currentTime . ' ' . $reservationDateTime;
+        }
+        if ($currentTime->lessThan($reservationDateTime)) {
             $reservation->status = 'upcoming';
-            $reservation->save();
-        } elseif ($currentTime >= $reservationDateTime && $currentTime <= $reservationEndTime) {
+        } elseif ($currentTime->greaterThanOrEqualTo($reservationDateTime) && $currentTime->lessThanOrEqualTo($reservationEndTime)) {
             $reservation->status = 'in-progress';
-            $reservation->save();
         } else {
             $reservation->status = 'completed';
-            $reservation->save();
         }
+
+        $reservation->save();
     }
 }
