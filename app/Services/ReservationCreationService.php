@@ -17,14 +17,7 @@ class ReservationCreationService
     public function createReservation($request)
     {
         $dateString = $request['start_time'];
-        $currentTime = Carbon::now('Africa/Cairo');
-        $currentPlus12Hours = $currentTime->copy()->addHours(12);
 
-        $startTime = Carbon::parse($dateString);
-
-        if ($startTime < $currentPlus12Hours) {
-            throw new \Exception('You cannot make a reservation in the past');
-        }
         $reservationData = [
             'barber_id' => $request['barber_id'],
             'user_id' => auth()->user()->id,
