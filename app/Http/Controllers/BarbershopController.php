@@ -58,7 +58,7 @@ class BarbershopController extends Controller
 
     public function updateBarbershop(UpdateBarbershopRequest $request, $barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopByOwnerId($barbershop_id);
+        $barbershop = $this->barbershopService->getBarbershop($barbershop_id);
         if (!$barbershop || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
