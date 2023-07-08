@@ -38,7 +38,7 @@ class ReservationRatingService
         return $reservationRating;
     }
 
-    public function update($id, $request)
+    public function update($request, $id)
     {
         $reservationRating = $this->reservationRatingRepository->update($id, $request->all());
 
