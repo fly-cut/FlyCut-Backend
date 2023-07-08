@@ -55,7 +55,7 @@ class BarbershopOwnerService
 
     public function assignToken($owner, $token)
     {
-        $owner->token = $token;
+        $owner->device_token = $token;
         $owner->save();
 
         $message = [
