@@ -96,7 +96,7 @@ class ReservationService
         $timeNow = Carbon::now('Africa/Cairo');
         $currentTime = Carbon::parse($timeNow)->subHours(12)->addHour();
         $slotCount = Slot::where('reservation_id', $reservation->id)->count();
-        $reservationDateTime = Carbon::parse($reservation->date, 'Africa/Cairo')->subHours(12);
+        $reservationDateTime = Carbon::parse($reservation->date, 'Africa/Cairo');
         $reservationEndTime = $reservationDateTime->copy()->addMinutes(15 * $slotCount);
         if ($reservation->id == 12) {
             echo $reservationDateTime . " " . $currentTime;
