@@ -26,8 +26,8 @@ class ServiceService
         $destinationPath = public_path() . '/images';
         $path->move($destinationPath, $filename);
 
-        $data->image = $filename;
-        return $data;
+        $data['image'] = $filename;
+        return $data->all();
         return $this->serviceRepository->create($data);
     }
 
