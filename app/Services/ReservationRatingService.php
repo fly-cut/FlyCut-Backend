@@ -98,12 +98,12 @@ class ReservationRatingService
         $rating->client_name = Client::find($rating->client_id)->name;
         $rating->client_image = Client::find($rating->client_id)->image;
         $rating->barber_name = Barber::find($rating->barber_id)->name;
-        $rating->services = Service::whereIn(
-            'id',
-            DB::table('reservation_service')
-                ->where('reservation_id', $rating->reservation_id)
-                ->pluck('service_id')
-        )->get();
+        $services_ids = DB::table('reservation_service')->where('reservation_id', $rating->reservation_id)->pluck('service_id');
+        foreach ($services_ids as $service_id) {
+            $service = Service::find($service_id);
+            array_push($services, $service);
+        }
+        $rating->services = $services;
 
         return $rating;
     }

@@ -23,29 +23,29 @@ class ReservationRatingController extends Controller
     {
         $this->reservationRatingService = $reservationRatingService;
     }
-    
+
     public function store(StoreReservationRatingRequest $request)
     {
-        $reservationRating = $this->reservationRatingService->createReservationRating($request);
+        $reservationRating = $this->reservationRatingService->create($request);
 
         return response()->json($reservationRating, 201);
     }
 
     public function update(UpdateReservationRatingRequest $request, $id)
     {
-        $reservationRating = $this->reservationRatingService->updateReservationRating($request, $id);
+        $reservationRating = $this->reservationRatingService->update($request, $id);
 
         return response()->json($reservationRating, 200);
     }
 
     public function destroy($id)
     {
-        $reservationRating = $this->reservationRatingService->getReservationRatingById($id);
+        $reservationRating = $this->reservationRatingService->getBarberRatingByReservationId($id);
         if (!$reservationRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
 
-        $this->reservationRatingService->deleteReservationRating($id);
+        $this->reservationRatingService->getBarberRatingByReservationId($id);
 
         return response()->json(['message' => 'Rating deleted successfully.'], 200);
     }
@@ -67,7 +67,7 @@ class ReservationRatingController extends Controller
         if (!$barbershop) {
             return response()->json(['message' => 'Barbershop not found.'], 404);
         }
-        
+
         $barbershopRatings = $this->reservationRatingService->getBarbershopRatings($id);
 
         return response()->json($barbershopRatings, 200);
@@ -79,7 +79,7 @@ class ReservationRatingController extends Controller
         if (!$rating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
-        
+
         $rating = $this->reservationRatingService->getBarberRatingByReservationId($id);
 
         return response()->json($rating, 200);
