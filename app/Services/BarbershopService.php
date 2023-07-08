@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Repositories\BarbershopRepository;
 use App\Http\Controllers\ReservationController;
+use App\Models\BarbershopOwner;
 
 class BarbershopService
 {
@@ -39,11 +40,10 @@ class BarbershopService
             $barbershop->image = $filename;
             $barbershop->save();
         }
-
-        Auth::user()->has_barbershop = true;
-        echo (Auth::user()->has_barbershop);
+        $user = BarbershopOwner::find(Auth::user()->id);
+        $user->has_barbershop = true;
+        $user->save();
         $barbershop->barbershop_owner = Auth::user();
-
         return $barbershop;
     }
 
