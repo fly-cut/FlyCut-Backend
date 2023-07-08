@@ -49,6 +49,6 @@ class ReservationRatingRepository
 
     public function getBarberRatingByReservationId($id)
     {
-        return ReservationRating::where('reservation_id', $id)->first();
+        return ReservationRating::where('id', $id)->first();
     }
 }
