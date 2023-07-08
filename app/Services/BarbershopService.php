@@ -146,7 +146,7 @@ class BarbershopService
                 'reservation' => $reservation,
                 'services' => $servicedata,
                 'client' => $client,
-                'barber_name' => $barber_name,
+                'barber_name' => Barber::where('id', $reservation->barber_id)->first()->name,
             ];
 
             $data[] = $element;
