@@ -27,6 +27,7 @@ class ServiceService
         $path->move($destinationPath, $filename);
 
         $data['image'] = $filename;
+        return $data;
         return $this->serviceRepository->create($data);
     }
 
