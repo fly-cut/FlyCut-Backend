@@ -41,6 +41,7 @@ class BarbershopService
         }
 
         Auth::user()->has_barbershop = true;
+
         $barbershop->barbershop_owner = Auth::user();
 
         return $barbershop;
