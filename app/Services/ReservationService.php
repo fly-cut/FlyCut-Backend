@@ -98,9 +98,6 @@ class ReservationService
         $slotCount = Slot::where('reservation_id', $reservation->id)->count();
         $reservationDateTime = Carbon::parse($reservation->date, 'Africa/Cairo');
         $reservationEndTime = $reservationDateTime->copy()->addMinutes(15 * $slotCount);
-        if ($reservation->id == 12) {
-            echo $reservationDateTime . " " . $currentTime;
-        }
         if ($currentTime < $reservationDateTime) {
             $reservation->status = 'upcoming';
             $reservation->save();

@@ -13,14 +13,19 @@ use Illuminate\Support\Facades\File;
 use App\Repositories\BarbershopRepository;
 use App\Http\Controllers\ReservationController;
 use App\Models\BarbershopOwner;
+use App\Services\ReservationService;
 
 class BarbershopService
 {
     protected $barbershopRepository;
+    private $reservationService;
 
-    public function __construct(BarbershopRepository $barbershopRepository)
-    {
+    public function __construct(
+        BarbershopRepository $barbershopRepository,
+        ReservationService $reservationService
+    ) {
         $this->barbershopRepository = $barbershopRepository;
+        $this->reservationService = $reservationService;
     }
 
     public function getAllBarbershops()
@@ -117,7 +122,7 @@ class BarbershopService
         $data = [];
 
         foreach ($reservations as $reservation) {
-            ReservationController::getStatus($reservation);
+            $this->reservationService->getStatus($reservation);
             $reservationId = $reservation->id;
             $services = Service::whereHas('reservations', function ($query) use ($reservationId) {
                 $query->where('reservation_id', $reservationId);

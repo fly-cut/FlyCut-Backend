@@ -71,7 +71,7 @@ class SlotService
         }
     }
 
-    public function changeSlotStatusToFree(ChangeSlotStatusToFreeRequest $request): void
+    public function changeSlotStatusToFree(ChangeSlotStatusToFreeRequest $request)
     {
         try {
             $slotId = $request->input('slotId');
