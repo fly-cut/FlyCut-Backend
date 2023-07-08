@@ -45,6 +45,7 @@ class VariationRepository
 
     public function searchByName($name)
     {
-        return Variation::where('name', 'like', '%' . $name . '%')->get();
+        $haircut = Variation::where('name', 'like', '%' . $name . '%')->get();
+        return $haircut;
     }
 }
