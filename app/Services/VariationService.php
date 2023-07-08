@@ -21,35 +21,32 @@ class VariationService
 
     public function createVariation($request)
     {
-        $path = $request->file('image');
-        $filename = $path->getClientOriginalName();
-        $destinationPath = public_path() . '/images';
-        $path->move($destinationPath, $filename);
+        $filename = $this->uploadImage($request->file('image'));
 
-        $request['image'] = $filename;
+        $variationData = [
+            'service_id' => $request->service_id,
+            'name' => $request->name,
+            'image' => $filename,
+        ];
 
-        return $this->variationRepository->create($request);
+        return $this->variationRepository->create($variationData);
     }
 
     public function updateVariation($request, $id)
     {
         $variation = $this->variationRepository->getById($id);
 
-        $image = $request->file('image');
-        if ($image) {
-            if (File::exists(public_path('images/' . $variation->image))) {
-                File::delete(public_path('images/' . $variation->image));
-            }
+        if ($request->hasFile('image')) {
+            $this->deleteImage($variation->image);
 
-            $path = $request->file('image');
-            $filename = $path->getClientOriginalName();
-            $destinationPath = public_path() . '/images';
-            $path->move($destinationPath, $filename);
-
-            $request['image'] = $filename;
+            $filename = $this->uploadImage($request->file('image'));
+            $variation->image = $filename;
         }
 
-        return $this->variationRepository->update($request, $id);
+        $variation->name = $request->name;
+        $variation->service_id = $request->service_id;
+
+        return $this->variationRepository->update($variation, $id);
     }
 
     public function getVariationById($id)
@@ -59,6 +56,28 @@ class VariationService
 
     public function deleteVariation($id)
     {
+        $variation = $this->variationRepository->getById($id);
+
+        $this->deleteImage($variation->image);
+
         $this->variationRepository->delete($id);
+    }
+
+    protected function uploadImage($file)
+    {
+        $filename = $file->getClientOriginalName();
+        $destinationPath = public_path() . '/images';
+        $file->move($destinationPath, $filename);
+
+        return $filename;
+    }
+
+    protected function deleteImage($filename)
+    {
+        $imagePath = public_path('images/' . $filename);
+
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
     }
 }

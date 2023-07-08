@@ -44,7 +44,7 @@ class ServiceService
 
         $service->name = $data->name;
 
-        return $this->serviceRepository->update($service);
+        return $this->serviceRepository->update($service, $id);
     }
 
     public function getServiceById($id)

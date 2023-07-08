@@ -17,22 +17,15 @@ class VariationRepository
         return Variation::find($id);
     }
 
-    public function create($request)
+    public function create($data)
     {
-        return Variation::create([
-            'service_id' => $request['service_id'],
-            'name' => $request['name'],
-            'image' => $request['image'],
-        ]);
+        return Variation::create($data);
     }
 
-    public function update($request, $id)
+    public function update($data, $id)
     {
-        $variation = $this->getById($id);
-        $variation->name = $request['name'];
-        $variation->service_id = $request['service_id'];
-        $variation->save();
-
+        $variation = Variation::find($id);
+        $variation->update($data);
         return $variation;
     }
 
