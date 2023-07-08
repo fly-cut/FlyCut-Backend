@@ -41,7 +41,7 @@ class HairCutService
 
     public function searchByName($name)
     {
-        return $haircut = $this->variationRepository->searchByName($name);
+        $haircut = $this->variationRepository->searchByName($name);
         if ($haircut->isEmpty()) {
             return [
                 'success' => false,
