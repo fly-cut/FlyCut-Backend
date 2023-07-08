@@ -3,17 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\ReservationRating;
-use App\Models\Reservation;
-use App\Models\Barber;
-use App\Models\Barbershop;
+use Illuminate\Support\Facades\DB;
 
 class ReservationRatingRepository
 {
-    public function getAll()
-    {
-        return ReservationRating::all();
-    }
-
     public function getById($id)
     {
         return ReservationRating::find($id);
@@ -33,8 +26,7 @@ class ReservationRatingRepository
 
     public function delete($id)
     {
-        $reservationRating = ReservationRating::find($id);
-        $reservationRating->delete();
+        ReservationRating::destroy($id);
     }
 
     public function getBarberRatings($id)
@@ -49,6 +41,36 @@ class ReservationRatingRepository
 
     public function getBarberRatingByReservationId($id)
     {
-        return ReservationRating::where('id', $id)->first();
+        return ReservationRating::where('reservation_id', $id)->first();
+    }
+
+    public function hasBarbershopRatings($barbershopId)
+    {
+        return ReservationRating::where('barbershop_id', $barbershopId)->exists();
+    }
+
+    public function hasBarberRatings($barberId)
+    {
+        return ReservationRating::where('barber_id', $barberId)->exists();
+    }
+
+    public function getAverageBarbershopRating($barbershopId)
+    {
+        return ReservationRating::where('barbershop_id', $barbershopId)->avg('barbershop_rating');
+    }
+
+    public function getAverageBarberRating($barberId)
+    {
+        return ReservationRating::where('barber_id', $barberId)->avg('barber_rating');
+    }
+
+    public function getBarbershopRatingCount($barbershopId)
+    {
+        return ReservationRating::where('barbershop_id', $barbershopId)->count();
+    }
+
+    public function getBarberRatingCount($barberId)
+    {
+        return ReservationRating::where('barber_id', $barberId)->count();
     }
 }

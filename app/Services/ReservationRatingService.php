@@ -53,29 +53,34 @@ class ReservationRatingService
 
     public function delete($id)
     {
-        $reservationRating = ReservationRating::find($id);
+        $reservationRating = $this->reservationRatingRepository->getById($id);
+
+        $this->reservationRatingRepository->delete($id);
+
         $barber = Barber::find($reservationRating->barber_id);
         $barbershop = Barbershop::find($reservationRating->barbershop_id);
         $reservation = Reservation::find($reservationRating->reservation_id);
         $reservation->is_rated = false;
-        $reservationRating->delete();
-        if (ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->count() > 0) {
-            $barbershop->rating = ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->avg('barbershop_rating');
+
+        if ($this->reservationRatingRepository->hasBarbershopRatings($barbershop->id)) {
+            $barbershop->rating = $this->reservationRatingRepository->getAverageBarbershopRating($barbershop->id);
         } else {
             $barbershop->rating = 5.0;
         }
 
-        if (ReservationRating::where('barber_id', $barber->barber_id)->count() > 0) {
-            $barber->rating = ReservationRating::where('barber_id', $barber->barber_id)->avg('barber_rating');
+        if ($this->reservationRatingRepository->hasBarberRatings($barber->id)) {
+            $barber->rating = $this->reservationRatingRepository->getAverageBarberRating($barber->id);
         } else {
             $barber->rating = 5.0;
         }
-        $barbershop->rating_count = ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->count();
-        $barber->rating_count = ReservationRating::where('barber_id', $barber->barber_id)->count();
+
+        $barbershop->rating_count = $this->reservationRatingRepository->getBarbershopRatingCount($barbershop->id);
+        $barber->rating_count = $this->reservationRatingRepository->getBarberRatingCount($barber->id);
+
+        $reservation->save();
         $barbershop->save();
         $barber->save();
     }
-
 
     public function getBarberRatings($id)
     {

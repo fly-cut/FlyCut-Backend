@@ -40,7 +40,7 @@ class ReservationRatingController extends Controller
 
     public function destroy($id)
     {
-        $reservationRating = $this->reservationRatingService->getBarberRatingByReservationId($id);
+        $reservationRating = $this->reservationRatingService->delete($id);
         if (!$reservationRating) {
             return response()->json(['message' => 'Rating not found.'], 404);
         }
