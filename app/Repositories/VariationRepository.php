@@ -46,7 +46,6 @@ class VariationRepository
     public function searchByName($name)
     {
         $haircut = Variation::where('name', 'like', '%' . $name . '%')
-            ->orderByRaw("name COLLATE utf8_general_ci ASC")
             ->get();
         return $haircut;
     }
