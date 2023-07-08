@@ -53,6 +53,11 @@ class BarberController extends Controller
 
     public function checkAvailability($startTime, $numberOfSlots, $barberId)
     {
-        $this->barberService->checkAvailability($startTime, $numberOfSlots, $barberId);
+        if ($this->barberService->checkAvailability($startTime, $numberOfSlots, $barberId)) {
+            $message = 'Slots available';
+        } else {
+            $message = 'No slots available';
+        }
+        return response($message, 200);
     }
 }
