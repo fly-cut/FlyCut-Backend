@@ -39,18 +39,25 @@ class ReservationService
             'start_time' => 'required',
             'services' => 'required|array|min:1',
             'services.*.name' => 'required|string|exists:services,name',
+            'payment_method' => 'required|string|in:Cash,Card',
         ]);
     }
 
     private function createReservation(Request $request)
     {
         $dateString = $request->input('start_time');
+        $payment_status = 'Unpaid';
+        if ($request->payment_method == 'Card') {
+            $payment_status = 'Paid';
+        }
 
         return Reservation::create([
             'barber_id' => $request->barber_id,
             'user_id' => auth()->user()->id,
             'barbershop_id' => $request->barbershop_id,
             'date' => $dateString,
+            'payment_method' => $request->payment_method,
+            'payment_status' => $payment_status,
         ]);
     }
 
