@@ -29,29 +29,29 @@ class ReservationRatingRepository
         ReservationRating::destroy($id);
     }
 
-    public function getBarberRatings($id)
+    /*public function getBarberRatings($id)
     {
         return ReservationRating::where('barber_id', $id)->get();
-    }
+    }*/
 
-    public function getBarbershopRatings($id)
+    /*public function getBarbershopRatings($id)
     {
         return ReservationRating::where('barbershop_id', $id)->get();
-    }
+    }*/
 
     public function getBarberRatingByReservationId($id)
     {
         return ReservationRating::where('reservation_id', $id)->first();
     }
 
-    public function hasBarbershopRatings($barbershopId)
+    public function getBarbershopRatings($barbershopId)
     {
-        return ReservationRating::where('barbershop_id', $barbershopId)->exists();
+        return ReservationRating::where('barbershop_id', $barbershopId);
     }
 
-    public function hasBarberRatings($barberId)
+    public function getBarberRatings($barberId)
     {
-        return ReservationRating::where('barber_id', $barberId)->exists();
+        return ReservationRating::where('barber_id', $barberId);
     }
 
     public function getAverageBarbershopRating($barbershopId)
