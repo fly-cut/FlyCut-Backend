@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AddServicesToBarbershopRequest;
-use App\Http\Requests\EditServicePriceAndSlotsRequest;
-use App\Http\Requests\GetNearbyBarbershopsRequest;
-use App\Http\Requests\RemoveServicesFromBarbershopRequest;
+use Illuminate\Http\Request;
+use App\Models\BarbershopOwner;
+use App\Services\BarbershopService;
 use App\Http\Requests\SearchRequest;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreBarbershopRequest;
 use App\Http\Requests\UpdateBarbershopRequest;
-use App\Services\BarbershopService;
-use Illuminate\Http\Request;
+use App\Http\Requests\GetNearbyBarbershopsRequest;
+use App\Http\Requests\AddServicesToBarbershopRequest;
+use App\Http\Requests\EditServicePriceAndSlotsRequest;
+use App\Http\Requests\RemoveServicesFromBarbershopRequest;
 
 
 class BarbershopController extends Controller
@@ -32,11 +34,13 @@ class BarbershopController extends Controller
     public function addBarbershop(StoreBarbershopRequest $request)
     {
         $barbershop = $this->barbershopService->createBarbershop($request);
+        $barbershop_owner = BarbershopOwner::find(Auth::id());
         return response()->json([
-            'status' => 201,
+            'status' => 200,
             'message' => 'Barbershop has been added successfully',
             'barbershop' => $barbershop,
-        ], 201);
+            'barbershop_owner' => $barbershop_owner,
+        ], 200);
     }
 
 
