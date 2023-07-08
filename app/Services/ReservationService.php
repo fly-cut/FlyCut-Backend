@@ -94,7 +94,7 @@ class ReservationService
     public static function getStatus(Reservation $reservation)
     {
         $timeNow = Carbon::now('Africa/Cairo');
-        $currentTime = Carbon::parse($timeNow)->subHours(12)->addHour();
+        $currentTime = Carbon::parse($timeNow)->subHours(12);
         $slotCount = Slot::where('reservation_id', $reservation->id)->count();
         $reservationDateTime = Carbon::parse($reservation->date, 'Africa/Cairo');
         $reservationEndTime = $reservationDateTime->copy()->addMinutes(15 * $slotCount);
