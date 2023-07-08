@@ -7,7 +7,7 @@ use App\Http\Requests\UpdateProfileBarbershopOwnerRequest;
 use App\Models\BarbershopOwner;
 use Illuminate\Http\Request;
 use App\Services\BarbershopOwnerService;
-
+use Illuminate\Support\Facades\Auth;
 
 class BarbershopOwnerController extends Controller
 {
@@ -23,15 +23,26 @@ class BarbershopOwnerController extends Controller
 
     public function changePassword(ChangePasswordBarbershopOwnerRequest $request)
     {
-        return $this->barbershopOwnerService->changePassword($request);
+        $user = Auth::user();
+        $currentPassword = $request->input('current_password');
+        $newPassword = $request->input('new_password');
+
+        return $this->barbershopOwnerService->changePassword($user, $currentPassword, $newPassword);
     }
 
     public function updateProfile(UpdateProfileBarbershopOwnerRequest $request)
     {
-        return $this->barbershopOwnerService->updateProfile($request);
+        $user = Auth::user();
+        $formData = $request->validated();
+
+        return $this->barbershopOwnerService->updateProfile($user, $formData);
     }
+
     public function assignToken(Request $request)
     {
-        return $this->barbershopOwnerService->assignToken($request);
+        $user = Auth::user(); // Assuming you're using Laravel's authentication system
+        $token = $request->input('token');
+
+        return $this->barbershopOwnerService->assignToken($user, $token);
     }
 }
