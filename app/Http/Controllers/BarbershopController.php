@@ -114,6 +114,7 @@ class BarbershopController extends Controller
         ], 200);
     }
 
+
     public function editServicePriceAndSlots(EditServicePriceAndSlotsRequest $request)
     {
         $this->barbershopService->editServicePriceAndSlots($request);
@@ -126,7 +127,7 @@ class BarbershopController extends Controller
 
     public function getBarbershopServicesWithPriceAndSlots($barbershop_id)
     {
-        $barbershop = $this->barbershopService->getBarbershopByOwnerId($barbershop_id);
+        $barbershop = $this->barbershopService->getBarbershop($barbershop_id);
         if (is_null($barbershop) || empty($barbershop)) {
             return response()->json([
                 'status' => 404,
