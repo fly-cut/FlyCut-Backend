@@ -124,7 +124,6 @@ Route::group(['prefix' => 'variations/', 'middleware' => 'tri-guard'], function 
 Route::group(['prefix' => 'reservation/ratings/', 'middleware' => 'tri-guard'], function () {
     Route::post('', [ReservationRatingController::class, 'store']);
     Route::put('{id}', [ReservationRatingController::class, 'update']);
-    Route::delete('{id}', [ReservationRatingController::class, 'destroy']);
     Route::get('barbershop/{id}', [ReservationRatingController::class, 'getBarbershopRatings']);
     Route::get('barber/{id}', [ReservationRatingController::class, 'getBarberRatings']);
     Route::get('get/by/reservation/{id}', [ReservationRatingController::class, 'getRatingByReservationId']);

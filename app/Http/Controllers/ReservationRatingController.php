@@ -38,18 +38,6 @@ class ReservationRatingController extends Controller
         return response()->json($reservationRating, 200);
     }
 
-    public function destroy($id)
-    {
-        $reservationRating = $this->reservationRatingService->getById($id);
-        if (!$reservationRating) {
-            return response()->json(['message' => 'Rating not found.'], 404);
-        }
-
-        $this->reservationRatingService->getBarberRatingByReservationId($id);
-
-        return response()->json(['message' => 'Rating deleted successfully.'], 200);
-    }
-
     public function getBarberRatings($id)
     {
         $barber = Barber::find($id);

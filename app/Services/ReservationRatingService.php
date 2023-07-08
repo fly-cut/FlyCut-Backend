@@ -56,37 +56,6 @@ class ReservationRatingService
         return $reservationRating;
     }
 
-    public function delete($id)
-    {
-        $reservationRating = $this->reservationRatingRepository->getById($id);
-
-        $this->reservationRatingRepository->delete($id);
-
-        $barber = Barber::find($reservationRating->barber_id);
-        $barbershop = Barbershop::find($reservationRating->barbershop_id);
-        $reservation = Reservation::find($reservationRating->reservation_id);
-        $reservation->is_rated = false;
-
-        if ($this->reservationRatingRepository->getBarbershopRatings($barbershop->id)->count() > 0) {
-            $barbershop->rating = $this->reservationRatingRepository->getAverageBarbershopRating($barbershop->id);
-        } else {
-            $barbershop->rating = 5.0;
-        }
-
-        if ($this->reservationRatingRepository->getBarberRatings($barber->id)->count() > 0) {
-            $barber->rating = $this->reservationRatingRepository->getAverageBarberRating($barber->id);
-        } else {
-            $barber->rating = 5.0;
-        }
-
-        $barbershop->rating_count = $this->reservationRatingRepository->getBarbershopRatingCount($barbershop->id);
-        $barber->rating_count = $this->reservationRatingRepository->getBarberRatingCount($barber->id);
-
-        $reservation->save();
-        $barbershop->save();
-        $barber->save();
-    }
-
     public function getBarberRatings($id)
     {
         $barberRatings = $this->reservationRatingRepository->getBarberRatings($id)->get();
