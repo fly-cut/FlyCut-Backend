@@ -19,20 +19,13 @@ class ServiceRepository
 
     public function create($data)
     {
-        $service = Service::create([
-            'name' => $data->name,
-            'image' => $data->image,
-        ]);
-
-        return $service;
+        return Service::create($data);
     }
 
     public function update($data, $id)
     {
         $service = Service::find($id);
-        $service->name = $data->name;
-        $service->save();
-
+        $service->update($data);
         return $service;
     }
 

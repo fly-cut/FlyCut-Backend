@@ -21,35 +21,30 @@ class ServiceService
 
     public function createService($data)
     {
-        $path = $data->file('image');
-        $filename = $path->getClientOriginalName();
-        $destinationPath = public_path() . '/images';
-        $path->move($destinationPath, $filename);
+        $filename = $this->uploadImage($data->file('image'));
 
-        $data['image'] = $filename;
-        return $data->all();
-        return $this->serviceRepository->create($data);
+        $serviceData = [
+            'name' => $data->name,
+            'image' => $filename,
+        ];
+
+        return $this->serviceRepository->create($serviceData);
     }
 
     public function updateService($data, $id)
     {
         $service = $this->serviceRepository->getById($id);
 
-        $image = $data->file('image');
-        if ($image) {
-            if (File::exists(public_path('images/' . $service->image))) {
-                File::delete(public_path('images/' . $service->image));
-            }
+        if ($data->hasFile('image')) {
+            $this->deleteImage($service->image);
 
-            $path = $data->file('image');
-            $filename = $path->getClientOriginalName();
-            $destinationPath = public_path() . '/images';
-            $path->move($destinationPath, $filename);
-
-            $data['image'] = $filename;
+            $filename = $this->uploadImage($data->file('image'));
+            $service->image = $filename;
         }
 
-        return $this->serviceRepository->update($data, $id);
+        $service->name = $data->name;
+
+        return $this->serviceRepository->update($service);
     }
 
     public function getServiceById($id)
@@ -59,6 +54,28 @@ class ServiceService
 
     public function deleteService($id)
     {
+        $service = $this->serviceRepository->getById($id);
+
+        $this->deleteImage($service->image);
+
         $this->serviceRepository->delete($id);
+    }
+
+    protected function uploadImage($file)
+    {
+        $filename = $file->getClientOriginalName();
+        $destinationPath = public_path() . '/images';
+        $file->move($destinationPath, $filename);
+
+        return $filename;
+    }
+
+    protected function deleteImage($filename)
+    {
+        $imagePath = public_path('images/' . $filename);
+
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
     }
 }
