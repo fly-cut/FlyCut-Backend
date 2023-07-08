@@ -20,7 +20,7 @@ class ReservationCreationService
         $timeNow = Carbon::now('Africa/Cairo');
         $curret_time = Carbon::parse($timeNow)->subHours(12)->addHour();
 
-        if ($dateString < $curret_time) {
+        if (Carbon::parse($dateString) < $curret_time) {
             throw new \Exception('You cannot make a reservation in the past');
         }
 
