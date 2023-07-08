@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Service;
 use App\Models\Barbershop;
 use App\Models\Reservation;
+use App\Models\ReservationRating;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\ReservationRatingRepository;
 
@@ -22,7 +23,9 @@ class ReservationRatingService
     public function create($request)
     {
         $reservationRating = $this->reservationRatingRepository->create($request->all());
-
+        $reservation = Reservation::find($request->reservation_id);
+        $reservation->is_rated = true;
+        $reservation->save();
         if ($request->file('image')) {
             $image = $request->file('image');
             $image_name = time() . '.' . $image->getClientOriginalExtension();
@@ -50,12 +53,29 @@ class ReservationRatingService
 
     public function delete($id)
     {
-        $reservationRating = $this->reservationRatingRepository->getById($id);
+        $reservationRating = ReservationRating::find($id);
+        $barber = Barber::find($reservationRating->barber_id);
+        $barbershop = Barbershop::find($reservationRating->barbershop_id);
+        $reservation = Reservation::find($reservationRating->reservation_id);
+        $reservation->is_rated = false;
+        $reservationRating->delete();
+        if (ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->count() > 0) {
+            $barbershop->rating = ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->avg('barbershop_rating');
+        } else {
+            $barbershop->rating = 5.0;
+        }
 
-        $this->reservationRatingRepository->delete($id);
-        $this->updateBarberRating($reservationRating->barber_id);
-        $this->updateBarbershopRating($reservationRating->barbershop_id);
+        if (ReservationRating::where('barber_id', $barber->barber_id)->count() > 0) {
+            $barber->rating = ReservationRating::where('barber_id', $barber->barber_id)->avg('barber_rating');
+        } else {
+            $barber->rating = 5.0;
+        }
+        $barbershop->rating_count = ReservationRating::where('barbershop_id', $barbershop->barbershop_id)->count();
+        $barber->rating_count = ReservationRating::where('barber_id', $barber->barber_id)->count();
+        $barbershop->save();
+        $barber->save();
     }
+
 
     public function getBarberRatings($id)
     {
@@ -78,13 +98,13 @@ class ReservationRatingService
             $rating->client_image = Client::find($rating->client_id)->image;
             $rating->barber_name = Barber::find($rating->barber_id)->name;
             $rating->barber_image = Barber::find($rating->barber_id)->image;
-            $rating->reservation_date = Reservation::find($rating->reservation_id)->date;
-            $services = Service::whereIn(
-                'id',
-                DB::table('reservation_service')
-                    ->where('reservation_id', $rating->reservation_id)
-                    ->pluck('service_id')
-            )->get();
+            $rating->date = Reservation::find($rating->reservation_id)->date;
+            $services = [];
+            $services_ids = DB::table('reservation_service')->where('reservation_id', $rating->reservation_id)->pluck('service_id');
+            foreach ($services_ids as $service_id) {
+                $service = Service::find($service_id);
+                array_push($services, $service);
+            }
             $rating->services = $services;
         }
 
