@@ -12,7 +12,6 @@ use App\Models\BarbershopOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
 
 class BarbershopController extends Controller
 {
@@ -126,10 +125,12 @@ class BarbershopController extends Controller
         $barbershop->city = $request->city;
         $barbershop->barbershop_owner_id = Auth::id();
 
-        $image = $request->file('image');
-        $filename = $image->getClientOriginalName();
-        Storage::disk('disk')->put('images', $image);
+        $path = $request->file('image');
+        $filename = $path->getClientOriginalName();
+        $destinationPath = public_path().'/images';
+        $path->move($destinationPath, $filename);
         $barbershop->image = $filename;
+
         $barbershop->save();
 
         $barbershop_owner = BarbershopOwner::find(Auth::id());
