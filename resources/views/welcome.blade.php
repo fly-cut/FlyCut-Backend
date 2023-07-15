@@ -413,7 +413,12 @@
         <h2 class="stylish_heading" style="margin-bottom: 4rem">
           Watch a Demo <span class="red_dot">.</span>
         </h2>
-        <iframe width="1120" height="630" src="https://www.youtube.com/embed/4L84fo1X_4s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <div class="demo-video">
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/4L84fo1X_4s" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </div>
+        </div>
+
         <!-- <video controls class="demo-video">
           <source src="{{URL::asset("images2/FlyCut_DemoV2.mp4")}}" type="video/mp4" />
         </video> -->

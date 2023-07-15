@@ -664,17 +664,9 @@ nav {
   align-items: center;
 }
 
-.demo-video-container {
-  padding: 10rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
 
-.demo-video {
-  width: 100%;
-}
+
+
 
 .name h4 {
   line-height: 1.5 !important;
@@ -885,10 +877,6 @@ nav {
   .btn {
     padding: 10px 20px;
     font-size: 16px;
-  }
-
-  .demo-video-container {
-    padding: 1rem;
   }
 
   section {
@@ -1180,9 +1168,6 @@ nav {
     flex-direction: column-reverse;
   }
 
-  .demo-video-container {
-    padding: 1rem;
-  }
 
   #testimonial .row {
     margin-top: 3.25rem;
@@ -1556,4 +1541,27 @@ nav {
     max-width: 350px;
     margin-top: -135px;
   }
+}
+
+.demo-video {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio (height / width) */
+  padding-top: 30px; /* Optional: Add some padding to the top */
+  height: 0;
+}
+
+.demo-video .video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.demo-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
