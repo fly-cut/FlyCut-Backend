@@ -123,7 +123,7 @@
                 <a
                   href="https://expo.dev/artifacts/eas/xjwJgTyboG8rXqFoV2sAK7.apk"
                   class="btn"
-                  style="margin-right: 1.6rem"
+                  style="margin-right: 1.6rem; margin-bottom: 1.6rem"
                   ><span class="download-btn">Download Now</span></a
                 >
                 <a
