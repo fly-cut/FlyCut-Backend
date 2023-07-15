@@ -185,7 +185,7 @@ html {
 
 ::selection {
   background-color: #ffffff;
-  color: #B87E53;
+  color: #b87e53;
 }
 
 body {
@@ -255,7 +255,7 @@ section {
 .preloader .loader {
   height: 2.5rem;
   width: 2.5rem;
-  border: 0.25rem solid #B87E53;
+  border: 0.25rem solid #b87e53;
   border-radius: 50%;
   border-top: 0.25rem solid transparent;
   border-bottom: 0.25rem solid transparent;
@@ -316,7 +316,7 @@ section {
 }
 
 .red_dot {
-  background: linear-gradient(to bottom, #B87E53 10%, #B87E53 100%);
+  background: linear-gradient(to bottom, #b87e53 10%, #b87e53 100%);
   background-clip: border-box;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -341,21 +341,21 @@ section {
 
 /* Header Section Styling */
 #home {
-  background: #B87E53; /* Old browsers */
+  background: #b87e53; /* Old browsers */
   background: -moz-linear-gradient(
     top,
-    #B87E53 37%,
-    #2F395C 98%
+    #b87e53 37%,
+    #2f395c 98%
   ); /* FF3.6-15 */
   background: -webkit-linear-gradient(
     top,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(
     to bottom,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B87E53', endColorstr='#B87E53',GradientType=0 ); /* IE6-9 */
   background-repeat: no-repeat;
@@ -398,13 +398,13 @@ nav {
   background-color: #fff;
   z-index: 500;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  color: #B87E53;
+  color: #b87e53;
   padding: 10px 40px;
   transition: 0.3s;
 }
 
 .sticky .logo {
-  color: #B87E53;
+  color: #b87e53;
 }
 
 .sticky #navbar ul li a {
@@ -412,7 +412,7 @@ nav {
 }
 
 .sticky #navbar ul li a:hover {
-  color: #B87E53;
+  color: #b87e53;
 }
 
 .sticky .navbar {
@@ -451,7 +451,7 @@ nav {
   background-color: #ffffff;
   z-index: 9999;
   overflow: hidden;
-  color: #B87E53;
+  color: #b87e53;
   transition: 0.3s;
   text-align: center;
 }
@@ -474,7 +474,7 @@ nav {
 }
 
 .overlay-content a:hover {
-  color: #B87E53;
+  color: #b87e53;
 }
 /* End: Mobile Menu Styling */
 
@@ -498,7 +498,7 @@ nav {
 }
 
 .download-btn {
-  background: linear-gradient(to bottom, #B87E53 10%, #B87E53 100%);
+  background: linear-gradient(to bottom, #b87e53 10%, #b87e53 100%);
   background-clip: border-box;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -549,21 +549,21 @@ nav {
   z-index: 99; /* Make sure it does not overlap */
   border: none; /* Remove borders */
   outline: none; /* Remove outline */
-  background: #B87E53; /* Old browsers */
+  background: #b87e53; /* Old browsers */
   background: -moz-linear-gradient(
     top,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* FF3.6-15 */
   background: -webkit-linear-gradient(
     top,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(
     to bottom,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B87E53', endColorstr='#B87E53',GradientType=0 ); /* IE6-9 */
   background-repeat: no-repeat;
@@ -642,7 +642,7 @@ nav {
 }
 
 .company-name {
-  background: linear-gradient(to bottom, #B87E53 10%, #B87E53 100%);
+  background: linear-gradient(to bottom, #b87e53 10%, #b87e53 100%);
   background-clip: border-box;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -664,6 +664,18 @@ nav {
   align-items: center;
 }
 
+.demo-video-container {
+  padding: 10rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.demo-video {
+  width: 100%;
+}
+
 .name h4 {
   line-height: 1.5 !important;
 }
@@ -682,21 +694,21 @@ nav {
 
 /* How To Section Styling */
 #howto {
-  background: #B87E53; /* Old browsers */
+  background: #b87e53; /* Old browsers */
   background: -moz-linear-gradient(
     top,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* FF3.6-15 */
   background: -webkit-linear-gradient(
     top,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* Chrome10-25,Safari5.1-6 */
   background: linear-gradient(
     to bottom,
-    #B87E53 37%,
-    #B87E53 98%
+    #b87e53 37%,
+    #b87e53 98%
   ); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B87E53', endColorstr='#B87E53',GradientType=0 ); /* IE6-9 */
   background-repeat: no-repeat;
@@ -786,12 +798,12 @@ nav {
   border-radius: 3.125rem;
   padding: 0 30px;
   padding-right: 210px;
-/*   position: relative; */
+  /*   position: relative; */
   font-size: 18px;
 }
 
 .subscribe-btn {
-  background: linear-gradient(to bottom, #B87E53 10%, #B87E53 100%);
+  background: linear-gradient(to bottom, #b87e53 10%, #b87e53 100%);
   border: none;
   box-shadow: 0 10px 30px rgba(223, 27, 60, 0.3);
   color: #ffffff;
@@ -801,7 +813,7 @@ nav {
   margin-left: -200px;
 }
 .subscribe-btn:hover {
-  background: linear-gradient(to bottom, #B87E53 10%, #B87E53 100%);
+  background: linear-gradient(to bottom, #b87e53 10%, #b87e53 100%);
   color: #ffffff;
 }
 /* End: Subscribe Section Styling */
@@ -840,7 +852,7 @@ nav {
 }
 
 .links ul li:hover {
-  background: linear-gradient(to bottom, #B87E53 10%, #B87E53 100%);
+  background: linear-gradient(to bottom, #b87e53 10%, #b87e53 100%);
   background-clip: border-box;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -873,6 +885,10 @@ nav {
   .btn {
     padding: 10px 20px;
     font-size: 16px;
+  }
+
+  .demo-video-container {
+    padding: 1rem;
   }
 
   section {
@@ -1049,6 +1065,41 @@ nav {
   }
 }
 
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.contact {
+  text-align: center;
+}
+
+.contact img {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
+@media (max-width: 767px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.contacts__social-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.social_card_email {
+  color: #808080;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) and (max-width: 767.98px) {
   body {
@@ -1127,6 +1178,10 @@ nav {
     display: flex;
     flex-flow: column;
     flex-direction: column-reverse;
+  }
+
+  .demo-video-container {
+    padding: 1rem;
   }
 
   #testimonial .row {
