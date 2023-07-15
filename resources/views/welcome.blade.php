@@ -273,7 +273,7 @@
         </div>
 
         <div class="contact">
-          <img src="images2/zeyad.jpg" alt="Person 3" />
+          <img src="images2/zeyad.jpeg" alt="Person 3" />
           <p><strong>Zeyad Taher</strong></p>
           <a href="mailto:zeyadtaher16@gmail.com" class="social_card_email"
             >zeyadtaher16@gmail.com</a
